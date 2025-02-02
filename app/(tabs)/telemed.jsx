@@ -6,6 +6,8 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import { doctors } from '../../constants/DoctorContacts';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
+
+
 const Item = ({item}) => (
     <View style={styles.doctorContainer}>
         <View style={styles.doctorItem}>
@@ -25,7 +27,7 @@ const renderItem = ({item}) => <Item item={item} />;
 
 export default function TeleMed() {
   return (
-    <SafeAreaView style={{backgroundColor:'white', height:'100%'}}>
+    <SafeAreaView>
       <View style={styles.header}>
         <Text style={styles.headerText}>Tele Medicine</Text>
       </View>
