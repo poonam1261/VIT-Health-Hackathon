@@ -6,8 +6,10 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import { doctors } from '../../constants/DoctorContacts';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Feather from '@expo/vector-icons/Feather';
+import { useRouter } from 'expo-router';
 
 const Item = ({item}) => (
+    
     <View style={styles.doctorContainer}>
         <View style={styles.doctorItem}>
         <View style={{display:'flex', flexDirection:'row'}}>
@@ -25,6 +27,7 @@ const Item = ({item}) => (
 const renderItem = ({item}) => <Item item={item} />;
 
 export default function TeleMed() {
+    const router = useRouter();
   return (
     <SafeAreaView>
       <View style={styles.header}>
@@ -35,10 +38,10 @@ export default function TeleMed() {
       <Text style={styles.messageText}>Hi John, how are you{'\n'}feeling?</Text>
       </View>
 
-      <View style={styles.survey}>
+      <TouchableOpacity style={styles.survey} onPress={() => {router.push('survey')}}>
         <Text style={styles.surveyText}>Take Up Medical Survey</Text>
         <Feather name="arrow-right-circle" size={30} color="white" />
-     </View>
+     </TouchableOpacity>
 
       <FlatList
       data={doctors}
