@@ -5,8 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { doctors } from '../../constants/DoctorContacts';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-
-
+import Feather from '@expo/vector-icons/Feather';
 
 const Item = ({item}) => (
     <View style={styles.doctorContainer}>
@@ -18,7 +17,7 @@ const Item = ({item}) => (
         <Text style={styles.doctorQual}>{item.qualification}</Text>
         
         </View>
-        <TouchableOpacity style={styles.bookApt}><Text style={{color:'white'}}>Book Appointment</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.bookApt}><Text style={{color:'white', fontWeight:'bold'}}>Book Appointment</Text></TouchableOpacity>
     
     </View>
 );
@@ -35,6 +34,11 @@ export default function TeleMed() {
         <Image source={require('../../assets/images/doctorImg.png')} style={styles.doctorImg}/>
       <Text style={styles.messageText}>Hi John, how are you{'\n'}feeling?</Text>
       </View>
+
+      <View style={styles.survey}>
+        <Text style={styles.surveyText}>Take Up Medical Survey</Text>
+        <Feather name="arrow-right-circle" size={30} color="white" />
+     </View>
 
       <FlatList
       data={doctors}
@@ -79,7 +83,7 @@ const styles= StyleSheet.create({
     messageText:{
         fontSize:25,
         fontWeight:'600',
-        color:'rgba(0,0,255, 0.7)',
+        color:'rgba(100,100,255, 0.6)',
         marginLeft:10
 
     },
@@ -104,7 +108,7 @@ const styles= StyleSheet.create({
     },
     doctorQual:{
         fontSize:15,
-        fontWeight:'500',
+        fontWeight:'bold',
         color:'white',
         marginRight:20,
         alignSelf:'flex-start'
@@ -136,6 +140,28 @@ const styles= StyleSheet.create({
         position:'absolute',
         top:'60%',
         right:4
+    },
+    survey:{
+        marginLeft:10,
+        marginRight:10,
+        padding:10,
+        borderRadius:15, 
+        backgroundColor:'rgba(100,30,240,0.5)', 
+        display:'flex', 
+        flexDirection:'row', 
+        justifyContent:'space-between', 
+        alignItems:'center', 
+        paddingRight:20, 
+        paddingLeft:20, 
+        marginTop:20,
+        marginBottom:20
+    }, 
+    surveyText:{
+        color:'white', 
+        marginLeft:10, 
+        fontSize:18,
+        fontWeight:'600',
+        textAlign:'center'
     }
 
   })

@@ -9,7 +9,7 @@ export default function index() {
       <View style={styles.header}>
         <Text style={styles.headerText}>Home</Text>
         <View style={{alignSelf:'flex-end'}}>
-        <MaterialCommunityIcons name="face-man-profile" size={34} color="black" />
+        <MaterialCommunityIcons name="face-man-profile" size={34} color="white" />
         </View>
       </View>
     </SafeAreaView>
@@ -20,25 +20,31 @@ const styles= StyleSheet.create({
   header:{
     display:'flex',
     flexDirection:'row',
-    //alignItems:'center',
-    
     borderBottomLeftRadius:15,
     borderBottomRightRadius:15,
     paddingTop:10,
     paddingBottom:10,
-    backgroundColor:'rgba(0,0,0,0.3)',
+    backgroundColor:'rgba(0,0,255,0.3)',
     elevation:10,
-    justifyContent:'space-between',
     paddingLeft:10,
     paddingRight:10,
-    
+    textAlign:'center', 
+    justifyContent:'center',
+    width:'100%'
     
   },
   headerText:{
-    position:'relative',
-    left:'40%',
+  
     fontSize:24,
     fontWeight:'bold',
-    alignSelf:'center'
+    alignSelf:'center',
+    color:'white',
+    
+
+  },
+  profileIcon:{
+    right:0,
+    alignSelf:'flex-end'
   }
+  
 })
