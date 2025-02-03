@@ -7,6 +7,8 @@ import { doctors } from '../../constants/DoctorContacts';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
+import Octicons from '@expo/vector-icons/Octicons';
+import { ScrollView } from 'react-native';
 
 const Item = ({item}) => (
     
@@ -24,18 +26,48 @@ const Item = ({item}) => (
     </View>
 );
 
-const renderItem = ({item}) => <Item item={item} />;
+const AptItem = ({item}) => (
+    
+  <TouchableOpacity style={styles.AptContainer}>
+      <View style={styles.AptItem}>
+      <View style={{display:'flex', flexDirection:'row'}}>
+      <Octicons name="note" size={30} color="white" />
+      <Text style={styles.doctorName}>{item.name}</Text>
+      </View>
+      <Text style={styles.AptDate}>Monday, 03-02-2025</Text>
+      
+      
+      </View>
+      <Text style={styles.AptTime}>13:00</Text>
+  </TouchableOpacity>
+);
 
+const renderItem = ({item}) => <Item item={item} />;
+const renderItemDr = ({item}) => <AptItem item={item}/>
 export default function TeleMed() {
     const router = useRouter();
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex:1}}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Tele Medicine</Text>
       </View>
+
+      <ScrollView >
       <View style={styles.message}>
         <Image source={require('../../assets/images/doctorImg.png')} style={styles.doctorImg}/>
       <Text style={styles.messageText}>Hi John, how are you{'\n'}feeling?</Text>
+      </View>
+
+      <View>
+        <Text style={styles.aptHead}>
+          Appointments
+        </Text>
+
+        <FlatList
+        data={doctors}
+        renderItem={renderItemDr}
+        keyExtractor={item => item.id}
+        />
       </View>
 
       <TouchableOpacity style={styles.survey} onPress={() => {router.push('survey')}}>
@@ -43,11 +75,14 @@ export default function TeleMed() {
         <Feather name="arrow-right-circle" size={30} color="white" />
      </TouchableOpacity>
 
+     <Text style={styles.aptHead}>Book An Appointment</Text>
+
       <FlatList
       data={doctors}
       renderItem={renderItem}
       keyExtractor={item => item.id}
       />
+      </ScrollView>
         
     </SafeAreaView>
   )
@@ -81,7 +116,14 @@ const styles= StyleSheet.create({
         display:'flex',
         flexDirection:'row',
         alignItems:'center',
-        paddingLeft:20
+        paddingLeft:20, 
+        borderWidth:2, 
+        margin:10, 
+        borderBottomRightRadius:25, 
+        borderBottomLeftRadius:25, 
+        borderTopRightRadius:25, 
+        borderColor:'rgba(10,0,255, 0.9)', 
+        marginTop:15, 
     },
     messageText:{
         fontSize:25,
@@ -126,9 +168,9 @@ const styles= StyleSheet.create({
         backgroundColor:'rgba(10,0,255, 0.5)',
         marginLeft:10,
         marginRight:10,
-        marginTop:10,
         borderRadius:15,
-        paddingBottom:20
+        paddingBottom:20, 
+        marginBottom:10
 
     },
     bookApt:{
@@ -165,6 +207,59 @@ const styles= StyleSheet.create({
         fontSize:18,
         fontWeight:'600',
         textAlign:'center'
-    }
+    }, 
+    aptHead:{
+      fontSize:24, 
+      fontWeight:'bold', 
+      color:'rgba(0,0,255,0.8)', 
+      alignSelf:'center', 
+      marginBottom:10, 
+      marginTop:10, 
+      borderRadius:10, 
+      paddingLeft:10, 
+      paddingRight:10, 
+      paddingTop:5, 
+      paddingBottom:5,
+      backgroundColor:'rgba(58,100,255, 0.3)'
+    }, 
+    AptDate:{
+      fontSize:15,
+        fontWeight:'bold',
+        color:'white',
+        marginRight:20,
+        alignSelf:'flex-start'
+
+    }, 
+    AptItem:{
+      display:'flex',
+        flexDirection:'row',
+        paddingTop:10,
+        paddingLeft:10,
+        paddingRight:10,
+        justifyContent:'space-between',
+        alignItems:'center',
+        marginLeft:10,
+        marginRight:10,
+       
+        alignItems:'center'
+    }, 
+    AptContainer:{
+      backgroundColor:'rgba(10,0,255, 0.3)',
+      marginLeft:10,
+      marginRight:10,
+      borderRadius:15,
+      paddingBottom:20, 
+      marginBottom:10, 
+      
+
+  },
+  AptTime:{
+    alignSelf:'flex-end',
+    marginRight:40,
+    fontSize:15,
+    fontWeight:'bold',
+    color:'white'
+
+  }
 
   })
