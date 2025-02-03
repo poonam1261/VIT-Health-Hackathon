@@ -19,7 +19,7 @@ const Item = ({item}) => (
         <Text style={styles.doctorQual}>{item.qualification}</Text>
         
         </View>
-        <TouchableOpacity style={styles.bookApt}><Text style={{color:'white', fontWeight:'bold'}}>Book Appointment</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.bookApt}><Text style={{color:'white', fontWeight:'bold'}}>Book an Appointment</Text></TouchableOpacity>
     
     </View>
 );
