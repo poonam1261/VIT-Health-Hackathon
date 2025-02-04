@@ -21,3 +21,16 @@ export const doctors = [
     },
 
 ]
+
+export const appointments = [
+    {
+        id: 1,
+        name:'Dr. Rajesh Naik' , 
+        aptdate : '2025-02-04'
+    },
+    {
+        id: 2,
+        name:'Dr. Anuj Kamat' , 
+        aptdate : '2025-02-06'
+    },
+]

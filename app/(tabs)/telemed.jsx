@@ -3,12 +3,13 @@ import React from 'react'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { doctors } from '../../constants/DoctorContacts';
+import { doctors, appointments } from '../../constants/DoctorContacts';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import Octicons from '@expo/vector-icons/Octicons';
 import { ScrollView } from 'react-native';
+import Foundation from '@expo/vector-icons/Foundation';
 
 const Item = ({item}) => (
     
@@ -30,15 +31,16 @@ const AptItem = ({item}) => (
     
   <TouchableOpacity style={styles.AptContainer}>
       <View style={styles.AptItem}>
-      <View style={{display:'flex', flexDirection:'row'}}>
-      <Octicons name="note" size={30} color="white" />
-      <Text style={styles.doctorName}>{item.name}</Text>
+        <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center',}}>
+        <Octicons name="note" size={30} color="rgba(79, 115, 235, 0.92)" />
+        <Text style={styles.AptDate}>Monday, 03-02-2025</Text>
+        </View>
+        <Text style={styles.AptTime}>13:00</Text>
       </View>
-      <Text style={styles.AptDate}>Monday, 03-02-2025</Text>
-      
-      
+      <View style={styles.seperator}>
+         
       </View>
-      <Text style={styles.AptTime}>13:00</Text>
+      <Text style={styles.doctorNameApt}>{item.name}</Text>
   </TouchableOpacity>
 );
 
@@ -51,23 +53,12 @@ export default function TeleMed() {
       <View style={styles.header}>
         <Text style={styles.headerText}>Tele Medicine</Text>
       </View>
+      
 
       <ScrollView >
       <View style={styles.message}>
         <Image source={require('../../assets/images/doctorImg.png')} style={styles.doctorImg}/>
-      <Text style={styles.messageText}>Hi John, how are you{'\n'}feeling?</Text>
-      </View>
-
-      <View>
-        <Text style={styles.aptHead}>
-          Appointments
-        </Text>
-
-        <FlatList
-        data={doctors}
-        renderItem={renderItemDr}
-        keyExtractor={item => item.id}
-        />
+      <Text style={styles.messageText}>Hi John, how are you feeling?</Text>
       </View>
 
       <TouchableOpacity style={styles.survey} onPress={() => {router.push('survey')}}>
@@ -75,7 +66,23 @@ export default function TeleMed() {
         <Feather name="arrow-right-circle" size={30} color="white" />
      </TouchableOpacity>
 
-     <Text style={styles.aptHead}>Book An Appointment</Text>
+      <View>
+       <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+       <Text style={styles.aptHead}>
+          Today's Appointments
+        </Text>
+        <Foundation name="calendar" size={45} color="rgba(79, 115, 235, 0.92)" style={styles.calendarIcon} onPress={() => {router.push('calendar/calendarApp')}}/>
+       </View>
+
+        <FlatList
+        data={appointments}
+        renderItem={renderItemDr}
+        keyExtractor={item => item.id}
+        />
+      </View>
+
+     
+     <Text style={styles.aptHead}>Book Appointment</Text>
 
       <FlatList
       data={doctors}
@@ -117,18 +124,20 @@ const styles= StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         paddingLeft:20, 
-        borderWidth:2, 
+        borderWidth:4, 
         margin:10, 
         borderBottomRightRadius:25, 
         borderBottomLeftRadius:25, 
         borderTopRightRadius:25, 
-        borderColor:'rgba(10,0,255, 0.9)', 
+        borderColor:'rgba(255, 255, 255, 0.9)', 
         marginTop:15, 
+        elevation:20, 
+        backgroundColor:'rgb(54, 48, 214)'
     },
     messageText:{
-        fontSize:25,
+        fontSize:20,
         fontWeight:'600',
-        color:'rgba(100,100,255, 0.6)',
+        color:'rgba(255,255,255, 0.7)',
         marginLeft:10
 
     },
@@ -151,6 +160,14 @@ const styles= StyleSheet.create({
         marginLeft:20
 
     },
+    doctorNameApt:{
+      fontSize:17,
+      fontWeight:'500',
+      marginRgiht:10,
+      color:'black',
+      marginLeft:20
+
+  },
     doctorQual:{
         fontSize:15,
         fontWeight:'bold',
@@ -209,7 +226,7 @@ const styles= StyleSheet.create({
         textAlign:'center'
     }, 
     aptHead:{
-      fontSize:24, 
+      fontSize:16, 
       fontWeight:'bold', 
       color:'rgba(0,0,255,0.8)', 
       alignSelf:'center', 
@@ -220,14 +237,15 @@ const styles= StyleSheet.create({
       paddingRight:10, 
       paddingTop:5, 
       paddingBottom:5,
-      backgroundColor:'rgba(58,100,255, 0.3)'
+      backgroundColor:'rgba(58,100,255, 0.3)', 
+      alignSelf:'center', 
+      textAlign:'center'
     }, 
     AptDate:{
       fontSize:15,
         fontWeight:'bold',
-        color:'white',
-        marginRight:20,
-        alignSelf:'flex-start'
+        color:'rgba(26, 153, 17, 0.92)',
+        marginLeft:15
 
     }, 
     AptItem:{
@@ -237,28 +255,41 @@ const styles= StyleSheet.create({
         paddingLeft:10,
         paddingRight:10,
         justifyContent:'space-between',
-        alignItems:'center',
         marginLeft:10,
         marginRight:10,
        
         alignItems:'center'
     }, 
     AptContainer:{
-      backgroundColor:'rgba(10,0,255, 0.3)',
+      backgroundColor:'rgb(255, 255, 255)',
       marginLeft:10,
       marginRight:10,
       borderRadius:15,
       paddingBottom:20, 
       marginBottom:10, 
+      borderWidth:1,
+      elevation:5, 
+      borderColor:'rgba(13, 48, 187, 0.92)'
+      
       
 
   },
   AptTime:{
-    alignSelf:'flex-end',
-    marginRight:40,
     fontSize:15,
     fontWeight:'bold',
-    color:'white'
+    color:'rgba(26, 153, 17, 0.92)'
+
+  }, 
+  calendarIcon:{
+    position:'absolute', 
+    right:0, 
+    marginRight:20
+  }, 
+  seperator:{
+    width:'95%', 
+    height:1,
+    backgroundColor:'rgba(237, 103, 103, 0.87)' , 
+    margin:10
 
   }
 

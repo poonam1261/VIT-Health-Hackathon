@@ -18,6 +18,7 @@ export default function TabLayout() {
     <Tabs 
       screenOptions={{
         tabBarActiveTintColor: 'rgba(0,0,255, 0.6)',
+        tabBarInactiveTintColor:'rgba(130, 130, 242, 0.43)',
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
@@ -46,7 +47,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="telemed"
         options={{
-          title: 'TeleMed',
+          title: 'Telemed',
           tabBarIcon: ({ color }) => <FontAwesome6 name="hand-holding-medical" size={24} color={color} />,
         }}
       />
