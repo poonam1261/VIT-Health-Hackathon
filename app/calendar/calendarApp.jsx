@@ -36,22 +36,58 @@ const markDate = (date) => {
 />;
 */}
 
+<Text style={{fontSize:30, fontWeight:'bold', marginBottom:30}}>Calendar</Text>
+
 <Calendar
 style={{
   borderWidth: 1,
   borderColor: 'gray',
-  height: 350, 
-  borderRadius:15,
-  width:'100%',
+  borderRadius:20,
+  width:'350',
   paddingLeft:20,
   paddingRight:20, 
   paddingBottom:50 ,
-  margin:0
+  
   
 }}
-onDayPress={(day) => markDate(day.dateString)}
   markingType={'custom'}
-  markedDates={markedDates}
+  markedDates={{
+    
+  
+    
+    '2025-02-06': {
+      customStyles: {
+        container: {
+          borderWidth:3,
+          borderColor: 'green',
+          
+        },
+        text: {
+          color: 'black'
+        }
+      }
+    }, 
+  
+    [appointments[0].aptdate]:{
+      customStyles: {
+        container: {
+          borderWidth:3,
+          borderColor: 'green',
+          
+        },
+        text: {
+          color: 'black'
+        }
+      }
+    },
+
+   /* {
+      appointments.map((item) => {
+        [item.aptdate] : {
+
+        }
+    })}*/
+  }}
 
   enableSwipeMonths={true}
   theme={{
@@ -61,14 +97,14 @@ onDayPress={(day) => markDate(day.dateString)}
     textSectionTitleDisabledColor: '#d9e1e8',
     selectedDayBackgroundColor: '#00adf5',
     selectedDayTextColor: '#ffffff',
-    todayTextColor: 'rgba(65, 229, 65, 0.7)',
-    dayTextColor: 'rgba(141, 141, 178, 0.86)',
+    todayTextColor: 'white',
+    todayBackgroundColor:'rgb(129, 163, 239)',    dayTextColor: 'rgba(141, 141, 178, 0.86)',
     textDisabledColor: '#d9e1e8',
     dotColor: '#00adf5',
     selectedDotColor: '#ffffff',
     arrowColor: 'orange',
     disabledArrowColor: '#d9e1e8',
-    monthTextColor: 'rgba(78, 78, 201, 0.91)',
+    monthTextColor: 'rgb(42, 42, 243)',
     indicatorColor: 'blue',
     textDayFontFamily: 'monospace',
     textMonthFontFamily: 'monospace',
@@ -77,10 +113,16 @@ onDayPress={(day) => markDate(day.dateString)}
     textMonthFontWeight: 'bold',
     textDayHeaderFontWeight: '300',
     textDayFontSize: 16,
-    textMonthFontSize: 16,
-    textDayHeaderFontSize: 16
+    textMonthFontSize: 20,
+    textDayHeaderFontSize: 16, 
+    'stylesheet.calendar.header':{
+      dayTextAtIndex0:{
+        color:'rgba(255, 0, 0, 0.55)'
+      }
+    }
   }} 
 
+  onDayPress={day => {}}
 />
         
     </View>
