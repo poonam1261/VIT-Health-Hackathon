@@ -10,38 +10,29 @@ import { useRouter } from 'expo-router';
 import Octicons from '@expo/vector-icons/Octicons';
 import { ScrollView } from 'react-native';
 import Foundation from '@expo/vector-icons/Foundation';
-import {app}
 
-
-export default function TeleMed() {
-
-  const handleBookApt = (item) => {
-     
-  }
-  
 const Item = ({item}) => (
     
-  <View style={styles.doctorContainer}>
-      <View style={styles.doctorItem}>
-      <View style={{display:'flex', flexDirection:'row'}}>
-      <FontAwesome6 name="user-doctor" size={50} color="white" style={{marginLeft:10}} />
-      <Text style={styles.doctorName}>{item.name}</Text>
-      </View>
-      <Text style={styles.doctorQual}>{item.qualification}</Text>
-      
-      </View>
-      <TouchableOpacity style={styles.bookApt}><Text style={{color:'white', fontWeight:'bold'}} onPress={() => {handleBookApt(item)}}>Book an Appointment</Text></TouchableOpacity>
-  
-  </View>
+    <View style={styles.doctorContainer}>
+        <View style={styles.doctorItem}>
+        <View style={{display:'flex', flexDirection:'row'}}>
+        <FontAwesome6 name="user-doctor" size={50} color="white" style={{marginLeft:10}} />
+        <Text style={styles.doctorName}>{item.name}</Text>
+        </View>
+        <Text style={styles.doctorQual}>{item.qualification}</Text>
+        
+        </View>
+        <TouchableOpacity style={styles.bookApt}><Text style={{color:'white', fontWeight:'bold'}}>Book an Appointment</Text></TouchableOpacity>
+    
+    </View>
 );
 
-  
 const AptItem = ({item}) => (
     
   <TouchableOpacity style={styles.AptContainer}>
       <View style={styles.AptItem}>
         <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center',}}>
-        <Octicons name="note" size={30} color="#5b4d54" />
+        <Octicons name="note" size={30} color="#896978" />
         <Text style={styles.AptDate}>Monday, 03-02-2025</Text>
         </View>
         <Text style={styles.AptTime}>13:00</Text>
@@ -55,6 +46,7 @@ const AptItem = ({item}) => (
 
 const renderItem = ({item}) => <Item item={item} />;
 const renderItemDr = ({item}) => <AptItem item={item}/>
+export default function TeleMed() {
     const router = useRouter();
   return (
     <SafeAreaView style={{flex:1}}>
@@ -79,7 +71,7 @@ const renderItemDr = ({item}) => <AptItem item={item}/>
        <Text style={styles.aptHead}>
           Today's Appointments
         </Text>
-        <Foundation name="calendar" size={45} color="#5b4d54" style={styles.calendarIcon} onPress={() => {router.push('calendar/calendarApp')}}/>
+        <Foundation name="calendar" size={45} color="#896978" style={styles.calendarIcon} onPress={() => {router.push('calendar/calendarApp')}}/>
        </View>
 
         <FlatList
@@ -107,12 +99,15 @@ const styles= StyleSheet.create({
     header:{
       display:'flex',
       flexDirection:'row',
+      borderBottomLeftRadius:15,
+      borderBottomRightRadius:15,
       paddingTop:10,
       paddingBottom:10,
-      backgroundColor:'#FFBFCC',
+      backgroundColor:'rgba(140, 122, 146, 0.79)',
       justifyContent:'center',
       paddingLeft:10,
       paddingRight:10,
+      marginBottom:15
       
     },
     headerText:{
@@ -120,7 +115,7 @@ const styles= StyleSheet.create({
       fontSize:24,
       fontWeight:'bold',
       alignSelf:'center',
-      color:'#fff'
+      color:'white'
 
     },
     message:{
@@ -137,7 +132,7 @@ const styles= StyleSheet.create({
         borderColor:'rgba(255, 255, 255, 0.55)', 
         marginTop:15, 
         elevation:20, 
-        backgroundColor:'#8c7a92'
+        backgroundColor:'#896978'
     },
     messageText:{
         fontSize:20,
@@ -187,7 +182,7 @@ const styles= StyleSheet.create({
         resizeMode:'contain'
     }, 
     doctorContainer:{
-        backgroundColor:'#b6dc76',
+        backgroundColor:'rgb(170, 192, 175)',
         marginLeft:10,
         marginRight:10,
         borderRadius:15,
@@ -213,7 +208,7 @@ const styles= StyleSheet.create({
         marginRight:10,
         padding:10,
         borderRadius:15, 
-        backgroundColor:'#a3a9cf', 
+        backgroundColor:'rgba(131, 151, 151, 0.81)', 
         display:'flex', 
         flexDirection:'row', 
         justifyContent:'space-between', 
@@ -233,7 +228,7 @@ const styles= StyleSheet.create({
     aptHead:{
       fontSize:16, 
       fontWeight:'bold', 
-      color:'rgba(58, 22, 20, 0.74)', 
+      color:'#896978', 
       alignSelf:'center', 
       marginBottom:10, 
       marginTop:10, 
@@ -242,15 +237,14 @@ const styles= StyleSheet.create({
       paddingRight:10, 
       paddingTop:5, 
       paddingBottom:5,
-      backgroundColor:'#f0e1b9', 
+      backgroundColor:'rgba(255, 212, 202, 1)', 
       alignSelf:'center', 
-      textAlign:'center',
-      elevation:10
+      textAlign:'center'
     }, 
     AptDate:{
       fontSize:15,
         fontWeight:'bold',
-        color:'rgba(26, 153, 17, 0.92)',
+        color:'rgb(86, 116, 84)',
         marginLeft:15
 
     }, 
@@ -283,7 +277,7 @@ const styles= StyleSheet.create({
   AptTime:{
     fontSize:15,
     fontWeight:'bold',
-    color:'rgba(26, 153, 17, 0.92)'
+    color:'rgb(86, 116, 84)'
 
   }, 
   calendarIcon:{
