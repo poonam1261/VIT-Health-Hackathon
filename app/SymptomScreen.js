@@ -3,9 +3,6 @@ import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from "react-nati
 import { useNavigation } from "@react-navigation/native";
 import Symptom from "./Symptom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-//import { createStackNavigator } from "@react-navigation/stack";
-
-//const Stack = createStackNavigator();
 
 const SymptomScreen = () => {
   const navigation = useNavigation();
@@ -15,6 +12,7 @@ const SymptomScreen = () => {
   ];
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
 
+  // Update symptom severity
   const updateSymptomSeverity = (symptom, severity) => {
     setSelectedSymptoms((prev) => {
       const updated = prev.filter((s) => s.name !== symptom);
@@ -22,11 +20,17 @@ const SymptomScreen = () => {
     });
   };
 
-
+  // Handle "Done" button press
   const handleDone = async () => {
     try {
-      await AsyncStorage.setItem("savedSymptoms", JSON.stringify(selectedSymptoms)); // Save to AsyncStorage
-      navigation.navigate("Home"); // Navigate to the saved note page
+      // Log the JSON to the console
+      console.log(JSON.stringify(selectedSymptoms, null, 2));
+
+      // Save to AsyncStorage
+      await AsyncStorage.setItem("savedSymptoms", JSON.stringify(selectedSymptoms));
+
+      // Navigate to the home screen
+      navigation.navigate("meddash");
     } catch (error) {
       console.error("Error saving symptoms:", error);
     }
@@ -59,14 +63,6 @@ const SymptomScreen = () => {
     </View>
   );
 };
-
-// const SymptomStack = () => {
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen name="SymptomScreen" component={SymptomScreen} options={{ headerShown: false }} />
-//     </Stack.Navigator>
-//   );
-// };
 
 const styles = StyleSheet.create({
   container: {
@@ -106,5 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-//export default SymptomStack;
 export default SymptomScreen;
