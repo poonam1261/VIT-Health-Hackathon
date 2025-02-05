@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { ExpandableCalendar, Calendar, CalendarProvider, AgendaList } from "react-native-calendars";
+import { ExpandableCalendar, CalendarProvider, AgendaList } from "react-native-calendars";
 
 const appointments = {
   "2025-02-06": [{ id: "1", hour: "10:00 AM", title: "Doctor Appointment" }],
-  "2025-02-07": [
+  "2025-02-11": [
     { id: "2", hour: "9:00 AM", title: "Gym Session" },
     { id: "3", hour: "2:00 PM", title: "Business Meeting" },
   ],
 };
 
-const ExpandableCalendarScreen = () => {
+const bookAppt = () => {
   const [selectedDate, setSelectedDate] = useState("2025-02-06");
 
   const handleDayPress = (day) => {
@@ -21,66 +21,19 @@ const ExpandableCalendarScreen = () => {
   const markedDates = {
     [selectedDate]: {
       selected: true,
-      selectedColor: "green",
+      selectedColor: "green", // Green circle around selected date
       selectedTextColor: "white",
     },
   };
 
-
-
   return (
     <CalendarProvider date={selectedDate}>
-      
-
-<Calendar
-onDayPress={handleDayPress}
-style={{
-  borderWidth: 1,
-  borderColor: 'gray',
-  borderRadius:20,
-  width:'350',
-  paddingLeft:20,
-  paddingRight:20, 
-  paddingBottom:50 ,
-  margin:10
-}}
-  markedDates={markedDates}
-
-  enableSwipeMonths={true}
-  theme={{
-    backgroundColor: '#ffffff',
-    calendarBackground: '#ffffff',
-    textSectionTitleColor: '#b6c1cd',
-    textSectionTitleDisabledColor: '#d9e1e8',
-    selectedDayBackgroundColor: '#00adf5',
-    selectedDayTextColor: '#ffffff',
-    todayTextColor: 'white',
-    todayBackgroundColor:'rgb(129, 163, 239)',    dayTextColor: 'rgba(141, 141, 178, 0.86)',
-    textDisabledColor: '#d9e1e8',
-    dotColor: '#00adf5',
-    selectedDotColor: '#ffffff',
-    arrowColor: 'orange',
-    disabledArrowColor: '#d9e1e8',
-    monthTextColor: 'rgb(42, 42, 243)',
-    indicatorColor: 'blue',
-    textDayFontFamily: 'monospace',
-    textMonthFontFamily: 'monospace',
-    textDayHeaderFontFamily: 'monospace',
-    textDayFontWeight: '300',
-    textMonthFontWeight: 'bold',
-    textDayHeaderFontWeight: '300',
-    textDayFontSize: 16,
-    textMonthFontSize: 20,
-    textDayHeaderFontSize: 16, 
-    'stylesheet.calendar.header':{
-      dayTextAtIndex0:{
-        color:'rgba(255, 0, 0, 0.55)'
-      }
-    }
-  }} 
-
-  
-/>
+      <ExpandableCalendar 
+        onDayPress={handleDayPress}
+        markedDates={markedDates} 
+        hideArrows={false} 
+        hideKnob={false} 
+      />
       <View style={styles.container}>
         <Text style={styles.header}>Appointments on {selectedDate}:</Text>
         <AgendaList
@@ -137,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExpandableCalendarScreen;
+export default bookAppt;

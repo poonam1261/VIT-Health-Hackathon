@@ -14,11 +14,8 @@ import Foundation from '@expo/vector-icons/Foundation';
 
 
 export default function TeleMed() {
-  const db = getFirestore(app);
-
-  const handleBookApt = (item) => {
-     
-  }
+  
+  
   
 const Item = ({item}) => (
     
@@ -57,6 +54,12 @@ const AptItem = ({item}) => (
 const renderItem = ({item}) => <Item item={item} />;
 const renderItemDr = ({item}) => <AptItem item={item}/>
     const router = useRouter();
+
+    const handleBookApt = (item) => {
+      router.push('Appointment/bookAppt')
+       
+    }
+
   return (
     <SafeAreaView style={{flex:1}}>
       <View style={styles.header}>

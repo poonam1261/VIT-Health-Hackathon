@@ -38,7 +38,7 @@
 
 
 import React, { useState } from "react";
-import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, ToastAndroid } from "react-native";
 import Slider from '@react-native-community/slider';
 import { useNavigation } from "@react-navigation/native";
 
@@ -67,13 +67,13 @@ const Survey = () => {
     };
 
     console.log("Pre-Appointment Form Data:", formData);
-
+    //ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
   
-    alert("Form submitted successfully!");
+    navigation.goBack();
   };
 
   const Navigate = () =>{
-    navigation.navigate("SymptomsScreen");
+    navigation.navigate("SymptomScreen");
   };
 
   return (
