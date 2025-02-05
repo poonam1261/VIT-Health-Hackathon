@@ -14,7 +14,7 @@ import Foundation from '@expo/vector-icons/Foundation';
 
 
 export default function TeleMed() {
-  const db = getFirestore(app);
+
 
   const handleBookApt = (item) => {
      
@@ -70,7 +70,7 @@ const renderItemDr = ({item}) => <AptItem item={item}/>
       <Text style={styles.messageText}>Hi John, how are you feeling?</Text>
       </View>
 
-      <TouchableOpacity style={styles.survey} onPress={() => {router.push('survey')}}>
+      <TouchableOpacity style={styles.survey} onPress={() => {router.push('SymptomScreen')}}>                        {/* changed */}
         <Text style={styles.surveyText}>Take Up Medical Survey</Text>
         <Feather name="arrow-right-circle" size={30} color="white" />
      </TouchableOpacity>
