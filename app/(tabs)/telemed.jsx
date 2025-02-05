@@ -10,10 +10,11 @@ import { useRouter } from 'expo-router';
 import Octicons from '@expo/vector-icons/Octicons';
 import { ScrollView } from 'react-native';
 import Foundation from '@expo/vector-icons/Foundation';
-import {app}
+
 
 
 export default function TeleMed() {
+  const db = getFirestore(app);
 
   const handleBookApt = (item) => {
      
