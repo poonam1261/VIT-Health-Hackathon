@@ -26,7 +26,7 @@ const SymptomScreen = () => {
   const handleDone = async () => {
     try {
       await AsyncStorage.setItem("savedSymptoms", JSON.stringify(selectedSymptoms)); // Save to AsyncStorage
-      navigation.navigate("Home"); // Navigate to the saved note page
+      navigation.goBack(); // Navigate to the saved note page
     } catch (error) {
       console.error("Error saving symptoms:", error);
     }
