@@ -47,6 +47,7 @@ const Survey = () => {
   const [reason, setReason] = useState("");
   const [problemType, setProblemType] = useState("");
   const [apptType, setApptType] = useState("");
+  const [symptomsAdded, setSymptomsAdded] = useState(false);
 
   const [duration, setDuration] = useState("");
   const [foodInteractions, setFoodInteractions] = useState("");
@@ -66,6 +67,7 @@ const Survey = () => {
       otherObservations,
     };
 
+
     console.log("Pre-Appointment Form Data:", formData);
     //ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
   
@@ -74,6 +76,7 @@ const Survey = () => {
 
   const Navigate = () =>{
     navigation.navigate("SymptomScreen");
+    setSymptomsAdded(true);
   };
 
   return (
@@ -187,6 +190,12 @@ const Survey = () => {
           <Text style={styles.doneText}>Select Symptoms</Text>
         </TouchableOpacity>
 
+        {symptomsAdded && (
+        <Text style={styles.symptomsText}>
+          Symptoms have been added successfully!
+        </Text>
+      )}
+
         {/* Other Observations */}
         <Text style={styles.label}>Other Observations</Text>
         <TextInput
@@ -212,6 +221,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff5ee",
   },
+
+  header: {
+    paddingVertical: 15,
+    backgroundColor: '#ae887b',
+    alignItems: 'center',
+    marginBottom: 5,
+},
+
+headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+},
   scrollContent: {
     padding: 20,
   },
@@ -230,6 +252,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 5,
     color: "#333",
+  },
+  symptomsText: {
+    fontSize: 18,
+    marginVertical: 5,
+    color: "#ae897b",
   },
   input: {
     backgroundColor: "#f0f0f0",
@@ -255,6 +282,7 @@ const styles = StyleSheet.create({
   activeToggle: {
     backgroundColor: "#a3a9cf",
   },
+
   toggleText: {
     color: "#333",
     fontSize: 16,
@@ -275,7 +303,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   doneText: {
     color: "#fff",
