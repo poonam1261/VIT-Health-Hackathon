@@ -55,7 +55,7 @@ export default function TabLayout() {
       name = "educational"
       options={{
         title: 'Educational',
-        tabBarIcon: ({ color }) => <MaterialIcons name="school" size={24} color={color}/>
+        tabBarIcon: ({ color }) => <MaterialIcons name="medical-information" size={24} color={color}/>
       }}
       />
     </Tabs>

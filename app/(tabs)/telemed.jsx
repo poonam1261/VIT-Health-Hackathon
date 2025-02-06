@@ -1,20 +1,38 @@
 import { View, Text, StyleSheet, FlatList, Image, Button, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { doctors, appointments } from '../../constants/DoctorContacts';
+import { appointments, doctors } from '../../constants/DoctorContacts';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import Octicons from '@expo/vector-icons/Octicons';
 import { ScrollView } from 'react-native';
 import Foundation from '@expo/vector-icons/Foundation';
+import { db } from '../../firebase/firebaseConfig';
+import { getDocs, collection } from 'firebase/firestore';
 
 
 
 export default function TeleMed() {
-  
+  const [doctors, setDoctors] = useState([]);
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+  const fetchAppointments = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "Doctors"));
+      setDoctors(snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })));
+      console.log("Doctors:", doctors);
+      return appointments;
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
+  };
   
   
 const Item = ({item}) => (
@@ -25,7 +43,7 @@ const Item = ({item}) => (
       <FontAwesome6 name="user-doctor" size={50} color="white" style={{marginLeft:10}} />
       <Text style={styles.doctorName}>{item.name}</Text>
       </View>
-      <Text style={styles.doctorQual}>{item.qualification}</Text>
+      <Text style={styles.doctorQual}>{item.qual}</Text>
       
       </View>
       <TouchableOpacity style={styles.bookApt}><Text style={{color:'white', fontWeight:'bold'}} onPress={() => {handleBookApt(item)}}>Book an Appointment</Text></TouchableOpacity>
@@ -56,6 +74,7 @@ const renderItemDr = ({item}) => <AptItem item={item}/>
     const router = useRouter();
 
     const handleBookApt = (item) => {
+
       router.push('Appointment/bookAppt')
        
     }
