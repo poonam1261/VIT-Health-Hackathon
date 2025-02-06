@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { appointments, doctors } from '../../constants/DoctorContacts';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
@@ -17,10 +16,15 @@ import { getDocs, collection } from 'firebase/firestore';
 
 export default function TeleMed() {
   const [doctors, setDoctors] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   useEffect(() => {
-    fetchAppointments();
+    fetchDoctors();
   }, []);
-  const fetchAppointments = async () => {
+
+  useEffect(() => {
+    fetchAppts();
+  }, []);
+  const fetchDoctors = async () => {
     try {
       const snapshot = await getDocs(collection(db, "Doctors"));
       setDoctors(snapshot.docs.map((doc) => ({
@@ -28,6 +32,20 @@ export default function TeleMed() {
         ...doc.data(),
       })));
       console.log("Doctors:", doctors);
+      return appointments;
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
+  };
+  
+  const fetchAppts = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "Appointments"));
+      setAppointments(snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })));
+      console.log("Appointments:", appointments);
       return appointments;
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -58,14 +76,14 @@ const AptItem = ({item}) => (
       <View style={styles.AptItem}>
         <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center',}}>
         <Octicons name="note" size={30} color="#5b4d54" />
-        <Text style={styles.AptDate}>Monday, 03-02-2025</Text>
+        <Text style={styles.AptDate}>{item.date}</Text>
         </View>
-        <Text style={styles.AptTime}>13:00</Text>
+        <Text style={styles.AptTime}>{item.time}</Text>
       </View>
       <View style={styles.seperator}>
          
       </View>
-      <Text style={styles.doctorNameApt}>{item.name}</Text>
+      <Text style={styles.doctorNameApt}>{item.doctorName}</Text>
   </TouchableOpacity>
 );
 
@@ -73,9 +91,11 @@ const renderItem = ({item}) => <Item item={item} />;
 const renderItemDr = ({item}) => <AptItem item={item}/>
     const router = useRouter();
 
-    const handleBookApt = (item) => {
-
-      router.push('Appointment/bookAppt')
+    const handleBookApt = (doctor) => {
+      router.push({
+        pathname: '../Appointment/bookAppt',
+        params: { doctorId: doctor.id, doctorName: doctor.name, doctorQual: doctor.qual },
+      });
        
     }
 
@@ -102,7 +122,10 @@ const renderItemDr = ({item}) => <AptItem item={item}/>
        <Text style={styles.aptHead}>
           Today's Appointments
         </Text>
-        <Foundation name="calendar" size={45} color="#5b4d54" style={styles.calendarIcon} onPress={() => {router.push('calendar/calendarApp')}}/>
+        <Foundation name="calendar" size={45} color="#5b4d54" style={styles.calendarIcon} onPress={() => {router.push({
+        pathname: '../calendar/calendarApp',
+        params: { appointments: appointments },
+      });}}/>
        </View>
 
         <FlatList
