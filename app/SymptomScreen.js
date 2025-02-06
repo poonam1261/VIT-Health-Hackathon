@@ -23,16 +23,43 @@ const SymptomScreen = () => {
   // Handle "Done" button press
   const handleDone = async () => {
     try {
-      // Log the JSON to the console
-      console.log(JSON.stringify(selectedSymptoms, null, 2));
-
-      // Save to AsyncStorage
-      await AsyncStorage.setItem("savedSymptoms", JSON.stringify(selectedSymptoms));
-
-      // Navigate to the home screen
+      const symptomsObject = selectedSymptoms.reduce((acc, symptom) => {
+        acc[symptom.name] = symptom.severity;
+        return acc;
+      }, {});
+  
+      const payload = {
+        patient_id: 1,
+        patient_name: "Dummy Patient",
+        patient_symptoms: symptomsObject
+      };
+  
+      // Log payload
+      console.log("Submitting:", JSON.stringify(payload, null, 2));
+  
+      // Send to Django
+      const response = await fetch('http://127.0.0.1:8000/api/symptoms/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+  
+      // Handle non-JSON responses
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        throw new Error(`Server returned: ${text.substring(0, 100)}`);
+      }
+  
+      const data = await response.json();
+      console.log("Success:", data);
+  
+      await AsyncStorage.setItem("savedSymptoms", JSON.stringify(payload));
       navigation.navigate("meddash");
+  
     } catch (error) {
-      console.error("Error saving symptoms:", error);
+      console.error("Submission failed:", error);
+      alert(`Error: ${error.message}`);
     }
   };
 
