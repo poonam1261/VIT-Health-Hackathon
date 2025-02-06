@@ -42,7 +42,10 @@ style={{
   paddingLeft:20,
   paddingRight:20, 
   paddingBottom:50 ,
-  margin:10
+  margin:10, 
+  margintop:20,
+  justifyContent:'center', 
+  alignSelf:'center'
 }}
   markedDates={markedDates}
 
@@ -72,6 +75,7 @@ style={{
     textDayFontSize: 16,
     textMonthFontSize: 20,
     textDayHeaderFontSize: 16, 
+    marginTop:10,
     'stylesheet.calendar.header':{
       dayTextAtIndex0:{
         color:'rgba(255, 0, 0, 0.55)'
