@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import Octicons from '@expo/vector-icons/Octicons';
 import { ScrollView } from 'react-native';
 import Foundation from '@expo/vector-icons/Foundation';
-import { db } from '../firebase/firebaseConfig';
+import { db } from '../../firebase/firebaseConfig';
 import { getDocs, collection } from 'firebase/firestore';
 
 
