@@ -1,144 +1,200 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { ExpandableCalendar, CalendarProvider, AgendaList, Calendar } from "react-native-calendars";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
-import { db } from '../../firebase/firebaseConfig'
+import { db } from "../../firebase/firebaseConfig";
+import { Calendar } from "react-native-calendars";
 
-const appointments = {
-  "2025-02-06": [{ id: "1", hour: "10:00 AM", title: "Doctor Appointment" }],
-  "2025-02-11": [
-    { id: "2", hour: "9:00 AM", title: "Available" },
-    { id: "3", hour: "9:30 AM", title: "Not Available" },
-    { id: "4", hour: "10:00 AM", title: "Available" },
-    { id: "5", hour: "10:30 AM", title: "Available" },
-  ],
-  "2025-02-12": [
-    { id: "10", hour: "9:00 AM", title: "Available" },
-    { id: "11", hour: "9:30 AM", title: "Not Available" },
-    { id: "12", hour: "10:00 AM", title: "Available" },
-    { id: "13", hour: "10:30 AM", title: "Not Available" },
-  ],
-  "2025-02-13": [
-    { id: "6", hour: "9:00 AM", title: " Not Available" },
-    { id: "7", hour: "9:30 AM", title: "Not Available" },
-    { id: "8", hour: "10:00 AM", title: "Available" },
-    { id: "9", hour: "10:30 AM", title: "Available" },
-  ],
-};
+const defaultSlots = [
+  { id: "1", time: "9:00 AM" },
+  { id: "2", time: "9:30 AM" },
+  { id: "3", time: "10:00 AM" },
+  { id: "4", time: "10:30 AM" },
+];
 
+const BookAppt = () => {
+  const { doctorId, doctorName, doctorQual } = useLocalSearchParams();
+  const router = useRouter();
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const today = new Date();
+  const defaultDate = today.toISOString().split('T')[0]; // Formats as "yyyy-mm-dd"
+  const [selectedDate, setSelectedDate] = useState(defaultDate);
 
-const bookAppt = () => {
-  const [selectedDate, setSelectedDate] = useState("2025-02-06");
-  const [selectedApptId, setsectedApptId] = useState(null);
+  // Fetch booked slots from Firebase
+  useEffect(() => {
+    const fetchBookedSlots = async () => {
+      if (!selectedDate) {
+        // Don't fetch appointments if no date is selected
+        return;
+      }
 
-  const handleDayPress = (day) => {
-    setSelectedDate(day.dateString);
-    fetchAppointments();
-  }
+      try {
+        const snapshot = await getDocs(collection(db, "Appointments"));
+        const booked = snapshot.docs
+          .map((doc) => doc.data())
+          .filter(
+            (appt) => appt.doctorId === doctorId && appt.date === selectedDate
+          )
+          .map((appt) => appt.time);
 
-  const handleApptPress = (item) => {
-    setsectedApptId(item.id);
-   { /*if(item.title === "Not Available"){
-      alert("Slot is already booked")
+        setBookedSlots(booked);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
+    };
+
+    fetchBookedSlots();
+  }, [doctorId, selectedDate]); // Depend on doctorId and selectedDate
+
+  const handleBookSlot = async (slot) => {
+    if (!selectedDate) {
+      Alert.alert("Error", "Please select a date before booking.");
+      return;
     }
-    item.title = "Appointment Booked"*/}
-  }
-  const getAppointmentStyle = (apptId) => ({
-    backgroundColor: selectedApptId === apptId ? "#fef2e4" : "rgba(0,0,0,0.2)",
-  });
- 
-   // const db = firestore();
 
-   const fetchAppointments = async () => {
     try {
-      const snapshot = await getDocs(collection(db, "Appointments"));
-      const appointments = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      console.log("Appointments:", appointments);
-      return appointments;
+      // Add appointment with selected date and time to Firestore
+      await addDoc(collection(db, "Appointments"), {
+        doctorId,
+        doctorName,
+        time: slot.time,
+        date: selectedDate,  // Include the selected date here
+      });
+
+      Alert.alert("Success", `Appointment booked at ${slot.time} on ${selectedDate} with ${doctorName}`);
+      setBookedSlots([...bookedSlots, slot.time]);
+      setSelectedSlot(null);
     } catch (error) {
-      console.error("Error fetching appointments:", error);
+      console.error("Error booking appointment:", error);
+      Alert.alert("Error", "Could not book appointment. Try again later.");
     }
   };
 
-  
-  
+  const handleDayPress = (day) => {
+    if(day.dateString >= defaultDate)
+    setSelectedDate(day.dateString);
+    else
+   Alert.alert("Cannot select past dates");
+    console.log(day.dateString);
+  };
 
-  // Mark selected date with a green circle
   const markedDates = {
     [selectedDate]: {
       selected: true,
-      selectedColor: "green", // Green circle around selected date
+      selectedColor: "blue",
       selectedTextColor: "white",
     },
   };
 
   return (
-    <CalendarProvider date={selectedDate}>
-      <Calendar 
-        onDayPress={handleDayPress}
-        markedDates={markedDates} 
-        hideArrows={false} 
-        hideKnob={false} 
-      />
-      <View style={styles.container}>
-        <Text style={styles.header}>Appointments on {selectedDate}:</Text>
-        <AgendaList
-          sections={[
-            {
-              title: selectedDate,
-              data: appointments[selectedDate] || [],
-            },
-          ]}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={[styles.appointmentItem , getAppointmentStyle(item.id)]} onPress={() => {handleApptPress(item)}}>
-              <Text style={styles.time}>{item.hour}</Text>
-              <Text style={styles.title}>{item.title}</Text>
-            </TouchableOpacity>
-          )}
+    <ScrollView  contentContainerStyle={styles.scrollContainer}>
+      <Text style={styles.header}>Book Appointment with {doctorName}</Text>
+      <Text style={styles.subHeader}>{doctorQual}</Text>
+
+      {/* Calendar with fixed height */}
+      <View style={styles.calendarContainer}>
+        <Calendar 
+          onDayPress={handleDayPress}
+          markedDates={markedDates}
         />
-        {(!appointments[selectedDate] || appointments[selectedDate].length === 0) && (
-          <Text style={styles.noAppointments}>No appointments</Text>
+      </View>
+
+      <Text style={styles.avlbappt}>Available Slots</Text>
+
+      <View style={styles.slotContainer}>
+        {defaultSlots.map((slot) =>
+          bookedSlots.includes(slot.time) ? null : (
+            <TouchableOpacity
+              key={slot.id}
+              style={[styles.slot, selectedSlot === slot.time && styles.selectedSlot]}
+              onPress={() => setSelectedSlot(slot.time)}
+            >
+              <Text style={styles.slotText}>{slot.time}</Text>
+            </TouchableOpacity>
+          )
         )}
       </View>
-    </CalendarProvider>
+
+      {selectedSlot && (
+        <TouchableOpacity style={styles.bookButton} onPress={() => handleBookSlot({ time: selectedSlot })}>
+          <Text style={styles.bookButtonText}>Confirm Appointment</Text>
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>Back</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 10,
-    padding: 10,
+  scrollContainer: {
+    flexGrow: 1, // This ensures ScrollView takes all available space when necessary
+    alignItems: "center", // Align content inside ScrollView
+    padding: 20,
   },
   header: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 5,
   },
-  appointmentItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    backgroundColor:'rgba(0,0,0,0.2)', 
-    marginBottom:4
-  },
-  time: {
+  subHeader: {
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  title: {
-    fontSize: 14,
-    color: "#555",
-  },
-  noAppointments: {
-    fontSize: 16,
-    fontStyle: "italic",
     color: "gray",
-    textAlign: "center",
+    marginBottom: 20,
+  },
+  calendarContainer: {
+    height: 350, // Set a fixed height for the calendar
+    width: "100%",
+    marginBottom: 20,
+  },
+  slotContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  slot: {
+    width: "80%",
+    padding: 15,
+    backgroundColor: "#4CAF50",
+    marginVertical: 5,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  selectedSlot: {
+    backgroundColor: "#FFBF00",
+  },
+  slotText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  bookButton: {
+    backgroundColor: "#FF5733",
+    padding: 15,
+    borderRadius: 8,
     marginTop: 10,
+  },
+  bookButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  backButton: {
+    marginTop: 20,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: "blue",
+  },
+  avlbappt: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginBottom: 15,
   },
 });
 
-export default bookAppt;
+export default BookAppt;
