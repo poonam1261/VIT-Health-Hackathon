@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from .models import Patient, Symptom
+from .models import Patient, Symptoms
 
-class SymptomSerializer(serializers.ModelSerializer):
+class PatientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Symptom
-        fields = ['patient', 'symptoms']
+        model = Patient
+        fields = ["id", "name"]  # it's better to explicitly list the fields for better readability and maintainability
+
+
+class SymptomsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Symptoms
+        fields = ["patient", "symptom_data"]
