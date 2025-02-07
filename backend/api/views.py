@@ -33,7 +33,7 @@ class SymptomListCreateView(generics.ListCreateAPIView):
 class SymptomUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Symptoms.objects.all()
     serializer_class = SymptomsSerializer
-    lookup_field = "patient_id"
+    lookup_field = "patient_id"    # we set the lookup parameter in URLs to be the patient_id, by default it's the django auto-gen primary key
 
 """
 note how are key operations are BASIC creating, updating, and listing symptom entries
