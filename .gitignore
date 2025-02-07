@@ -1,8 +1,5 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# Ignore Django settings file
-backend/backend/settings.py
-
 # dependencies
 node_modules/
 
@@ -39,3 +36,61 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+
+# DJANGO
+# Ignore Django settings file
+backend/backend/settings.py
+
+# Byte-compiled / optimized / DLL files
+backend/**/__pycache__/
+backend/**/*.py[cod]
+backend/*$py.class
+
+# Distribution / packaging
+backend/.Python
+backend/build/
+backend/develop-eggs/
+backend/dist/
+backend/downloads/
+backend/eggs/
+backend/.eggs/
+backend/lib/
+backend/lib64/
+backend/parts/
+backend/sdist/
+backend/var/
+backend/*.egg-info/
+backend/.installed.cfg
+backend/*.egg
+
+# Virtual environment directories
+backend/.venv/
+
+# Django-specific files
+backend/db.sqlite3
+backend/*.log
+
+# Local configuration files (ensure you don't commit secrets)
+backend/.env
+backend/*.env
+
+# Media and static files (if generated or user-uploaded)
+backend/media/
+backend/staticfiles/
+
+# Test, coverage, and temporary files
+backend/.pytest_cache/
+backend/.coverage
+backend/tox/
+backend/nox/
+backend/coverage.xml
+backend/*.cover
+
+# IDEs and editors
+backend/.vscode/
+backend/.idea/
+backend/*.sublime-workspace
+
+# OS-specific files
+backend/.DS_Store
