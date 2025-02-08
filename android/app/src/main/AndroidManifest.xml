@@ -6,6 +6,9 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.SET_ALARM"/>
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>

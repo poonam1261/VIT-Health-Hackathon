@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, addDoc, query, where } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { Calendar } from "react-native-calendars";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const defaultSlots = [
   { id: "1", time: "9:00 AM" },
@@ -53,6 +55,26 @@ const BookAppt = () => {
       return;
     }
 
+    try{if (!slot?.time) {
+      alert("Invalid time slot selected.");
+      return;
+    } 
+    
+    const q = query(
+      collection(db, "Appointments"),
+      where("date", "==", selectedDate),
+      where("time", "==", slot.time) 
+    );
+    
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      alert("You already have an Appointment booked for this Slot");
+      return;
+    }}catch(error){
+      console.error("Error booking appointment:", error);
+    }
+    
     try {
       // Add appointment with selected date and time to Firestore
       await addDoc(collection(db, "Appointments"), {
@@ -79,6 +101,10 @@ const BookAppt = () => {
     console.log(day.dateString);
   };
 
+  const handleClashingAppts = () => {
+
+  }
+
   const markedDates = {
     [selectedDate]: {
       selected: true,
@@ -89,9 +115,14 @@ const BookAppt = () => {
 
   return (
     <ScrollView  contentContainerStyle={styles.scrollContainer}>
-      <Text style={styles.header}>Book Appointment with {doctorName}</Text>
-      <Text style={styles.subHeader}>{doctorQual}</Text>
+<View style={styles.header}>
+<Text style={styles.headerText}>Book Appointment with </Text>
+<View style={{flexDirection:'row', justifyContent:'center'}}>
+  <Text style={styles.headerText} >{doctorName}</Text>
+  <FontAwesome5 name="stethoscope" size={28} color="white" />
+</View>
 
+</View>
       {/* Calendar with fixed height */}
       <View style={styles.calendarContainer}>
         <Calendar 
@@ -107,7 +138,7 @@ const BookAppt = () => {
           bookedSlots.includes(slot.time) ? null : (
             <TouchableOpacity
               key={slot.id}
-              style={[styles.slot, selectedSlot === slot.time && styles.selectedSlot]}
+              style={[styles.slot, selectedSlot === slot.time && styles.selectedSlot, ]}
               onPress={() => setSelectedSlot(slot.time)}
             >
               <Text style={styles.slotText}>{slot.time}</Text>
@@ -119,12 +150,11 @@ const BookAppt = () => {
       {selectedSlot && (
         <TouchableOpacity style={styles.bookButton} onPress={() => handleBookSlot({ time: selectedSlot })}>
           <Text style={styles.bookButtonText}>Confirm Appointment</Text>
+          <FontAwesome6 name="check-circle" size={24} color="white" />
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>Back</Text>
-      </TouchableOpacity>
+      
     </ScrollView>
   );
 };
@@ -136,9 +166,20 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
+    
+    padding:10,
+    borderRadius:20,
+    backgroundColor:'#8c7a92', 
+    
+    elevation:10,
+  },
+  headerText:{
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 15,
+    textAlign:'center',
+    color:'white', 
+    marginRight:5 
   },
   subHeader: {
     fontSize: 16,
@@ -158,13 +199,13 @@ const styles = StyleSheet.create({
   slot: {
     width: "80%",
     padding: 15,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#C9EE76",
     marginVertical: 5,
     borderRadius: 8,
     alignItems: "center",
   },
   selectedSlot: {
-    backgroundColor: "#FFBF00",
+    backgroundColor: "#84717A",
   },
   slotText: {
     color: "white",
@@ -172,18 +213,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   bookButton: {
-    backgroundColor: "#FF5733",
+    backgroundColor: "#E34F67",
     padding: 15,
     borderRadius: 8,
     marginTop: 10,
+    flexDirection:'row', 
   },
   bookButtonText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+    marginRight:10
   },
   backButton: {
     marginTop: 20,
+    borderWidth:2,
+    padding:5
   },
   backButtonText: {
     fontSize: 16,
@@ -194,6 +239,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 15,
     marginBottom: 15,
+    borderRadius:10,
+    padding:10,
+    backgroundColor:'#5b4d54',
+    color:'white', 
+    justifyContent:'center'
   },
 });
 
