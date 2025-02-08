@@ -32,14 +32,10 @@ yarn-error.*
 # local env files
 .env*.local
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 
-app-example
-
-
-# DJANGO
-# Ignore Django settings file
+# Django
 backend/backend/settings.py
 
 # Byte-compiled / optimized / DLL files
@@ -91,6 +87,3 @@ backend/*.cover
 backend/.vscode/
 backend/.idea/
 backend/*.sublime-workspace
-
-# OS-specific files
-backend/.DS_Store

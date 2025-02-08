@@ -38,6 +38,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={MyTheme}>
       <Stack>
+        <Stack.Screen name="Login_Register/LoginPage" options={{ headerShown: false }} />
+        <Stack.Screen name="Login_Register/RegisterPage" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="survey" />
