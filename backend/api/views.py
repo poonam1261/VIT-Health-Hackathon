@@ -1,27 +1,6 @@
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework import status
-# from .models import Patient, Symptom
-
-# class SubmitSymptomsView(APIView):
-#     def get(self, request):
-#         # Handle GET request (list all symptoms)
-#         symptoms = Symptom.objects.all()
-#         symptom_data = [
-#             {
-#                 "patient_id": symptom.patient.patient_id,
-#                 "patient_name": symptom.patient.patient_name,
-#                 "symptoms": symptom.symptoms
-#             }
-#             for symptom in symptoms
-#         ]
-#         return Response(symptom_data, status=status.HTTP_200_OK)
-
-#     def post(self, request):
-#         # Handle POST request (create new symptom entry)
-
 from rest_framework import generics
 from .models import Symptoms
+from rest_framework.response import Response
 from .serializers import SymptomsSerializer
 
 # this view handles both GET (lists all symtom data) and POST (create an entry) requests
@@ -30,10 +9,16 @@ class SymptomListCreateView(generics.ListCreateAPIView):
     serializer_class = SymptomsSerializer
 
 # this view handles both GET (retrieve a specific symptom entry) and PUT (update a specific symptom entry) requests
-class SymptomUpdateView(generics.RetrieveUpdateAPIView):
+class SymptomRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Symptoms.objects.all()
     serializer_class = SymptomsSerializer
     lookup_field = "patient_id"    # we set the lookup parameter in URLs to be the patient_id, by default it's the django auto-gen primary key
+
+    def retrieve(self, request, *args, **kwargs):
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            # Return only the 'symptom_data' field from the serialized data
+            return Response(serializer.data.get("symptom_data"))
 
 """
 note how are key operations are BASIC creating, updating, and listing symptom entries
