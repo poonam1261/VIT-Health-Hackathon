@@ -51,6 +51,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome6 name="hand-holding-medical" size={24} color={color} />,
         }}
       />
+      <Tabs.Screen
+      name = "educational"
+      options={{
+        title: 'Educational',
+        tabBarIcon: ({ color }) => <MaterialIcons name="medical-information" size={24} color={color}/>
+      }}
+      />
     </Tabs>
   );
 }
