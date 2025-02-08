@@ -101,9 +101,7 @@ const BookAppt = () => {
     console.log(day.dateString);
   };
 
-  const handleClashingAppts = () => {
-
-  }
+ 
 
   const markedDates = {
     [selectedDate]: {

@@ -7,13 +7,15 @@ import { useRouter } from 'expo-router';
 import Octicons from '@expo/vector-icons/Octicons';
 import Foundation from '@expo/vector-icons/Foundation';
 import { db } from '../../firebase/firebaseConfig';
-import { getDocs, collection } from 'firebase/firestore';
-import * as Alarm from 'react-native-alarm-manager'
+import { getDocs, collection, where, orderBy, query } from 'firebase/firestore';
 
 export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const today = new Date();
+  const defaultDate = today.toISOString().split('T')[0]; 
+
   useEffect(() => {
     fetchDoctors();
   }, []);
@@ -37,11 +39,12 @@ export default function TeleMed() {
   };
 
  
-  
+   
   
   const fetchAppts = async () => {
     try {
-      const snapshot = await getDocs(collection(db, "Appointments"));
+      const q = query(collection(db, "Appointments"), where("date" , ">=", defaultDate), orderBy("date", "asc"))
+      const snapshot = await getDocs(q);
       const fetchedAppointments = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -230,7 +233,7 @@ const styles= StyleSheet.create({
         fontSize:15,
         fontWeight:'bold',
         color:'white',
-        marginRight:20,
+        marginRight:10,
         alignSelf:'flex-start'
 
     },
@@ -245,7 +248,8 @@ const styles= StyleSheet.create({
         marginRight:10,
         borderRadius:15,
         paddingBottom:20, 
-        marginBottom:10
+        marginBottom:10, 
+        elevation : 10
 
     },
     bookApt:{
