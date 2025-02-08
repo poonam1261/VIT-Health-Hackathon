@@ -1,20 +1,17 @@
-import { View, Text, StyleSheet, FlatList, Image, Button, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, Button, TouchableOpacity , Alert} from 'react-native'
 import React, { useEffect, useState } from 'react'
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Fontisto from '@expo/vector-icons/Fontisto';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import Octicons from '@expo/vector-icons/Octicons';
-import { ScrollView } from 'react-native';
 import Foundation from '@expo/vector-icons/Foundation';
 import { db } from '../../firebase/firebaseConfig';
 import { getDocs, collection } from 'firebase/firestore';
-
-
+import * as Alarm from 'react-native-alarm-manager'
 
 export default function TeleMed() {
+  const [modalVisible, setModalVisible] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   useEffect(() => {
@@ -24,6 +21,7 @@ export default function TeleMed() {
   useEffect(() => {
     fetchAppts();
   }, []);
+
   const fetchDoctors = async () => {
     try {
       const snapshot = await getDocs(collection(db, "Doctors"));
@@ -37,20 +35,29 @@ export default function TeleMed() {
       console.error("Error fetching appointments:", error);
     }
   };
+
+ 
+  
   
   const fetchAppts = async () => {
     try {
       const snapshot = await getDocs(collection(db, "Appointments"));
-      setAppointments(snapshot.docs.map((doc) => ({
+      const fetchedAppointments = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })));
-      console.log("Appointments:", appointments);
-      return appointments;
+      }));
+  
+      setAppointments(fetchedAppointments); 
+      console.log("Appointments:", fetchedAppointments); 
     } catch (error) {
       console.error("Error fetching appointments:", error);
+      setAppointments([]); 
     }
   };
+  
+  const handleApptPress = (item) => {
+     Alert.alert("Meeting Link", "https://meet.google.com/hjh-avns-qeq" )
+  }
   
   
 const Item = ({item}) => (
@@ -87,8 +94,6 @@ const AptItem = ({item}) => (
   </TouchableOpacity>
 );
 
-const renderItem = ({item}) => <Item item={item} />;
-const renderItemDr = ({item}) => <AptItem item={item}/>
     const router = useRouter();
 
     const handleBookApt = (doctor) => {
@@ -99,54 +104,56 @@ const renderItemDr = ({item}) => <AptItem item={item}/>
        
     }
 
-  return (
-    <SafeAreaView style={{flex:1}}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Tele Medicine</Text>
-      </View>
-      
-
-      <ScrollView >
-      <View style={styles.message}>
-        <Image source={require('../../assets/images/doctorImg.png')} style={styles.doctorImg}/>
-      <Text style={styles.messageText}>Hi John, how are you feeling?</Text>
-      </View>
-
-      <TouchableOpacity style={styles.survey} onPress={() => {router.push('survey')}}>
-        <Text style={styles.surveyText}>Take Up Medical Survey</Text>
-        <Feather name="arrow-right-circle" size={30} color="white" />
-     </TouchableOpacity>
-
-      <View>
-       <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-       <Text style={styles.aptHead}>
-          Today's Appointments
-        </Text>
-        <Foundation name="calendar" size={45} color="#5b4d54" style={styles.calendarIcon} onPress={() => {router.push({
-        pathname: '../calendar/calendarApp',
-        params: { appointments: appointments },
-      });}}/>
-       </View>
-
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
         <FlatList
-        data={appointments}
-        renderItem={renderItemDr}
-        keyExtractor={item => item.id}
+          ListHeaderComponent={
+            <>
+              <View style={styles.header}>
+                <Text style={styles.headerText}>Tele Medicine</Text>
+              </View>
+
+    
+              <View style={styles.message}>
+                <Image source={require('../../assets/images/doctorImg.png')} style={styles.doctorImg} />
+                <Text style={styles.messageText}>Hi John, how are you feeling?</Text>
+              </View>
+    
+              <TouchableOpacity style={styles.survey} onPress={() => router.push('survey')}>
+                <Text style={styles.surveyText}>Take Up Medical Survey</Text>
+                <Feather name="arrow-right-circle" size={30} color="white" />
+              </TouchableOpacity>
+    
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={styles.aptHead}>Scheduled Appointments</Text>
+                <Foundation
+                  name="calendar"
+                  size={45}
+                  color="#5b4d54"
+                  style={styles.calendarIcon}
+                  onPress={() => router.push({ pathname: '../calendar/calendarApp', params: { appointments : JSON.stringify(appointments) } })}
+                />
+              </View>
+            </>
+          }
+          data={appointments}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <AptItem item={item} />}
+          ListFooterComponent={
+            <>
+              <Text style={styles.aptHead}>Book Appointment</Text>
+              <FlatList
+                data={doctors}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <Item item={item} />}
+              />
+            </>
+          }
+          contentContainerStyle={{ paddingBottom: 20 }} // Prevent bottom cutoff
         />
-      </View>
-
-     
-     <Text style={styles.aptHead}>Book Appointment</Text>
-
-      <FlatList
-      data={doctors}
-      renderItem={renderItem}
-      keyExtractor={item => item.id}
-      />
-      </ScrollView>
-        
-    </SafeAreaView>
-  )
+      </SafeAreaView> 
+    );
+    
 }
 
 const styles= StyleSheet.create({
