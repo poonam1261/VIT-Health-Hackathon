@@ -1,7 +1,15 @@
 from rest_framework import generics
-from .models import Symptoms
+from .models import Symptoms, Patient
 from rest_framework.response import Response
-from .serializers import SymptomsSerializer
+from .serializers import SymptomsSerializer, PatientSerializer
+
+class PatientListCreateView(generics.ListCreateAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
+
+class PatientRetrieve(generics.RetrieveAPIView):        # Retrieve view so that React can verify whether the user already exists
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
 
 # this view handles both GET (lists all symtom data) and POST (create an entry) requests
 class SymptomListCreateView(generics.ListCreateAPIView):
@@ -12,7 +20,6 @@ class SymptomListCreateView(generics.ListCreateAPIView):
 class SymptomRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Symptoms.objects.all()
     serializer_class = SymptomsSerializer
-    lookup_field = "patient_id"    # we set the lookup parameter in URLs to be the patient_id, by default it's the django auto-gen primary key
 
     def retrieve(self, request, *args, **kwargs):
             instance = self.get_object()        # current object being referred to in request ex:symptoms/4

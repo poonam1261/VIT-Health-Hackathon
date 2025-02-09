@@ -9,6 +9,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Symptom from "./Symptom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth } from "../firebase/firebaseConfig";
 
 const SymptomScreen = () => {
   const navigation = useNavigation();
@@ -44,23 +45,9 @@ const SymptomScreen = () => {
       const symptomsObject = selectedSymptoms.reduce((acc, symptom) => {
         acc[symptom.name] = symptom.severity;
         return acc;
-      }, {});
-
-      // const payload = {
-      //   patient_id: 2,
-      //   patient_name: "Dummy Patient",
-      //   patient_symptoms: symptomsObject,
-      // };
-
-      // Send to Django
-      // const response = await fetch("http://127.0.0.1:8000/api/symptoms/", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(payload),
-      // });
 
       const payload = {
-        patient: 1, // patient_id
+        patient: auth.currentUser.uid,    // Get the Firebase user ID from the current user
         symptom_data: symptomsObject,
       };
 
@@ -108,7 +95,6 @@ const SymptomScreen = () => {
 
       await AsyncStorage.setItem("savedSymptoms", JSON.stringify(payload));
       navigation.navigate("meddash");
-
     } catch (error) {
       console.error("Submission failed:", error);
       alert(`Error: ${error.message}`);
