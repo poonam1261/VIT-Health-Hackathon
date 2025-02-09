@@ -19,7 +19,6 @@ function LoginScreen({  }) {
       const auth = getAuth(app);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
     
-      // ✅ Get the user from userCredential
       const user = userCredential.user;
       
       if (user) {
