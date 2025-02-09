@@ -17,9 +17,19 @@ function LoginScreen({  }) {
     setLoading(true);
     try {
       const auth = getAuth(app);
-      await signInWithEmailAndPassword(auth, email, password);
-      setLoading(false);
-      navigation.navigate('(tabs)');
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    
+      // ✅ Get the user from userCredential
+      const user = userCredential.user;
+      
+      if (user) {
+        console.log("User ID:", user.uid); // ✅ Prints the UID
+        setLoading(false);
+        navigation.navigate("(tabs)");
+      } else {
+        console.error("User not found after login");
+        setLoading(false);
+      }
     } catch (error) {
       setLoading(false);
       console.error('Login Error: ', error);
