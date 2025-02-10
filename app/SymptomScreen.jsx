@@ -45,14 +45,15 @@ const SymptomScreen = () => {
       const symptomsObject = selectedSymptoms.reduce((acc, symptom) => {
         acc[symptom.name] = symptom.severity;
         return acc;
+      }, {}); // Properly close the reduce callback and add an initial value (an empty object)
 
       const payload = {
-        patient: auth.currentUser.uid,    // Get the Firebase user ID from the current user
+        patient: auth.currentUser.uid, // Get the Firebase user ID from the current user
         symptom_data: symptomsObject,
       };
 
-      // do a get request to check if the patient already has a record
-      // if yes, do a put request to update the record else do a post request to create a new record
+      // Do a GET request to check if the patient already has a record
+      // If yes, do a PUT request to update the record; else, do a POST request to create a new record
       const checkResponse = await fetch(
         `http://127.0.0.1:8000/api/symptoms/${payload.patient}`,
       );
