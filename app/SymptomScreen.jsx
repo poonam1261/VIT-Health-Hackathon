@@ -3,9 +3,6 @@ import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from "react-nati
 import { useNavigation } from "@react-navigation/native";
 import Symptom from "./Symptom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-//import { createStackNavigator } from "@react-navigation/stack";
-
-//const Stack = createStackNavigator();
 
 const SymptomScreen = () => {
   const navigation = useNavigation();
@@ -15,6 +12,7 @@ const SymptomScreen = () => {
   ];
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
 
+  // Update symptom severity
   const updateSymptomSeverity = (symptom, severity) => {
     setSelectedSymptoms((prev) => {
       const updated = prev.filter((s) => s.name !== symptom);
@@ -22,13 +20,46 @@ const SymptomScreen = () => {
     });
   };
 
-
+  // Handle "Done" button press
   const handleDone = async () => {
     try {
-      await AsyncStorage.setItem("savedSymptoms", JSON.stringify(selectedSymptoms)); // Save to AsyncStorage
-      navigation.goBack(); // Navigate to the saved note page
+      const symptomsObject = selectedSymptoms.reduce((acc, symptom) => {
+        acc[symptom.name] = symptom.severity;
+        return acc;
+      }, {});
+  
+      const payload = {
+        patient_id: 1,
+        patient_name: "Dummy Patient",
+        patient_symptoms: symptomsObject
+      };
+  
+      // Log payload
+      console.log("Submitting:", JSON.stringify(payload, null, 2));
+  
+      // Send to Django
+      const response = await fetch('http://127.0.0.1:8000/api/symptoms/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+  
+      // Handle non-JSON responses
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        throw new Error(`Server returned: ${text.substring(0, 100)}`);
+      }
+  
+      const data = await response.json();
+      console.log("Success:", data);
+  
+      await AsyncStorage.setItem("savedSymptoms", JSON.stringify(payload));
+      navigation.navigate("meddash");
+  
     } catch (error) {
-      console.error("Error saving symptoms:", error);
+      console.error("Submission failed:", error);
+      alert(`Error: ${error.message}`);
     }
   };
 
@@ -59,14 +90,6 @@ const SymptomScreen = () => {
     </View>
   );
 };
-
-// const SymptomStack = () => {
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen name="SymptomScreen" component={SymptomScreen} options={{ headerShown: false }} />
-//     </Stack.Navigator>
-//   );
-// };
 
 const styles = StyleSheet.create({
   container: {
@@ -106,5 +129,4 @@ const styles = StyleSheet.create({
   },
 });
 
-//export default SymptomStack;
 export default SymptomScreen;

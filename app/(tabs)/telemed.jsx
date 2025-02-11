@@ -16,24 +16,9 @@ import { getDocs, collection } from 'firebase/firestore';
 
 
 export default function TeleMed() {
-  const [doctors, setDoctors] = useState([]);
-  useEffect(() => {
-    fetchAppointments();
-  }, []);
-  const fetchAppointments = async () => {
-    try {
-      const snapshot = await getDocs(collection(db, "Doctors"));
-      setDoctors(snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })));
-      console.log("Doctors:", doctors);
-      return appointments;
-    } catch (error) {
-      console.error("Error fetching appointments:", error);
-    }
-  };
-  
+  const db = getFirestore(app);
+
+
   
 const Item = ({item}) => (
     
@@ -92,7 +77,7 @@ const renderItemDr = ({item}) => <AptItem item={item}/>
       <Text style={styles.messageText}>Hi John, how are you feeling?</Text>
       </View>
 
-      <TouchableOpacity style={styles.survey} onPress={() => {router.push('survey')}}>
+      <TouchableOpacity style={styles.survey} onPress={() => {router.push('SymptomScreen')}}>                        {/* changed */}
         <Text style={styles.surveyText}>Take Up Medical Survey</Text>
         <Feather name="arrow-right-circle" size={30} color="white" />
      </TouchableOpacity>
