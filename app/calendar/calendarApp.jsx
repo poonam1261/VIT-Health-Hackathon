@@ -1,130 +1,146 @@
-import { View, Text } from 'react-native'
-import React, {useState} from 'react'
-import { CalendarList, Calendar, ExpandableCalendar, CalendarProvider } from 'react-native-calendars'
-import { appointments } from '../../constants/DoctorContacts';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { CalendarProvider, Calendar, AgendaList } from "react-native-calendars";
+import { useLocalSearchParams } from "expo-router";
+import { db } from "../../firebase/firebaseConfig"; // Import Firestore instance
+import { collection, query, where, getDocs } from "firebase/firestore";
 
+const ExpandableCalendarScreen = () => {
+  const [selectedDate, setSelectedDate] = useState("2025-02-06");
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-const vacation = {key: 'vacation', color: 'red', selectedDotColor: 'blue'};
-const massage = {key: 'massage', color: 'blue', selectedDotColor: 'blue'};
-const workout = {key: 'workout', color: 'green'};
+  // Fetch appointments for the selected date
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      setLoading(true);
+      try {
+        const q = query(collection(db, "Appointments"), where("date", "==", selectedDate));
+        const querySnapshot = await getDocs(q);
+        const fetchedAppointments = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
-
-export default function calendarApp() {
-  const [markedDates, setMarkedDates] = useState({});
-
-
-const markDate = (date) => {
-  setMarkedDates({
-    ...markedDates,
-    [date]: { selected: true, marked: true, dotColor: 'red' },
-  });
-};
-  return (
-    <View style={{ 
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center' 
-    }}>
-
-
-{/*<Calendar
-  markingType={'multi-dot'}
-  markedDates={{
-    '2025-10-25': {dots: [vacation, massage, workout]},
-    '2025-10-26': {dots: [massage, workout], disabled: true}
-  }}
-/>;
-*/}
-
-<Text style={{fontSize:30, fontWeight:'bold', marginBottom:30}}>Calendar</Text>
-
-<Calendar
-style={{
-  borderWidth: 1,
-  borderColor: 'gray',
-  borderRadius:20,
-  width:'350',
-  paddingLeft:20,
-  paddingRight:20, 
-  paddingBottom:50 ,
-  
-  
-}}
-  markingType={'custom'}
-  markedDates={{
-    
-  
-    
-    '2025-02-06': {
-      customStyles: {
-        container: {
-          borderWidth:3,
-          borderColor: 'green',
-          
-        },
-        text: {
-          color: 'black'
-        }
+        setAppointments(fetchedAppointments);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
       }
-    }, 
-  
-    [appointments[0].aptdate]:{
-      customStyles: {
-        container: {
-          borderWidth:3,
-          borderColor: 'green',
-          
-        },
-        text: {
-          color: 'black'
-        }
-      }
+      setLoading(false);
+    };
+
+    fetchAppointments();
+  }, [selectedDate]);
+
+  const handleDayPress = (day) => {
+    setSelectedDate(day.dateString);
+  };
+
+  const markedDates = {
+    [selectedDate]: {
+      selected: true,
+      selectedColor: "green",
+      selectedTextColor: "white",
     },
+  };
 
-   /* {
-      appointments.map((item) => {
-        [item.aptdate] : {
-
-        }
-    })}*/
-  }}
-
-  enableSwipeMonths={true}
-  theme={{
-    backgroundColor: '#ffffff',
-    calendarBackground: '#ffffff',
-    textSectionTitleColor: '#b6c1cd',
-    textSectionTitleDisabledColor: '#d9e1e8',
-    selectedDayBackgroundColor: '#00adf5',
-    selectedDayTextColor: '#ffffff',
-    todayTextColor: 'white',
-    todayBackgroundColor:'rgb(129, 163, 239)',    dayTextColor: 'rgba(141, 141, 178, 0.86)',
-    textDisabledColor: '#d9e1e8',
-    dotColor: '#00adf5',
-    selectedDotColor: '#ffffff',
-    arrowColor: 'orange',
-    disabledArrowColor: '#d9e1e8',
-    monthTextColor: 'rgb(42, 42, 243)',
-    indicatorColor: 'blue',
-    textDayFontFamily: 'monospace',
-    textMonthFontFamily: 'monospace',
-    textDayHeaderFontFamily: 'monospace',
-    textDayFontWeight: '300',
-    textMonthFontWeight: 'bold',
-    textDayHeaderFontWeight: '300',
-    textDayFontSize: 16,
-    textMonthFontSize: 20,
-    textDayHeaderFontSize: 16, 
-    'stylesheet.calendar.header':{
-      dayTextAtIndex0:{
-        color:'rgba(255, 0, 0, 0.55)'
-      }
-    }
-  }} 
-
-  onDayPress={day => {}}
-/>
+  return (
+    <CalendarProvider date={selectedDate}>
+      <Calendar
+        onDayPress={handleDayPress}
+        style={styles.calendar}
+        markedDates={markedDates}
+        enableSwipeMonths={true}
+        theme={{
+          backgroundColor: '#ffffff',
+          calendarBackground: '#ffffff',
+          textSectionTitleColor: '#b6c1cd',
+          selectedDayBackgroundColor: '#00adf5',
+          selectedDayTextColor: '#ffffff',
+          todayTextColor: 'white',
+          todayBackgroundColor: 'rgb(129, 163, 239)',
+          dayTextColor: 'rgba(141, 141, 178, 0.86)',
+          dotColor: '#00adf5',
+          selectedDotColor: '#ffffff',
+          arrowColor: 'orange',
+          monthTextColor: 'rgb(42, 42, 243)',
+        }}
+      />
+      <View style={styles.container}>
+        <Text style={styles.header}>Appointments</Text>
         
-    </View>
-  )
-}
+        {loading ? (
+          <ActivityIndicator size="large" color="blue" />
+        ) : appointments.length > 0 ? (
+          <AgendaList
+            sections={[
+              {
+                title: selectedDate,
+                data: appointments,
+              },
+            ]}
+            renderItem={({ item }) => (
+              <View style={styles.appointmentItem}>
+                <Text style={styles.time}>{item.time}</Text>
+                <Text style={styles.title}>{item.doctorName}</Text>
+              </View>
+            )}
+          />
+        ) : (
+          <Text style={styles.noAppointments}>No appointments</Text>
+        )}
+      </View>
+    </CalendarProvider>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 10,
+    padding: 10,
+  },
+  header: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: 'gray',
+    textAlign: 'center'
+  },
+  appointmentItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    marginLeft:10,
+    marginRight:10,
+  },
+  time: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  title: {
+    fontSize: 14,
+    color: "#555",
+  },
+  noAppointments: {
+    fontSize: 16,
+    fontStyle: "italic",
+    color: "gray",
+    textAlign: "center",
+    marginTop: 10,
+  },
+  calendar: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 20,
+    width: 350,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 50,
+    margin: 10,
+    marginTop: 20,
+    justifyContent: "center",
+    alignSelf: "center",
+  },
+});
+
+export default ExpandableCalendarScreen;
