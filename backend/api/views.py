@@ -1,43 +1,36 @@
-from rest_framework.views import APIView
+from rest_framework import generics
+from .models import Symptoms, Patient
 from rest_framework.response import Response
-from rest_framework import status
-from .models import Patient, Symptom
+from .serializers import SymptomsSerializer, PatientSerializer
 
-class SubmitSymptomsView(APIView):
-    def get(self, request):
-        # Handle GET request (list all symptoms)
-        symptoms = Symptom.objects.all()
-        symptom_data = [
-            {
-                "patient_id": symptom.patient.patient_id,
-                "patient_name": symptom.patient.patient_name,
-                "symptoms": symptom.symptoms
-            }
-            for symptom in symptoms
-        ]
-        return Response(symptom_data, status=status.HTTP_200_OK)
+class PatientListCreateView(generics.ListCreateAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
 
-    def post(self, request):
-        # Handle POST request (create new symptom entry)
-        try:
-            payload = request.data
-            patient_id = payload.get('patient_id')
-            patient_name = payload.get('patient_name')
-            symptoms_data = payload.get('patient_symptoms', {})
+class PatientRetrieve(generics.RetrieveAPIView):        # Retrieve view so that React can verify whether the user already exists
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
 
-            # Create/update patient
-            patient, _ = Patient.objects.update_or_create(
-                patient_id=patient_id,
-                defaults={'patient_name': patient_name}
-            )
+# this view handles both GET (lists all symtom data) and POST (create an entry) requests
+class SymptomListCreateView(generics.ListCreateAPIView):
+    queryset = Symptoms.objects.all()
+    serializer_class = SymptomsSerializer
 
-            # Create symptom entry
-            Symptom.objects.create(
-                patient=patient,
-                symptoms=symptoms_data
-            )
+# this view handles both GET (retrieve a specific symptom entry) and PUT (update a specific symptom entry) requests
+class SymptomRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Symptoms.objects.all()
+    serializer_class = SymptomsSerializer
 
-            return Response({"status": "success"}, status=status.HTTP_201_CREATED)
+    def retrieve(self, request, *args, **kwargs):
+            instance = self.get_object()        # current object being referred to in request ex:symptoms/4
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data.get("symptom_data"))
 
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+"""
+note how are key operations are BASIC creating, updating, and listing symptom entries
+we're not doing anything extra like filtering submitted data etc, so we can use the generic views provided by DRF
+in the case of GET, I want to only return the symptoms JSON, so I override the RETRIEVE functionality
+hopefully, the names are self-explanatory in what they do
+check out their function definitions for more details
+notice how this makes the code much more 'cleaner', as much of the basic stuff is abstracted away, do play around with this
+"""
