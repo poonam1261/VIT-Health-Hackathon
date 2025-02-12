@@ -68,6 +68,7 @@ backend/db.sqlite3
 backend/*.log
 
 # Local configuration files (ensure you don't commit secrets)
+env/
 backend/.env
 backend/*.env
 
@@ -84,6 +85,7 @@ backend/coverage.xml
 backend/*.cover
 
 # IDEs and editors
+.vscode/
 backend/.vscode/
 backend/.idea/
 backend/*.sublime-workspace
