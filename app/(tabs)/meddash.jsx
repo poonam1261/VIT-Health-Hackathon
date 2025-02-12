@@ -1,3 +1,4 @@
+import { View, Text } from 'react-native'
 import React, { useState } from "react";
 import {
   View,
@@ -59,6 +60,7 @@ export default function MedicationDashboard() {
 
 
   return (
+   
     <SafeAreaView style={styles.container}>
     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}>
       <View>
@@ -142,7 +144,7 @@ export default function MedicationDashboard() {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-              {selectedMed ? `${selectedMed.name} - ${selectedMed.dosage} (${selectedMed.timing})` : ""}
+              {selectedMed ? ${selectedMed.name} - ${selectedMed.dosage} (${selectedMed.timing}) : ""}
             </Text>
             <TouchableOpacity style={styles.closeButton} onPress={() => setShowModal(false)}>
               <Text style={styles.closeButtonText}>Close</Text>
