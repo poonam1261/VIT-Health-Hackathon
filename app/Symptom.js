@@ -24,7 +24,7 @@ const Symptom = ({ text, onUpdateSeverity }) => {
             <FontAwesome
               name="circle"
               size={24}
-              color={level <= selectedSeverity ? severityColors[level - 1] : "#d3d3d3"}
+              color={level <= selectedSeverity ? severityColors[selectedSeverity - 1] : "#d3d3d3"}
             />
           </TouchableOpacity>
         ))}
