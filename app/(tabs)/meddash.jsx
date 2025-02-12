@@ -12,6 +12,7 @@ import {
 import { Image } from 'expo-image';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
+import { ScrollView } from "react-native";
 
 export default function MedicationDashboard() {
   const [medications, setMedications] = useState([]);
@@ -20,6 +21,12 @@ export default function MedicationDashboard() {
   const [prescriptionHistory, setPrescriptionHistory] = useState([]);
   const [selectedMed, setSelectedMed] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+
+  const toggleCalendar = () => {
+    setIsCalendarVisible(!isCalendarVisible);
+  };
 
   const addMedication = () => {
     if (newMed.name && newMed.dosage && newMed.timing && newMed.frequency) {
@@ -44,6 +51,9 @@ export default function MedicationDashboard() {
 
   return (
     <SafeAreaView style={styles.container}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}>
+      <View>
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerText}>MedDash</Text>
@@ -55,20 +65,20 @@ export default function MedicationDashboard() {
           placeholder="Medicine Name"
           value={newMed.name}
           onChangeText={(text) => setNewMed({ ...newMed, name: text })}
-          style={styles.input}
-        />
+          style={styles.inputf}
+          />
         <TextInput
           placeholder="Dosage"
           value={newMed.dosage}
           onChangeText={(text) => setNewMed({ ...newMed, dosage: text })}
           style={styles.input}
-        />
+          />
         <TextInput
           placeholder="Timing"
           value={newMed.timing}
           onChangeText={(text) => setNewMed({ ...newMed, timing: text })}
           style={styles.input}
-        />
+          />
         <TextInput
           placeholder="Frequency"
           value={newMed.frequency}
@@ -81,30 +91,42 @@ export default function MedicationDashboard() {
       <TouchableOpacity style={styles.addButton} onPress={addMedication}>
         <Text style={styles.addButtonText}>Add Medication</Text>
       </TouchableOpacity>
-       {/* GIF Button for Navigation */}
-       <TouchableOpacity style={styles.gifButton} onPress={() => navigation.navigate("MedicationDetails")}>
-       <Image
-        source={require("../../assets/animations/happy_blob.gif")}  // Local GIF
-        style={{ width: 200, height: 200 }}
-        contentFit="contain"
-      />
 
+      <View style={styles.gifContainer}>
+  {/* GIF Button for Navigation */}
+        <TouchableOpacity style={styles.reminderButton}>
+          <Image 
+            style={styles.gifButton} 
+            source={require("../../assets/animations/happy_blob.gif")} // Local GIF
+            contentFit="contain"
+          />
+          <Text style={styles.reminderText}>Hello Fren! 🌼{"\n"}Have you taken your meds today? ^_^</Text>
+        </TouchableOpacity>
+      </View>
+
+
+     {/* Medication Calendar Dropdown Button */}
+      <TouchableOpacity onPress={toggleCalendar} style={styles.calendarToggle}>
+         <Text style={styles.calendarToggleText}>
+            {isCalendarVisible ? "Hide Medication Calendar ▲" : "Show Medication Calendar ▼"}
+               </Text>
       </TouchableOpacity>
 
-      {/* Calendar */}
-      <Text style={styles.subHeader}>Medication Calendar</Text>
-      <View style={styles.calendarContainer}>
-        <Calendar
-          style={styles.calendar}
-          markedDates={selectedDate}
-          onDayPress={markDate}
-          theme={{
-            selectedDayBackgroundColor: "#4a90e2",
-            todayTextColor: "red",
-            arrowColor: "#4a90e2",
-          }}
-        />
-      </View>
+{/* Conditionally Render the Calendar */}
+{isCalendarVisible && (
+  <View style={styles.calendarContainer}>
+    <Calendar
+      style={styles.calendar}
+      markedDates={selectedDate}
+      onDayPress={markDate}
+      theme={{
+        selectedDayBackgroundColor: "#4a90e2",
+        todayTextColor: "red",
+        arrowColor: "#4a90e2",
+      }}
+    />
+  </View>
+)}
       
       {/* Modal for Medication Details */}
       <Modal visible={showModal} animationType="slide" transparent>
@@ -122,7 +144,7 @@ export default function MedicationDashboard() {
 
       {/* Medication List */}
       <Text style={styles.subHeader}>All Medications</Text>
-      <FlatList
+      <FlatList style={styles.listContainer}
         nestedScrollEnabled={true}
         data={medications}
         keyExtractor={(item, index) => index.toString()}
@@ -137,20 +159,21 @@ export default function MedicationDashboard() {
           </View>
         )}
       />
+      </View>
+     </ScrollView>
     </SafeAreaView>
   );
 }
-
-
-
-
 const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: "#f8f8f8",
+      flex: 1, 
+      justifyContent: "center", 
+      
     },
     header: {
-      backgroundColor: "#ae887b",
+      backgroundColor: "#829582",
       padding: 15,
       alignItems: "center",
       },
@@ -163,24 +186,30 @@ const styles = StyleSheet.create({
         padding: 20,
       },
       inputContainer: {
-        marginBottom: 20,
-        backgroundColor: '#d3d3o3',
-    
+        marginBottom: 20,    
       },
-      input: {
-        
+      inputf:{
         marginLeft:10,
         marginRight:10,
         borderWidth: 1,
         borderColor: "#ccc",
         padding: 10,
-        marginBottom: 10,
+        marginBottom: 4,
         borderRadius: 5,
-        
+        marginTop:10
+      },
+      input: {  
+        marginLeft:10,
+        marginRight:10,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        padding: 10,
+        marginBottom: 4,
+        borderRadius: 5,
       
       },
       addButton: {
-        backgroundColor: "#4a90e2",
+        backgroundColor: "rgb(184, 158, 184)",
         padding: 20,
         borderRadius: 14,
         marginLeft:20,
@@ -236,8 +265,6 @@ const styles = StyleSheet.create({
     buttonText: {
       color: "#fff",
       fontWeight: "bold",
-      
-
     },
     modalContainer: {
       flex: 1,
@@ -265,30 +292,53 @@ const styles = StyleSheet.create({
       color: "#fff",
       fontWeight: "bold",
     },
-    calendarContainer: {
-      marginVertical: 10, // Adjusts spacing
-      paddingHorizontal: 10, // Adjusts left and right spacing
-      
+    calendarToggle: {
+      backgroundColor: "rgb(184, 158, 184)",
+      padding: 10,
+      borderRadius: 8,
+      marginHorizontal: 20,
+      alignItems: "center",
+      marginBottom: 10,
     },
-    calendar: {
-      width: "100%", // Change width as needed
-      height: 300, // Adjust height to your preference
-      alignSelf: "left", // Centers it
-      borderRadius: 10, // Optional rounded corners
-       // Adds shadow on Android
+    calendarToggleText: {
+      color: "#fff",
+      fontWeight: "bold",
     },
-  gifButton: {
-     alignItems: "center",
-     marginVertical: 10 
+    
+    gifContainer: {
+      alignItems: "center", 
+      justifyContent: "center",
+      marginVertical: 10,
     },
-  gif: { 
-    width: 100, 
-    height: 100 
-  },
-  gifButtonText: { 
-    marginTop: 5, 
-    fontWeight: "bold", 
-    color: "#4a90e2" 
-  },
+    
+    reminderButton: {
+      flexDirection: "row", // Keeps GIF & text side by side
+      alignItems: "center",
+      backgroundColor: "#fef3c7", // Soft pastel background
+      padding: 12,
+      borderRadius: 12,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3, // For Android shadow
+    },
+    
+    gifButton: {
+      width: 200,
+      height: 200,
+      marginRight: 10, // Spacing between GIF and text
+    },
+    
+    reminderText: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: "#4a5568", // Dark gray for readability
+    },
+  listContainer: {
+    flex: 1,
+    minHeight: 200, // Ensures it doesn't shrink and overlap
+    marginBottom: 20, // Space from bottom
+  }
 
   });
