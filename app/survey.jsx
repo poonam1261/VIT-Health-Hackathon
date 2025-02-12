@@ -280,7 +280,7 @@ headerText: {
     alignItems: "center",
   },
   activeToggle: {
-    backgroundColor: "#a3a9cf",
+    backgroundColor: "#rgb(184, 158, 184)",
   },
 
   toggleText: {
@@ -299,7 +299,7 @@ headerText: {
     color: "#ae897b",
   },
   doneButton: {
-    backgroundColor: "#aea9cf",
+    backgroundColor: "#rgb(184, 158, 184)",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",

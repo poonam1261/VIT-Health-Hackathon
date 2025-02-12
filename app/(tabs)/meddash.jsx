@@ -13,6 +13,10 @@ import { Image } from 'expo-image';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native";
+import { navigate } from "expo-router/build/global-state/routing";
+import SymptomScreen from "../SymptomScreen";
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function MedicationDashboard() {
   const [medications, setMedications] = useState([]);
@@ -23,7 +27,6 @@ export default function MedicationDashboard() {
   const [showModal, setShowModal] = useState(false);
 
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
-
   const toggleCalendar = () => {
     setIsCalendarVisible(!isCalendarVisible);
   };
@@ -48,6 +51,12 @@ export default function MedicationDashboard() {
       [day.dateString]: { selected: true, marked: true, selectedColor: "blue" },
     }));
   };
+
+  const Navigate = () =>{
+    navigation.navigate("SymptomScreen");
+    };
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -94,7 +103,7 @@ export default function MedicationDashboard() {
 
       <View style={styles.gifContainer}>
   {/* GIF Button for Navigation */}
-        <TouchableOpacity style={styles.reminderButton}>
+        <TouchableOpacity style={styles.reminderButton} onPress={Navigate}>
           <Image 
             style={styles.gifButton} 
             source={require("../../assets/animations/happy_blob.gif")} // Local GIF
