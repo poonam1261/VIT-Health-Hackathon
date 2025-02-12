@@ -1,23 +1,41 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { ExpandableCalendar, Calendar, CalendarProvider, AgendaList } from "react-native-calendars";
-
-const appointments = {
-  "2025-02-06": [{ id: "1", hour: "10:00 AM", title: "Doctor Appointment" }],
-  "2025-02-07": [
-    { id: "2", hour: "9:00 AM", title: "Gym Session" },
-    { id: "3", hour: "2:00 PM", title: "Business Meeting" },
-  ],
-};
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { CalendarProvider, Calendar, AgendaList } from "react-native-calendars";
+import { useLocalSearchParams } from "expo-router";
+import { db } from "../../firebase/firebaseConfig"; // Import Firestore instance
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const ExpandableCalendarScreen = () => {
   const [selectedDate, setSelectedDate] = useState("2025-02-06");
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch appointments for the selected date
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      setLoading(true);
+      try {
+        const q = query(collection(db, "Appointments"), where("date", "==", selectedDate));
+        const querySnapshot = await getDocs(q);
+        const fetchedAppointments = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        setAppointments(fetchedAppointments);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
+      setLoading(false);
+    };
+
+    fetchAppointments();
+  }, [selectedDate]);
 
   const handleDayPress = (day) => {
     setSelectedDate(day.dateString);
   };
 
-  // Mark selected date with a green circle
   const markedDates = {
     [selectedDate]: {
       selected: true,
@@ -26,82 +44,49 @@ const ExpandableCalendarScreen = () => {
     },
   };
 
-
-
   return (
     <CalendarProvider date={selectedDate}>
-      
-
-<Calendar
-onDayPress={handleDayPress}
-style={{
-  borderWidth: 1,
-  borderColor: 'gray',
-  borderRadius:20,
-  width:'350',
-  paddingLeft:20,
-  paddingRight:20, 
-  paddingBottom:50 ,
-  margin:10, 
-  margintop:20,
-  justifyContent:'center', 
-  alignSelf:'center'
-}}
-  markedDates={markedDates}
-
-  enableSwipeMonths={true}
-  theme={{
-    backgroundColor: '#ffffff',
-    calendarBackground: '#ffffff',
-    textSectionTitleColor: '#b6c1cd',
-    textSectionTitleDisabledColor: '#d9e1e8',
-    selectedDayBackgroundColor: '#00adf5',
-    selectedDayTextColor: '#ffffff',
-    todayTextColor: 'white',
-    todayBackgroundColor:'rgb(129, 163, 239)',    dayTextColor: 'rgba(141, 141, 178, 0.86)',
-    textDisabledColor: '#d9e1e8',
-    dotColor: '#00adf5',
-    selectedDotColor: '#ffffff',
-    arrowColor: 'orange',
-    disabledArrowColor: '#d9e1e8',
-    monthTextColor: 'rgb(42, 42, 243)',
-    indicatorColor: 'blue',
-    textDayFontFamily: 'monospace',
-    textMonthFontFamily: 'monospace',
-    textDayHeaderFontFamily: 'monospace',
-    textDayFontWeight: '300',
-    textMonthFontWeight: 'bold',
-    textDayHeaderFontWeight: '300',
-    textDayFontSize: 16,
-    textMonthFontSize: 20,
-    textDayHeaderFontSize: 16, 
-    marginTop:10,
-    'stylesheet.calendar.header':{
-      dayTextAtIndex0:{
-        color:'rgba(255, 0, 0, 0.55)'
-      }
-    }
-  }} 
-
-  
-/>
+      <Calendar
+        onDayPress={handleDayPress}
+        style={styles.calendar}
+        markedDates={markedDates}
+        enableSwipeMonths={true}
+        theme={{
+          backgroundColor: '#ffffff',
+          calendarBackground: '#ffffff',
+          textSectionTitleColor: '#b6c1cd',
+          selectedDayBackgroundColor: '#00adf5',
+          selectedDayTextColor: '#ffffff',
+          todayTextColor: 'white',
+          todayBackgroundColor: 'rgb(129, 163, 239)',
+          dayTextColor: 'rgba(141, 141, 178, 0.86)',
+          dotColor: '#00adf5',
+          selectedDotColor: '#ffffff',
+          arrowColor: 'orange',
+          monthTextColor: 'rgb(42, 42, 243)',
+        }}
+      />
       <View style={styles.container}>
-        <Text style={styles.header}>Appointments on {selectedDate}:</Text>
-        <AgendaList
-          sections={[
-            {
-              title: selectedDate,
-              data: appointments[selectedDate] || [],
-            },
-          ]}
-          renderItem={({ item }) => (
-            <View style={styles.appointmentItem}>
-              <Text style={styles.time}>{item.hour}</Text>
-              <Text style={styles.title}>{item.title}</Text>
-            </View>
-          )}
-        />
-        {(!appointments[selectedDate] || appointments[selectedDate].length === 0) && (
+        <Text style={styles.header}>Appointments</Text>
+        
+        {loading ? (
+          <ActivityIndicator size="large" color="blue" />
+        ) : appointments.length > 0 ? (
+          <AgendaList
+            sections={[
+              {
+                title: selectedDate,
+                data: appointments,
+              },
+            ]}
+            renderItem={({ item }) => (
+              <View style={styles.appointmentItem}>
+                <Text style={styles.time}>{item.time}</Text>
+                <Text style={styles.title}>{item.doctorName}</Text>
+              </View>
+            )}
+          />
+        ) : (
           <Text style={styles.noAppointments}>No appointments</Text>
         )}
       </View>
@@ -118,11 +103,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    color: 'gray',
+    textAlign: 'center'
   },
   appointmentItem: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
+    marginLeft:10,
+    marginRight:10,
   },
   time: {
     fontSize: 16,
@@ -138,6 +127,19 @@ const styles = StyleSheet.create({
     color: "gray",
     textAlign: "center",
     marginTop: 10,
+  },
+  calendar: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 20,
+    width: 350,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 50,
+    margin: 10,
+    marginTop: 20,
+    justifyContent: "center",
+    alignSelf: "center",
   },
 });
 
