@@ -22,6 +22,13 @@ const ExpandableCalendarScreen = () => {
           id: doc.id,
           ...doc.data(),
         }));
+
+        const q2 = query(collection(db, "Appointments"), where("date", "==", selectedDate));
+        const querySnapshot2 = await getDocs(q2);
+        const fetchAppointments2 = querySnapshot2.docs.map(doc => ({
+          id : doc.id,
+          ...doc.data()
+        }))
   
         setAppointments(fetchedAppointments);
   
@@ -41,8 +48,10 @@ const ExpandableCalendarScreen = () => {
           selectedColor: "green",
           selectedTextColor: "white",
         };
-  
+
+       
         setMarkedDates(newMarkedDates);
+        setAppointments(fetchAppointments2);
       } catch (error) {
         console.error("Error fetching appointments:", error);
       }
@@ -82,7 +91,7 @@ const ExpandableCalendarScreen = () => {
           monthTextColor: 'rgb(42, 42, 243)',
         }}
       />
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <Text style={styles.header}>Appointments</Text>
         
         {loading ? (
@@ -105,7 +114,7 @@ const ExpandableCalendarScreen = () => {
         ) : (
           <Text style={styles.noAppointments}>No appointments</Text>
         )}
-      </ScrollView>
+      </View>
     </CalendarProvider>
   );
 };
