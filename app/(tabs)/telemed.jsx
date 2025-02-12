@@ -155,7 +155,7 @@ export default function TeleMed() {
 
             <TouchableOpacity
               style={styles.survey}
-              onPress={() => router.push("SymptomScreen")}
+              onPress={() => router.push("survey")}
             >
               <Text style={styles.surveyText}>Take Up Medical Survey</Text>
               <Feather name="arrow-right-circle" size={30} color="white" />
