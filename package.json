@@ -24,13 +24,18 @@
     "@react-native-picker/picker": "2.9.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
+    "axios": "^1.7.9",
     "expo": "~52.0.28",
     "expo-blur": "~14.0.3",
     "expo-calendar": "~14.0.6",
     "expo-constants": "~17.0.5",
     "expo-font": "~13.0.3",
     "expo-haptics": "~14.0.1",
+<<<<<<< HEAD
     "expo-image": "^2.0.5",
+=======
+    "expo-linear-gradient": "^14.0.2",
+>>>>>>> 912e22c003d5a16b1d607ae916b9a6c880703cdd
     "expo-linking": "~7.0.5",
     "expo-router": "~4.0.17",
     "expo-splash-screen": "~0.29.21",
