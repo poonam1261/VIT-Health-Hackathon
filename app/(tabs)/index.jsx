@@ -1,17 +1,24 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native'
 import React from 'react'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 export default function index() {
+  const router = useRouter();
   return (
     <SafeAreaView>
       <View style={styles.header}>
         <Text style={styles.headerText}>Home</Text>
         <View style={{alignSelf:'flex-end'}}>
         <MaterialCommunityIcons name="face-man-profile" size={34} color="white" />
+
         </View>
+       
       </View>
+      <TouchableOpacity onPress={() => router.push('/temp/temp3')}>
+          <Text>Click Me</Text>
+        </TouchableOpacity>
     </SafeAreaView>
   )
 }
