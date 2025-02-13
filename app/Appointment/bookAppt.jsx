@@ -59,6 +59,7 @@ const BookAppt = () => {
       alert("Invalid time slot selected.");
       return;
     } 
+
     
     const q = query(
       collection(db, "Appointments"),
