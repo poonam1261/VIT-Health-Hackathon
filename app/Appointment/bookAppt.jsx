@@ -92,6 +92,8 @@ const BookAppt = () => {
       console.error("Error booking appointment:", error);
       Alert.alert("Error", "Could not book appointment. Try again later.");
     }
+
+    
   };
 
   const handleDayPress = (day) => {
@@ -116,9 +118,9 @@ const BookAppt = () => {
     <ScrollView  contentContainerStyle={styles.scrollContainer}>
 <View style={styles.header}>
 <Text style={styles.headerText}>Book Appointment with </Text>
-<View style={{flexDirection:'row', justifyContent:'center'}}>
+<View style={{flexDirection:'row', justifyContent:'flex-start'}}>
   <Text style={styles.headerText} >{doctorName}</Text>
-  <FontAwesome5 name="stethoscope" size={28} color="white" />
+  <FontAwesome5 name="stethoscope" size={28} color="#84717A" />
 </View>
 
 </View>
@@ -168,17 +170,17 @@ const styles = StyleSheet.create({
     
     padding:10,
     borderRadius:20,
-    backgroundColor:'#8c7a92', 
+    borderWidth:3,
+    borderColor:'#84717A'
     
-    elevation:10,
   },
   headerText:{
     fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 15,
+    marginBottom: 10,
+    fontWeight:'semibold',
     textAlign:'center',
-    color:'white', 
-    marginRight:5 
+    color:'black', 
+    marginRight:5 , 
   },
   subHeader: {
     fontSize: 16,
