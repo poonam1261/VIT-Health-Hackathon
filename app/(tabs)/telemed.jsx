@@ -113,7 +113,12 @@ export default function TeleMed() {
             color="white"
             style={{ marginLeft: 10 }}
           />
-          <Text style={styles.doctorName}>{item.name}</Text>
+          <Text style={styles.doctorName} numberOfLines={2}>
+          {item.name.startsWith("Dr.") && item.name.includes(" ")
+            ? item.name.split(" ").slice(0, 2).join(" ") + "\n" + item.name.split(" ").slice(2).join(" ")
+            : item.name}
+        </Text>
+
         </View>
         <Text style={styles.doctorQual}>{item.qual}</Text>
       </View>
