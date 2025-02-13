@@ -45,7 +45,7 @@ export default function RootLayout() {
         <Stack.Screen name="survey" />
         <Stack.Screen name="calendar/calendarApp" options={
           {
-            title:'Calendar'
+            title:'Your Appointments'
           }
         } />
       </Stack>

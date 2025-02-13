@@ -89,6 +89,9 @@ const ExpandableCalendarScreen = () => {
           selectedDotColor: '#ffffff',
           arrowColor: 'orange',
           monthTextColor: 'rgb(42, 42, 243)',
+          dotStyle:{
+            marginTop:7
+          }
         }}
       />
       <View style={styles.container}>

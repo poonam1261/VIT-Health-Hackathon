@@ -24,6 +24,17 @@ export default function TeleMed() {
   const [appointments, setAppointments] = useState([]);
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
+  const doctors2 = [
+    { name: "Dr. Sneha Verma", specialty: "Endocrinologist (Diabetes)" },
+    { name: "Dr. Arjun Mehta", specialty: "Pulmonologist (Chronic Respiratory Diseases)" },
+    { name: "Dr. Priya Sharma", specialty: "Nephrologist (Chronic Kidney Disease)" },
+    { name: "Dr. Karan Kapoor", specialty: "Rheumatologist (Arthritis & Autoimmune Disorders)" },
+    { name: "Dr. Neha Joshi", specialty: "Oncologist (Cancer Specialist)" },
+    { name: "Dr. Vikram Rao", specialty: "Gastroenterologist (Chronic Liver Disease)" },
+    { name: "Dr. Ananya Iyer", specialty: "Neurologist (Alzheimer's & Parkinson’s)" },
+    { name: "Dr. Sameer Malhotra", specialty: "Psychiatrist (Chronic Mental Illness)" },
+    { name: "Dr. Riya Desai", specialty: "Geriatrician (Age-related Chronic Conditions)" }
+  ];
 
   useEffect(() => {
     fetchDoctors();
@@ -77,6 +88,8 @@ export default function TeleMed() {
       console.error("Error fetching appointments:", error);
     }
   };
+
+  
 
   const fetchAppts = async () => {
     try {
@@ -136,7 +149,7 @@ export default function TeleMed() {
   );
 
   const AptItem = ({ item }) => (
-    <TouchableOpacity style={styles.AptContainer}>
+    <TouchableOpacity style={styles.AptContainer} onPress={handleApptPress}>
       <View style={styles.AptItem}>
         <View
           style={{
