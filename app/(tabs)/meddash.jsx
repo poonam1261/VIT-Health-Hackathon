@@ -9,7 +9,6 @@ import {
   Modal,
   FlatList,
 } from "react-native";
-import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native";
@@ -99,11 +98,7 @@ export default function MedicationDashboard() {
           <View style={styles.gifContainer}>
             {/* GIF Button for Navigation */}
             <TouchableOpacity style={styles.reminderButton}>
-              <Image
-                style={styles.gifButton}
-                source={require("../../assets/animations/happy_blob.gif")} // Local GIF
-                contentFit="contain"
-              />
+              
               <Text style={styles.reminderText}>
                 Hello Fren! 🌼{"\n"}Have you taken your meds today? ^_^
               </Text>
@@ -114,7 +109,7 @@ export default function MedicationDashboard() {
           <TouchableOpacity
             onPress={toggleCalendar}
             style={styles.calendarToggle}
-          >
+          >  
             <Text style={styles.calendarToggleText}>
               {isCalendarVisible
                 ? "Hide Medication Calendar ▲"
