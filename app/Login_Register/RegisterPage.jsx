@@ -15,6 +15,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig"; // Adjust the path according to your project structure
 import { useRouter } from "expo-router";
+import { API_BASE_URL } from "../../config";
 
 function RegisterScreen({ navigation }) {
   const router = useRouter();
@@ -33,11 +34,11 @@ function RegisterScreen({ navigation }) {
         const user = userCredential.user;
 
         // First, check if the patient already exists
-        fetch(`http://127.0.0.1:8000/api/patients/${user.uid}/`)
+        fetch(`${API_BASE_URL}/api/patients/${user.uid}/`)
           .then((checkResponse) => {
             if (checkResponse.status === 404) {
               // Patient does not exist, so create a new entry
-              return fetch("http://127.0.0.1:8000/api/patients/", {
+              return fetch(`${API_BASE_URL}/api/patients/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -206,15 +207,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     backgroundColor: "white",
-  },
-  text: {
-    fontSize: 30,
-    color: "blue",
-    textShadowColor: "blue",
-    textShadowRadius: 15,
-    elevation: 10,
-    textAlign: "center",
-    fontWeight: "bold",
   },
   textSmall: {
     marginTop: 20,
