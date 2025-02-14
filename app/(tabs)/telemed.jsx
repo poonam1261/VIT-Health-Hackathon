@@ -1,4 +1,4 @@
-
+//READ 
 
 import {
   View,
@@ -22,9 +22,7 @@ import { getDocs, collection, where, orderBy, query } from "firebase/firestore";
 import LottieView from 'lottie-react-native';           //import Lottie from "lottie-react";       //is a no no if we want to work on phones
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-// import { DotLottie } from '@lottiefiles/dotlottie-react-native';
-// import { View } from 'react-native';
-//import { useNavigation } from "@react-navigation/native";
+
 
 export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -34,6 +32,26 @@ export default function TeleMed() {
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
   const router = useRouter();
+
+
+
+
+
+
+
+// RESET MOOD: uncomment below code -> run once -> comment below -> refresh, this way peelu mood is reset to 0 and can be uplifted again.
+
+// if (typeof window !== "undefined") {
+//   AsyncStorage.setItem("healthScore", "0");
+// }  
+
+////////////////////////////////
+
+
+
+
+
+
 
   useEffect(() => {
     fetchDoctors();
@@ -160,6 +178,9 @@ export default function TeleMed() {
         console.error("Error loading score:", error);
       }
     };
+
+
+
 
     const updateAnimationData = () => {
       let anim;
