@@ -12,7 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { auth } from "../firebase/firebaseConfig";
 
 // UPDATED: Use AsyncStorage (async) instead of localStorage
-const updateScore = async (increment = 10) => {
+const updateScore = async (increment = 25) => {
   try {
     // Retrieve the existing score from AsyncStorage
     const scoreStr = await AsyncStorage.getItem("healthScore"); // <-- Using AsyncStorage.getItem instead of localStorage.getItem
