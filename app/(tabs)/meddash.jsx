@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+//import { View, Text } from 'react-native'
 import React, { useState } from "react";
 import {
   View,
@@ -105,7 +105,7 @@ export default function MedicationDashboard() {
 
       <View style={styles.gifContainer}>
   {/* GIF Button for Navigation */}
-        <TouchableOpacity style={styles.reminderButton} onPress={Navigate}>
+        <TouchableOpacity style={styles.reminderButton}>
           <Image 
             style={styles.gifButton} 
             source={require("../../assets/animations/happy_blob.gif")} // Local GIF
@@ -144,7 +144,7 @@ export default function MedicationDashboard() {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-              {selectedMed ? ${selectedMed.name} - ${selectedMed.dosage} (${selectedMed.timing}) : ""}
+              {selectedMed ? `${selectedMed.name} - ${selectedMed.dosage} (${selectedMed.timing})` : "No medication selected"}
             </Text>
             <TouchableOpacity style={styles.closeButton} onPress={() => setShowModal(false)}>
               <Text style={styles.closeButtonText}>Close</Text>

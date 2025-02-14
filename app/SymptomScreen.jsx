@@ -14,21 +14,43 @@ import { auth } from "../firebase/firebaseConfig";
 const SymptomScreen = () => {
   const navigation = useNavigation();
   const symptoms = [
+    "Abdominal pain",
+    "Anxiety",
+    "Back pain",
     "Body pain",
     "Chills",
+    "Cold sweats",
     "Confusion",
+    "Constipation",
     "Cough",
+    "Dehydration",
     "Diarrhea",
     "Dizziness",
+    "Dry mouth",
     "Fatigue",
     "Fever",
+    "Hair loss",
     "Headache",
+    "Heartburn",
+    "Irritability",
+    "Itchy skin",
+    "Joint pain",
     "Loss of appetite",
     "Migraines",
+    "Mood swings",
+    "Muscle cramps",
     "Nausea",
+    "Night sweats",
+    "Numbness",
+    "Shortness of breath",
+    "Skin rash",
+    "Sore throat",
+    "Sweating",
+    "Vomiting",
+    "Weakness",
     "Weight gain",
-    "Weight loss",
-  ];
+    "Weight loss"
+];
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
 
   // Update symptom severity
