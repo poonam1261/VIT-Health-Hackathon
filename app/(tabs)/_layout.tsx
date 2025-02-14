@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
@@ -10,15 +9,14 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs 
+    <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#613d66',
-        tabBarInactiveTintColor:'#bc99c2',
+        tabBarInactiveTintColor: '#bc99c2',
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
@@ -52,11 +50,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-      name = "educational"
-      options={{
-        title: 'Lifestyle',
-        tabBarIcon: ({ color }) => <MaterialIcons name="medical-information" size={24} color={color}/>
-      }}
+        name="educational"
+        options={{
+          title: 'Lifestyle',
+          tabBarIcon: ({ color }) => <MaterialIcons name="medical-information" size={24} color={color} />
+        }}
       />
     </Tabs>
   );
