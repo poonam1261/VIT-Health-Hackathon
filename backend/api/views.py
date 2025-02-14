@@ -24,7 +24,10 @@ class SymptomRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     def retrieve(self, request, *args, **kwargs):
             instance = self.get_object()        # current object being referred to in request ex:symptoms/4
             serializer = self.get_serializer(instance)
-            return Response(serializer.data.get("symptom_data"))
+            return Response({
+                    "message": "Auto deploy test successful!",  # Add this line
+                    "data": serializer.data
+                })
 
 """
 note how are key operations are BASIC creating, updating, and listing symptom entries
