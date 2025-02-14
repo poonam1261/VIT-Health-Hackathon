@@ -1,9 +1,9 @@
 import { useState } from 'react';
 //import { Link } from 'react-router-dom';
-import { View, Text, ScrollView, FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import { Button } from 'react-native-web';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
-export default historyPage = () => {
+
+const historyPage = () => {
   const historyData = {
     name: "John Doe",
     age: "38",
@@ -292,4 +292,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 90,
   },
+  
+  editText: {
+    fontSize: 16,
+    color: "#333",
+    alignContent: "center",
+    fontWeight: "bold",
+  }
 });
+
+export default historyPage;
