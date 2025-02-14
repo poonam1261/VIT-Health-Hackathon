@@ -25,7 +25,7 @@ class SymptomRetrieveUpdateView(generics.RetrieveUpdateAPIView):
             instance = self.get_object()        # current object being referred to in request ex:symptoms/4
             serializer = self.get_serializer(instance)
             return Response({
-                    "message": "Auto deploy test successful!",  # Add this line
+                    "message": "Auto deploy test successful?",  # Add this line
                     "data": serializer.data
                 })
 
