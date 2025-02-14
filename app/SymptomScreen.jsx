@@ -11,6 +11,26 @@ import Symptom from "./Symptom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { auth } from "../firebase/firebaseConfig";
 
+// UPDATED: Use AsyncStorage (async) instead of localStorage
+const updateScore = async (increment = 10) => {
+  try {
+    // Retrieve the existing score from AsyncStorage
+    const scoreStr = await AsyncStorage.getItem("healthScore"); // <-- Using AsyncStorage.getItem instead of localStorage.getItem
+    let score = scoreStr ? parseInt(scoreStr, 10) : 0;
+    
+    // Increment the score and ensure it doesn't exceed 100
+    score = Math.min(score + increment, 100);
+    
+    // Save the updated score back to AsyncStorage
+    await AsyncStorage.setItem("healthScore", score.toString()); // <-- Using AsyncStorage.setItem instead of localStorage.setItem
+    
+    return score;
+  } catch (error) {
+    console.error("Error updating score:", error);
+    return 0;
+  }
+};
+
 const SymptomScreen = () => {
   const navigation = useNavigation();
   const symptoms = [
@@ -45,17 +65,16 @@ const SymptomScreen = () => {
       const symptomsObject = selectedSymptoms.reduce((acc, symptom) => {
         acc[symptom.name] = symptom.severity;
         return acc;
-      }, {}); // Properly close the reduce callback and add an initial value (an empty object)
-
+      }, {}); // Missing initial value fixed
+  
       const payload = {
         patient: auth.currentUser.uid, // Get the Firebase user ID from the current user
         symptom_data: symptomsObject,
       };
-
+  
       // Do a GET request to check if the patient already has a record
-      // If yes, do a PUT request to update the record; else, do a POST request to create a new record
       const checkResponse = await fetch(
-        `http://127.0.0.1:8000/api/symptoms/${payload.patient}`,
+        `http://127.0.0.1:8000/api/symptoms/${payload.patient}/`
       );
 
       let response;
@@ -100,6 +119,12 @@ const SymptomScreen = () => {
       console.error("Submission failed:", error);
       alert(`Error: ${error.message}`);
     }
+
+      //window.location.reload();   forced refresh
+      // Update the score (increment by 10 points for each submission)
+      const updatedScore = updateScore(); // Update the score
+      console.log("Updated Health Score:", updatedScore);
+      //navigation.navigate("TeleMed");   //setup in navigator
   };
 
   return (
