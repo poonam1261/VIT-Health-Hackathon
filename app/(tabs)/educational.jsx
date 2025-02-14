@@ -123,11 +123,11 @@ export default function Educational() {
                         <MaterialIcons name="self-improvement" size={40} color="#fff" />
                         <Text style={styles.buttonText}>Mental Health</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('telemed')}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('history')}>
                         <MaterialIcons name="nature" size={40} color="#fff" />
                         <Text style={styles.buttonText}>Mindfulness</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('telemed')}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('profile')}>
                         <FontAwesome5 name="heartbeat" size={40} color="#fff" />
                         <Text style={styles.buttonText}>Heart Health</Text>
                     </TouchableOpacity>
