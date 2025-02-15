@@ -19,6 +19,14 @@ export default function index() {
       <TouchableOpacity onPress={() => router.push('/temp/temp3')}>
           <Text>Click Me</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress = {()=>router.push("profhist/profile")}>
+          <Text>Profile</Text>
+        </TouchableOpacity>
+
+        {/* { <TouchableOpacity onPress = {()=>router.push("profhist/anatomy")}>
+          <Text>Profile</Text>
+        </TouchableOpacity>} */}
     </SafeAreaView>
   )
 }

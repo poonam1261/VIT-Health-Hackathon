@@ -61,7 +61,7 @@ const profilePage = ()=>{
                 <Text style={styles.value}>{profileData.emergencyPhone}</Text>
                 <Text style={styles.label}>Emergency Relation:</Text>
                 <Text style={styles.value}>{profileData.emergencyRelation}</Text>
-                <TouchableOpacity style={styles.button} onPress={()=> router.push("history")}>
+                <TouchableOpacity style={styles.button} onPress={()=> router.push("./history")}>
                   <Text style={styles.buttonText}>View Medical History</Text>
 
                 </TouchableOpacity>
@@ -80,21 +80,21 @@ const styles = StyleSheet.create({
       paddingTop: 0
     },
     title: {
-      fontSize:16, 
-      fontWeight:'bold', 
-      color:'rgba(58, 22, 20, 0.74)', 
-      alignSelf:'center', 
-      marginBottom:20, 
-      marginTop:10, 
-      borderRadius:10, 
-      paddingLeft:10, 
-      paddingRight:10, 
-      paddingTop:5, 
-      paddingBottom:5,
-      backgroundColor:'#f0e1b9', 
-      alignSelf:'center', 
-      textAlign:'center',
-      elevation:10
+      fontSize: 16,
+    fontWeight: "bold",
+    color: "rgba(58, 22, 20, 0.74)",
+    alignSelf: "center",
+    marginBottom: 10,
+    marginTop: 10,
+    borderRadius: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    backgroundColor: "#f0e1b9",
+    alignSelf: "center",
+    textAlign: "center",
+    elevation: 10,
     },
     profileSection: {
       alignItems: "center",
