@@ -68,7 +68,7 @@ function LoginScreen({}) {
           style={styles.buttonDesigner}
           onPress={() => console.log("Designer pressed")}
         >
-          <Button color="#8c7a92" title="Customer Login" />
+          <Button color="#8c7a92" title="Patient Login" />
         </TouchableOpacity>
       </View>
       <TextInput

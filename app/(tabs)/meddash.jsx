@@ -24,7 +24,12 @@ export default function MedicationDashboard() {
 
   const [swipeMeds, setSwipeMeds] = useState(initialSwipeMeds);
   const [medications, setMedications] = useState([]);
-  const [newMed, setNewMed] = useState({ name: "", dosage: "", timing: "", frequency: "" });
+  const [newMed, setNewMed] = useState({
+    name: "",
+    dosage: "",
+    timing: "",
+    frequency: "",
+  });
   const [selectedDate, setSelectedDate] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [selectedMed, setSelectedMed] = useState(null);

@@ -11,11 +11,29 @@ import {
   Platform,
 } from "react-native";
 
+<<<<<<< HEAD
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
+=======
+export default function index() {
+  const router = useRouter();
+  return (
+    <SafeAreaView>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Home</Text>
+        <View style={{alignSelf:'flex-end'}}>
+        <MaterialCommunityIcons name="face-man-profile" size={34} color="white" />
+
+        </View>
+       
+      </View>
+      
+    </SafeAreaView>
+  )
+>>>>>>> 67ec6c1bb6c86f3cdc5cf3623ee3a3229130b9bf
 }
 
 
