@@ -20,6 +20,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BlobAnimation from "../../components/BlobAnimation.jsx";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
@@ -321,7 +322,14 @@ export default function index() {
         <View style={styles.mainContainer}>
           <View style={styles.leftColumn}>
             <View style={styles.virtualPetContainer}>
-              <Text style={styles.virtualPetText}>Peelu here?</Text>
+              {/* <Text style={styles.virtualPetText}>Peelu here?</Text> */}
+              <BlobAnimation 
+                isVisible={true}
+                positionStyle={{
+                  position: "relative",
+                  alignSelf: "center",
+                }}
+              />
             </View>
             <View style={styles.happinessContainer}>
               <Text style={styles.happinessTitle}>Happiness Meter</Text>
