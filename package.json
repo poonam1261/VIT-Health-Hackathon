@@ -17,7 +17,6 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@lottiefiles/dotlottie-react": "^0.6.5",
-    "@lottiefiles/dotlottie-react-native": "^0.2.0",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-community/slider": "^4.5.5",
