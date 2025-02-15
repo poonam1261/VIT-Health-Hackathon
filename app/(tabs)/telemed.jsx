@@ -290,9 +290,9 @@ const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "#FFBFCC",
+    paddingTop: 15,
+    paddingBottom: 15,
+    backgroundColor: "#829582",
     justifyContent: "center",
     paddingLeft: 10,
     paddingRight: 10,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     alignSelf: "center",
-    color: "#fff",
+    color: "#fff", 
   },
   message: {
     padding: 10,
