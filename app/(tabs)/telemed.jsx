@@ -101,13 +101,24 @@ export default function TeleMed() {
     );
   };
 
-// RESET MOOD: uncomment below code -> run once -> comment below -> refresh, this way peelu mood is reset to 0 and can be uplifted again.
+
+
+
+
+
+// RESET MOOD: uncomment below code -> run once(npx expo start -c) -> comment below -> refresh, this way peelu mood is reset to 0 and can be uplifted again.
 
 // if (typeof window !== "undefined") {
 //   AsyncStorage.setItem("healthScore", "0");
 // }  
 
 ////////////////////////////////
+
+
+
+
+
+
 
   useFocusEffect(
     useCallback(() => {
