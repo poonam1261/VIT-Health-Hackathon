@@ -11,13 +11,14 @@ import {
   Platform,
 } from "react-native";
 
-<<<<<<< HEAD
+
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
-=======
+}
+
 export default function index() {
   const router = useRouter();
   return (
@@ -33,7 +34,6 @@ export default function index() {
       
     </SafeAreaView>
   )
->>>>>>> 67ec6c1bb6c86f3cdc5cf3623ee3a3229130b9bf
 }
 
 
