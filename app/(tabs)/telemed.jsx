@@ -26,14 +26,21 @@ import {
   doc,
 } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
+import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
+import LottieView from 'lottie-react-native';
+// import Lottie from "lottie-react";       //is a no no if we want to work on phones
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+
+const router = useRouter();
+
 export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
-  const [showAllAppointments, setShowAllAppointments] = useState(false);
-
+  
 
   useEffect(() => {
     fetchDoctors();
@@ -79,6 +86,15 @@ export default function TeleMed() {
       ],
     );
   };
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsAnimationVisible(true); // Show animation when screen is focused
+      return () => setIsAnimationVisible(false); // Hide animation when screen is unfocused
+    }, [])
+  );
 
   const fetchDoctors = async () => {
     try {
@@ -201,95 +217,170 @@ export default function TeleMed() {
     });
   };
 
-  
-return (
-  <SafeAreaView style={{ flex: 1 }}>
-    <FlatList
-      ListHeaderComponent={
-        <>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>Tele Medicine</Text>
-          </View>
 
-          <View style={styles.message}>
-            <Image
-              source={require("../../assets/images/doctorImg.png")}
-              style={styles.doctorImg}
-            />
-            <Text style={styles.messageText}>
-              Hi John, how are you feeling?
-            </Text>
-          </View>
+  const BlobAnimation = ({ isVisible }) => {
+    const [score, setScore] = useState(0);
+    const [animationData, setAnimationData] = useState(null);
+    const animationRef = useRef(null);
 
-          <TouchableOpacity
-            style={styles.survey}
-            onPress={() => router.push("../Doctor/allPrescriptions")}
-          >
-            <Text style={styles.surveyText}>All Prescriptions</Text>
-            <Feather name="arrow-right-circle" size={30} color="white" />
-          </TouchableOpacity>
-
-          <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-            <Text style={styles.aptHead}>Scheduled Appointments</Text>
-            <Foundation
-              name="calendar"
-              size={45}
-              color="#5b4d54"
-              style={styles.calendarIcon}
-              onPress={() =>
-                router.push({
-                  pathname: "../calendar/calendarApp",
-                  params: { appointments: JSON.stringify(appointments) },
-                })
-              }
-            />
-          </View>
-        </>
+    const loadScore = async () => {
+      try {
+        const storedScore = await AsyncStorage.getItem("healthScore");
+        if (storedScore) {
+          setScore(parseInt(storedScore, 10));
+        }
+      } catch (error) {
+        console.error("Error loading score:", error);
       }
-      data={showAllAppointments ? appointments : appointments.slice(0, 1)}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <AptItem item={item} />}
-      ListFooterComponent={
-        <>
-          {appointments.length > 1 && !showAllAppointments && (
-            <TouchableOpacity
-              onPress={() => setShowAllAppointments(true)}
-              style={styles.showMoreBtn}
-            >
-              <Text style={{ color: "#5b4d54", textAlign:"right", fontWeight: "bold", marginRight:15 }}>Show More...</Text>
-            </TouchableOpacity>
-          )}
+    };
 
-          {showAllAppointments && (
-            <TouchableOpacity
-              onPress={() => setShowAllAppointments(false)}
-              style={styles.showMoreBtn}
-            >
-              <Text style={{ color: "#5b4d54", textAlign:"right", fontWeight: "bold", marginRight:15 }}>Show Less</Text>
-            </TouchableOpacity>
-          )}
+    useEffect(() => {
+      const decrementInterval = setInterval(async () => {
+        setScore((prevScore) => {
+          const newScore = Math.max(prevScore - 25, 0); // Ensure score doesn't go below 0
+          AsyncStorage.setItem("healthScore", newScore.toString());
+          return newScore;
+        });
+      }, 30000); // 30 seconds
+    
+      return () => clearInterval(decrementInterval);
+    }, []);
 
-          <Text style={styles.aptHead}>Book Appointment</Text>
-          <FlatList
-            data={doctors}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <Item item={item} />}
+
+    const updateAnimationData = () => {
+      let anim;
+      if (score < 25) {
+        anim = require("../../assets/animations/angry.json");
+      } else if (score < 50) {
+        anim = require("../../assets/animations/concerned.json");
+      } else if (score < 75) {
+        anim = require("../../assets/animations/idle.json");
+      } else {
+        anim = require("../../assets/animations/happy.json");
+      }
+      setAnimationData(anim);
+    };
+
+    useEffect(() => {
+      loadScore();
+    }, []);
+
+    useEffect(() => {
+      updateAnimationData();
+    }, [score]);
+
+    return (
+      <View
+        style={{
+          position: "absolute",
+          bottom: -63,
+          right: -40,
+          width: 250,
+          height: 250,
+          opacity: isVisible ? 1 : 0,
+        }}
+      >
+        {animationData && (
+          <LottieView
+            ref={animationRef}
+            source={animationData}
+            autoPlay={isVisible}
+            loop
+            style={{ width: "100%", height: "100%" }}
           />
-        </>
-      }
-      contentContainerStyle={{ paddingBottom: 20 }}
-    />
-  </SafeAreaView>
-);
+        )}
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <View style={styles.header}>
+              <Text style={styles.headerText}>Tele Medicine</Text>
+            </View>
+  
+            <View style={styles.message}>
+              <Image
+                source={require("../../assets/images/doctorImg.png")}
+                style={styles.doctorImg}
+              />
+              <Text style={styles.messageText}>
+                Hi John, how are you feeling?
+              </Text>
+            </View>
+  
+            <TouchableOpacity
+              style={styles.survey}
+              onPress={() => router.push("../Doctor/allPrescriptions")}
+            >
+              <Text style={styles.surveyText}>All Prescriptions</Text>
+              <Feather name="arrow-right-circle" size={30} color="white" />
+            </TouchableOpacity>
+  
+            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+              <Text style={styles.aptHead}>Scheduled Appointments</Text>
+              <Foundation
+                name="calendar"
+                size={45}
+                color="#5b4d54"
+                style={styles.calendarIcon}
+                onPress={() =>
+                  router.push({
+                    pathname: "../calendar/calendarApp",
+                    params: { appointments: JSON.stringify(appointments) },
+                  })
+                }
+              />
+            </View>
+          </>
+        }
+        data={showAllAppointments ? appointments : appointments.slice(0, 1)}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <AptItem item={item} />}
+        ListFooterComponent={
+          <>
+            {appointments.length > 1 && !showAllAppointments && (
+              <TouchableOpacity
+                onPress={() => setShowAllAppointments(true)}
+                style={styles.showMoreBtn}
+              >
+                <Text style={{ color: "#5b4d54", textAlign:"right", fontWeight: "bold", marginRight:15 }}>Show More...</Text>
+              </TouchableOpacity>
+            )}
+  
+            {showAllAppointments && (
+              <TouchableOpacity
+                onPress={() => setShowAllAppointments(false)}
+                style={styles.showMoreBtn}
+              >
+                <Text style={{ color: "#5b4d54", textAlign:"right", fontWeight: "bold", marginRight:15 }}>Show Less</Text>
+              </TouchableOpacity>
+            )}
+  
+            <Text style={styles.aptHead}>Book Appointment</Text>
+            <FlatList
+              data={doctors}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => <Item item={item} />}
+            />
+          </>
+        }
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    paddingTop: 15,
-    paddingBottom: 15,
-    backgroundColor: "#829582",
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: "#FFBFCC",
     justifyContent: "center",
     paddingLeft: 10,
     paddingRight: 10,
