@@ -55,42 +55,59 @@ const BookAppt = () => {
       return;
     }
 
-    try{if (!slot?.time) {
-      alert("Invalid time slot selected.");
-      return;
-    } 
     
-    const q = query(
-      collection(db, "Appointments"),
-      where("date", "==", selectedDate),
-      where("time", "==", slot.time) 
-    );
-    
-    const querySnapshot = await getDocs(q);
-    
-    if (!querySnapshot.empty) {
-      alert("You already have an Appointment booked for this Slot");
-      return;
-    }}catch(error){
-      console.error("Error booking appointment:", error);
-    }
-    
-    try {
-      // Add appointment with selected date and time to Firestore
-      await addDoc(collection(db, "Appointments"), {
-        doctorId,
-        doctorName,
-        time: slot.time,
-        date: selectedDate,  // Include the selected date here
-      });
 
-      Alert.alert("Success", `Appointment booked at ${slot.time} on ${selectedDate} with ${doctorName}`);
-      setBookedSlots([...bookedSlots, slot.time]);
-      setSelectedSlot(null);
-    } catch (error) {
-      console.error("Error booking appointment:", error);
-      Alert.alert("Error", "Could not book appointment. Try again later.");
-    }
+     Alert.alert(
+          "Confirm Appointment",
+          "Are you sure you want to confirm this appointment?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel", // Does nothing, just closes the alert
+            },
+            {
+              text: "Yes, Confirm",
+              style: "destructive", // Red button for dangerous actions
+              onPress: async () => {
+                try {
+                  const q = query(
+                    collection(db, "Appointments"),
+                    where("date", "==", selectedDate),
+                    where("time", "==", slot.time) 
+                  );
+                  
+                  const querySnapshot = await getDocs(q);
+                  
+                  if (!querySnapshot.empty) {
+                    alert("You already have an Appointment booked for this Slot");
+                    return;
+                  }
+                  
+                
+                    // Add appointment with selected date and time to Firestore
+                    await addDoc(collection(db, "Appointments"), {
+                      doctorId,
+                      doctorName,
+                      time: slot.time,
+                      date: selectedDate,  // Include the selected date here
+                    });
+              
+                    Alert.alert("Success", `Appointment booked at ${slot.time} on ${selectedDate} with ${doctorName}`);
+                    setBookedSlots([...bookedSlots, slot.time]);
+                    setSelectedSlot(null);
+                 
+                } catch (error) {
+                  console.error("Error bookign the appointment:", error);
+                  Alert.alert("Error", "Failed to book the appointment.");
+                }
+              },
+            },
+          ],
+        );
+    
+    
+
+    
   };
 
   const handleDayPress = (day) => {
@@ -115,9 +132,9 @@ const BookAppt = () => {
     <ScrollView  contentContainerStyle={styles.scrollContainer}>
 <View style={styles.header}>
 <Text style={styles.headerText}>Book Appointment with </Text>
-<View style={{flexDirection:'row', justifyContent:'center'}}>
+<View style={{flexDirection:'row', justifyContent:'flex-start'}}>
   <Text style={styles.headerText} >{doctorName}</Text>
-  <FontAwesome5 name="stethoscope" size={28} color="white" />
+  <FontAwesome5 name="stethoscope" size={28} color="#84717A" />
 </View>
 
 </View>
@@ -132,32 +149,47 @@ const BookAppt = () => {
       <Text style={styles.avlbappt}>Available Slots</Text>
 
       <View style={styles.slotContainer}>
-        {defaultSlots.map((slot) =>
-          bookedSlots.includes(slot.time) ? null : (
-            <TouchableOpacity
-              key={slot.id}
-              style={[styles.slot, selectedSlot === slot.time && styles.selectedSlot, ]}
-              onPress={() => setSelectedSlot(slot.time)}
-            >
-              <Text style={styles.slotText}>{slot.time}</Text>
-            </TouchableOpacity>
-          )
-        )}
-      </View>
+  {defaultSlots.map((slot) => (
+    <View key={slot.id} style={styles.slotRow}>
+      <TouchableOpacity
+        style={[
+          styles.slot,
+          bookedSlots.includes(slot.time) ? styles.bookedslot : null, // Gray for booked slots
+          selectedSlot === slot.time && !bookedSlots.includes(slot.time) && styles.selectedSlot, // Dark for selected slot
+        ]}
+        onPress={() => {
+          if (!bookedSlots.includes(slot.time)) {
+            setSelectedSlot(slot.time);
+          } else {
+            Alert.alert("Slot Unavailable", "This slot is already booked.");
+          }
+        }}
+      >
+        <Text style={styles.slotText}>{slot.time}</Text>
+      </TouchableOpacity>
 
-      {selectedSlot && (
-        <TouchableOpacity style={styles.bookButton} onPress={() => handleBookSlot({ time: selectedSlot })}>
-          <Text style={styles.bookButtonText}>Confirm Appointment</Text>
-          <FontAwesome6 name="check-circle" size={24} color="white" />
+      {/* Show booking button only for available and selected slots */}
+      {selectedSlot === slot.time && !bookedSlots.includes(slot.time) && (
+        <TouchableOpacity style={styles.bookButton} onPress={() => handleBookSlot(slot)}>
+          <FontAwesome6 name="check-circle" size={28} color="#E34F67" />
         </TouchableOpacity>
       )}
+    </View>
+  ))}
+</View>
 
-      
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  slotRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  width: "80%",
+},
+
   scrollContainer: {
     flexGrow: 1, // This ensures ScrollView takes all available space when necessary
     alignItems: "center", // Align content inside ScrollView
@@ -167,17 +199,17 @@ const styles = StyleSheet.create({
     
     padding:10,
     borderRadius:20,
-    backgroundColor:'#8c7a92', 
+    borderWidth:3,
+    borderColor:'#84717A'
     
-    elevation:10,
   },
   headerText:{
     fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 15,
+    marginBottom: 10,
+    fontWeight:'semibold',
     textAlign:'center',
-    color:'white', 
-    marginRight:5 
+    color:'black', 
+    marginRight:5 , 
   },
   subHeader: {
     fontSize: 16,
@@ -202,6 +234,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
+  bookedslot: {
+    width: "80%",
+    padding: 15,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    marginVertical: 5,
+    borderRadius: 8,
+    alignItems: "center",
+  },
   selectedSlot: {
     backgroundColor: "#84717A",
   },
@@ -211,11 +251,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   bookButton: {
-    backgroundColor: "#E34F67",
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 10,
-    flexDirection:'row', 
+    padding: 10,
+    borderRadius: 8,    flexDirection:'row', 
   },
   bookButtonText: {
     color: "white",

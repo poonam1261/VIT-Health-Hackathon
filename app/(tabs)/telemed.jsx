@@ -1,3 +1,5 @@
+//READ 
+
 import {
   View,
   Text,
@@ -8,7 +10,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
@@ -16,22 +18,114 @@ import { useRouter } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import { db } from "../../firebase/firebaseConfig";
-import { getDocs, collection, where, orderBy, query } from "firebase/firestore";
+import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
+import LottieView from 'lottie-react-native';           //import Lottie from "lottie-react";       //is a no no if we want to work on phones
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+
+const router = useRouter();
 
 export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [isAnimationVisible, setIsAnimationVisible] = useState(true);
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
+  const doctors2 = [
+    { name: "Dr. Sneha Verma", specialty: "Endocrinologist (Diabetes)" },
+    {
+      name: "Dr. Arjun Mehta",
+      specialty: "Pulmonologist (Chronic Respiratory Diseases)",
+    },
+    {
+      name: "Dr. Priya Sharma",
+      specialty: "Nephrologist (Chronic Kidney Disease)",
+    },
+    {
+      name: "Dr. Karan Kapoor",
+      specialty: "Rheumatologist (Arthritis & Autoimmune Disorders)",
+    },
+    { name: "Dr. Neha Joshi", specialty: "Oncologist (Cancer Specialist)" },
+    {
+      name: "Dr. Vikram Rao",
+      specialty: "Gastroenterologist (Chronic Liver Disease)",
+    },
+    {
+      name: "Dr. Ananya Iyer",
+      specialty: "Neurologist (Alzheimer's & Parkinson’s)",
+    },
+    {
+      name: "Dr. Sameer Malhotra",
+      specialty: "Psychiatrist (Chronic Mental Illness)",
+    },
+    {
+      name: "Dr. Riya Desai",
+      specialty: "Geriatrician (Age-related Chronic Conditions)",
+    },
+  ];
 
   useEffect(() => {
     fetchDoctors();
   }, []);
 
-  useEffect(() => {
-    fetchAppts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchAppts();
+    }, []),
+  );
+  const handleDeleteAppt = async (id) => {
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to delete this appointment?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel", // Does nothing, just closes the alert
+        },
+        {
+          text: "Yes, Delete",
+          style: "destructive", // Red button for dangerous actions
+          onPress: async () => {
+            try {
+              await deleteDoc(doc(db, "Appointments", id)); // Delete the document
+              Alert.alert("Success", "Appointment deleted successfully!");
+              fetchAppts(); // Refresh the list
+            } catch (error) {
+              console.error("Error deleting appointment:", error);
+              Alert.alert("Error", "Failed to delete the appointment.");
+            }
+          },
+        },
+      ],
+    );
+  };
+
+
+
+
+
+
+// RESET MOOD: uncomment below code -> run once(npx expo start -c) -> comment below -> refresh, this way peelu mood is reset to 0 and can be uplifted again.
+
+// if (typeof window !== "undefined") {
+//   AsyncStorage.setItem("healthScore", "0");
+// }  
+
+////////////////////////////////
+
+
+
+
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsAnimationVisible(true); // Show animation when screen is focused
+      return () => setIsAnimationVisible(false); // Hide animation when screen is unfocused
+    }, [])
+  );
 
   const fetchDoctors = async () => {
     try {
@@ -40,12 +134,11 @@ export default function TeleMed() {
         snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        })),
+        }))
       );
       console.log("Doctors:", doctors);
-      return appointments;
     } catch (error) {
-      console.error("Error fetching appointments:", error);
+      console.error("Error fetching doctors:", error);
     }
   };
 
@@ -54,7 +147,7 @@ export default function TeleMed() {
       const q = query(
         collection(db, "Appointments"),
         where("date", ">=", defaultDate),
-        orderBy("date", "asc"),
+        orderBy("date", "asc")
       );
       const snapshot = await getDocs(q);
       const fetchedAppointments = snapshot.docs.map((doc) => ({
@@ -84,7 +177,13 @@ export default function TeleMed() {
             color="white"
             style={{ marginLeft: 10 }}
           />
-          <Text style={styles.doctorName}>{item.name}</Text>
+          <Text style={styles.doctorName} numberOfLines={2}>
+            {item.name.startsWith("Dr.") && item.name.includes(" ")
+              ? item.name.split(" ").slice(0, 2).join(" ") +
+                "\n" +
+                item.name.split(" ").slice(2).join(" ")
+              : item.name}
+          </Text>
         </View>
         <Text style={styles.doctorQual}>{item.qual}</Text>
       </View>
@@ -102,7 +201,7 @@ export default function TeleMed() {
   );
 
   const AptItem = ({ item }) => (
-    <TouchableOpacity style={styles.AptContainer}>
+    <TouchableOpacity style={styles.AptContainer} onPress={handleApptPress}>
       <View style={styles.AptItem}>
         <View
           style={{
@@ -117,11 +216,17 @@ export default function TeleMed() {
         <Text style={styles.AptTime}>{item.time}</Text>
       </View>
       <View style={styles.seperator}></View>
-      <Text style={styles.doctorNameApt}>{item.doctorName}</Text>
+      <View style={{ flexDirection: "row" }} justifyContent="space-between">
+        <Text style={styles.doctorNameApt}>{item.doctorName}</Text>
+        <TouchableOpacity
+          style={styles.cancelAppt}
+          onPress={() => handleDeleteAppt(item.id)}
+        >
+          <Text>Cancel Appointment</Text>
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
-
-  const router = useRouter();
 
   const handleBookApt = (doctor) => {
     router.push({
@@ -134,6 +239,71 @@ export default function TeleMed() {
     });
   };
 
+  const BlobAnimation = ({ isVisible }) => {
+    const [score, setScore] = useState(0);
+    const [animationData, setAnimationData] = useState(null);
+    const animationRef = useRef(null);
+
+    const loadScore = async () => {
+      try {
+        const storedScore = await AsyncStorage.getItem("healthScore");
+        if (storedScore) {
+          setScore(parseInt(storedScore, 10));
+        }
+      } catch (error) {
+        console.error("Error loading score:", error);
+      }
+    };
+
+
+
+
+    const updateAnimationData = () => {
+      let anim;
+      if (score < 25) {
+        anim = require("../../assets/animations/angry.json");
+      } else if (score < 50) {
+        anim = require("../../assets/animations/concerned.json");
+      } else if (score < 75) {
+        anim = require("../../assets/animations/idle.json");
+      } else {
+        anim = require("../../assets/animations/happy.json");
+      }
+      setAnimationData(anim);
+    };
+
+    useEffect(() => {
+      loadScore();
+    }, []);
+
+    useEffect(() => {
+      updateAnimationData();
+    }, [score]);
+
+    return (
+      <View
+        style={{
+          position: "absolute",
+          bottom: -60,
+          right: -40,
+          width: 250,
+          height: 250,
+          opacity: isVisible ? 1 : 0,
+        }}
+      >
+        {animationData && (
+          <LottieView
+            ref={animationRef}
+            source={animationData}
+            autoPlay={isVisible}
+            loop
+            style={{ width: "100%", height: "100%" }}
+          />
+        )}
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
@@ -142,7 +312,6 @@ export default function TeleMed() {
             <View style={styles.header}>
               <Text style={styles.headerText}>Tele Medicine</Text>
             </View>
-
             <View style={styles.message}>
               <Image
                 source={require("../../assets/images/doctorImg.png")}
@@ -156,32 +325,11 @@ export default function TeleMed() {
             <TouchableOpacity
               style={styles.survey}
               onPress={() => router.push("survey")}
+              // testing: onPress={() => router.push("SymptomScreen")}
             >
               <Text style={styles.surveyText}>Take Up Medical Survey</Text>
               <Feather name="arrow-right-circle" size={30} color="white" />
             </TouchableOpacity>
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={styles.aptHead}>Scheduled Appointments</Text>
-              <Foundation
-                name="calendar"
-                size={45}
-                color="#5b4d54"
-                style={styles.calendarIcon}
-                onPress={() =>
-                  router.push({
-                    pathname: "../calendar/calendarApp",
-                    params: { appointments: JSON.stringify(appointments) },
-                  })
-                }
-              />
-            </View>
           </>
         }
         data={appointments}
@@ -197,8 +345,9 @@ export default function TeleMed() {
             />
           </>
         }
-        contentContainerStyle={{ paddingBottom: 20 }} // Prevent bottom cutoff
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
+      <BlobAnimation isVisible={isAnimationVisible} />
     </SafeAreaView>
   );
 }
@@ -207,9 +356,9 @@ const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "#FFBFCC",
+    paddingTop: 15,
+    paddingBottom: 15,
+    backgroundColor: "#829582",
     justifyContent: "center",
     paddingLeft: 10,
     paddingRight: 10,
@@ -218,7 +367,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     alignSelf: "center",
-    color: "#fff",
+    color: "#fff", 
   },
   message: {
     padding: 10,
@@ -383,5 +532,11 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "rgba(237, 103, 103, 0.87)",
     margin: 10,
+  },
+  cancelAppt: {
+    backgroundColor: "rgba(240, 8, 8, 0.14)",
+    marginRight: 10,
+    padding: 5,
+    borderRadius: 8,
   },
 });
