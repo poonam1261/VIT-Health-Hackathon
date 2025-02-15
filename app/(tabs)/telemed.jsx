@@ -19,7 +19,8 @@ import Octicons from "@expo/vector-icons/Octicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import { db } from "../../firebase/firebaseConfig";
 import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
-import LottieView from 'lottie-react-native';           //import Lottie from "lottie-react";       //is a no no if we want to work on phones
+import LottieView from 'lottie-react-native';
+// import Lottie from "lottie-react";       //is a no no if we want to work on phones
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -100,23 +101,6 @@ export default function TeleMed() {
       ],
     );
   };
-
-
-
-
-
-
-// RESET MOOD: uncomment below code -> run once(npx expo start -c) -> comment below -> refresh, this way peelu mood is reset to 0 and can be uplifted again.
-
-// if (typeof window !== "undefined") {
-//   AsyncStorage.setItem("healthScore", "0");
-// }  
-
-////////////////////////////////
-
-
-
-
 
 
 
@@ -255,7 +239,17 @@ export default function TeleMed() {
       }
     };
 
-
+    useEffect(() => {
+      const decrementInterval = setInterval(async () => {
+        setScore((prevScore) => {
+          const newScore = Math.max(prevScore - 25, 0); // Ensure score doesn't go below 0
+          AsyncStorage.setItem("healthScore", newScore.toString());
+          return newScore;
+        });
+      }, 30000); // 30 seconds
+    
+      return () => clearInterval(decrementInterval);
+    }, []);
 
 
     const updateAnimationData = () => {
@@ -284,7 +278,7 @@ export default function TeleMed() {
       <View
         style={{
           position: "absolute",
-          bottom: -60,
+          bottom: -63,
           right: -40,
           width: 250,
           height: 250,
@@ -348,6 +342,7 @@ export default function TeleMed() {
         contentContainerStyle={{ paddingBottom: 20 }}
       />
       <BlobAnimation isVisible={isAnimationVisible} />
+
     </SafeAreaView>
   );
 }
@@ -356,9 +351,9 @@ const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    paddingTop: 15,
-    paddingBottom: 15,
-    backgroundColor: "#829582",
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: "#FFBFCC",
     justifyContent: "center",
     paddingLeft: 10,
     paddingRight: 10,
@@ -367,7 +362,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     alignSelf: "center",
-    color: "#fff", 
+    color: "#fff",
   },
   message: {
     padding: 10,
