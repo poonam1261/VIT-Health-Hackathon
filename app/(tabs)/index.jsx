@@ -19,23 +19,6 @@ if (Platform.OS === "android") {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export default function index() {
-  const router = useRouter();
-  return (
-    <SafeAreaView>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Home</Text>
-        <View style={{alignSelf:'flex-end'}}>
-        <MaterialCommunityIcons name="face-man-profile" size={34} color="white" />
-
-        </View>
-       
-      </View>
-      
-    </SafeAreaView>
-  )
-}
-
 
 const PillIcon = () => (
   <LinearGradient
