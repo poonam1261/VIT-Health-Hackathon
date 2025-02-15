@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
@@ -28,6 +28,7 @@ export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [isAnimationVisible, setIsAnimationVisible] = useState(true);
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
   const [showAllAppointments, setShowAllAppointments] = useState(false);
@@ -361,6 +362,7 @@ export default function TeleMed() {
         }
         contentContainerStyle={{ paddingBottom: 20 }}
       />
+      <BlobAnimation isVisible={isAnimationVisible} />
     </SafeAreaView>
   );
 }
