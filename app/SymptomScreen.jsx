@@ -18,13 +18,13 @@ const updateScore = async (increment = 25) => {
     // Retrieve the existing score from AsyncStorage
     const scoreStr = await AsyncStorage.getItem("healthScore"); // <-- Using AsyncStorage.getItem instead of localStorage.getItem
     let score = scoreStr ? parseInt(scoreStr, 10) : 0;
-    
+
     // Increment the score and ensure it doesn't exceed 100
     score = Math.min(score + increment, 100);
-    
+
     // Save the updated score back to AsyncStorage
     await AsyncStorage.setItem("healthScore", score.toString()); // <-- Using AsyncStorage.setItem instead of localStorage.setItem
-    
+
     return score;
   } catch (error) {
     console.error("Error updating score:", error);
@@ -70,8 +70,8 @@ const SymptomScreen = () => {
     "Vomiting",
     "Weakness",
     "Weight gain",
-    "Weight loss"
-];
+    "Weight loss",
+  ];
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
 
   // Update symptom severity
@@ -91,7 +91,7 @@ const SymptomScreen = () => {
       }, {});
 
       const payload = {
-        patient: auth.currentUser.uid, // Fetch user ID from firebase
+        //patient: auth.currentUser.uid, // Fetch user ID from firebase
         patient: "1", // hardcoded value
         symptom_data: symptomsObject,
       };
@@ -143,11 +143,11 @@ const SymptomScreen = () => {
       alert(`Error: ${error.message}`);
     }
 
-      //window.location.reload();   forced refresh
-      // Update the score (increment by 10 points for each submission)
-      const updatedScore = updateScore(); // Update the score
-      console.log("Updated Health Score:", updatedScore);
-      //navigation.navigate("TeleMed");   //setup in navigator
+    //window.location.reload();   forced refresh
+    // Update the score (increment by 10 points for each submission)
+    const updatedScore = updateScore(); // Update the score
+    console.log("Updated Health Score:", updatedScore);
+    //navigation.navigate("TeleMed");   //setup in navigator
   };
 
   return (

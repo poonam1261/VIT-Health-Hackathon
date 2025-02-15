@@ -1,4 +1,4 @@
-//READ 
+//READ
 
 import {
   View,
@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState, useCallback, useRef} from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
@@ -18,10 +18,18 @@ import { useRouter } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import { db } from "../../firebase/firebaseConfig";
-import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
-import LottieView from 'lottie-react-native';           //import Lottie from "lottie-react";       //is a no no if we want to work on phones
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
+import {
+  getDocs,
+  collection,
+  where,
+  orderBy,
+  query,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import LottieView from "lottie-react-native"; //import Lottie from "lottie-react";       //is a no no if we want to work on phones
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 const router = useRouter();
 
@@ -101,30 +109,19 @@ export default function TeleMed() {
     );
   };
 
+  // RESET MOOD: uncomment below code -> run once(npx expo start -c) -> comment below -> refresh, this way peelu mood is reset to 0 and can be uplifted again.
 
+  // if (typeof window !== "undefined") {
+  //   AsyncStorage.setItem("healthScore", "0");
+  // }
 
-
-
-
-// RESET MOOD: uncomment below code -> run once(npx expo start -c) -> comment below -> refresh, this way peelu mood is reset to 0 and can be uplifted again.
-
-// if (typeof window !== "undefined") {
-//   AsyncStorage.setItem("healthScore", "0");
-// }  
-
-////////////////////////////////
-
-
-
-
-
-
+  ////////////////////////////////
 
   useFocusEffect(
     useCallback(() => {
       setIsAnimationVisible(true); // Show animation when screen is focused
       return () => setIsAnimationVisible(false); // Hide animation when screen is unfocused
-    }, [])
+    }, []),
   );
 
   const fetchDoctors = async () => {
@@ -134,7 +131,7 @@ export default function TeleMed() {
         snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }))
+        })),
       );
       console.log("Doctors:", doctors);
     } catch (error) {
@@ -147,7 +144,7 @@ export default function TeleMed() {
       const q = query(
         collection(db, "Appointments"),
         where("date", ">=", defaultDate),
-        orderBy("date", "asc")
+        orderBy("date", "asc"),
       );
       const snapshot = await getDocs(q);
       const fetchedAppointments = snapshot.docs.map((doc) => ({
@@ -255,9 +252,6 @@ export default function TeleMed() {
       }
     };
 
-
-
-
     const updateAnimationData = () => {
       let anim;
       if (score < 25) {
@@ -324,8 +318,8 @@ export default function TeleMed() {
 
             <TouchableOpacity
               style={styles.survey}
-              onPress={() => router.push("survey")}
-              // testing: onPress={() => router.push("SymptomScreen")}
+              //onPress={() => router.push("survey")}
+              onPress={() => router.push("SymptomScreen")}
             >
               <Text style={styles.surveyText}>Take Up Medical Survey</Text>
               <Feather name="arrow-right-circle" size={30} color="white" />
