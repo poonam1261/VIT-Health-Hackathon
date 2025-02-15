@@ -57,23 +57,6 @@ export default function PrescriptionsList() {
               {/* Show Prescription Only If It Exists */}
              
                 <View style={{ marginTop: 10 }}>
-                  <Text style={styles.prescriptionTitle}>Prescription:</Text>
-                  {item.prescription.medicines.map((med, index) => (
-                    <Text key={index} style={styles.medicineText}>
-                      • {med.name} - {med.dosage} - {med.frequency}
-                    </Text>
-                  ))}
-
-                  {/* Doctor's Signature */}
-                  {item.prescription.signature ? (
-                    <View style={{ alignItems: "center", marginTop: 10 }}>
-                      <Text style={styles.signatureTitle}>Doctor's Signature:</Text>
-                      <Image
-                        source={{ uri: item.prescription.signature }}
-                        style={styles.signatureImage}
-                      />
-                    </View>
-                  ) : null}
 
                   {/* View Full Prescription Button */}
                   <TouchableOpacity 
