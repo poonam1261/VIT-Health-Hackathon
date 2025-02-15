@@ -4,7 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from '@react-navigation/native';
 
-const BlobAnimation = ({ positionStyle }) => {
+const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
+  const [happinessScore, setHappinessScore] = useState(0);
   const [score, setScore] = useState(0);
   const [animationData, setAnimationData] = useState(null);
   const animationRef = useRef(null);
@@ -65,6 +66,13 @@ const BlobAnimation = ({ positionStyle }) => {
       return () => setIsVisible(false); // Hide when losing focus
     }, [])
   );
+
+  useEffect(() => {
+    if (typeof onScoreChange === "function") {
+      onScoreChange(score);
+    }
+    console.log("Score changed:", score);
+  }, [score, onScoreChange]);
 
   return (
     <View

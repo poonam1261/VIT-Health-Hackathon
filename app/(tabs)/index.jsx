@@ -28,7 +28,7 @@ if (Platform.OS === "android") {
 }
 
 // ICONS & CARDS
-
+const [happinessScore, setHappinessScore] = useState(0);
 const PillIcon = () => (
   <LinearGradient
     colors={["#FFCDD2", "#E57373"]}
@@ -292,15 +292,18 @@ export default function index() {
   const happinessAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(happinessAnim, {
-      toValue: 1,
-      duration: 2000,
+      toValue: happinessScore,  // Animate to the latest score
+      duration: 1000,
       useNativeDriver: false,
     }).start();
-  }, []);
+  }, [happinessScore]);
+
   const fillWidth = happinessAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, meterWidth * 0.85],
+    inputRange: [0, 100], // Update this to match score range (0 to 100)
+    outputRange: [0, meterWidth],
   });
+  
+  
 
   const handleDeleteNotification = (notificationText) => {
     setNotifications(notifications.filter((item) => item !== notificationText));
@@ -323,13 +326,19 @@ export default function index() {
           <View style={styles.leftColumn}>
             <View style={styles.virtualPetContainer}>
               {/* <Text style={styles.virtualPetText}>Peelu here?</Text> */}
+
+
               <BlobAnimation 
                 isVisible={true}
                 positionStyle={{
                   position: "relative",
                   alignSelf: "center",
                 }}
+                onScoreChange={setHappinessScore}
               />
+
+
+
             </View>
             <View style={styles.happinessContainer}>
               <Text style={styles.happinessTitle}>Happiness Meter</Text>
@@ -340,7 +349,8 @@ export default function index() {
                 <Animated.View
                   style={[styles.happinessFill, { width: fillWidth }]}
                 />
-                <Text style={styles.happinessValue}>75%</Text>
+                <Text style={styles.happinessValue}>{happinessScore}%</Text>
+
               </View>
             </View>
           </View>
