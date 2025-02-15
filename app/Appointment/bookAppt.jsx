@@ -95,6 +95,8 @@ const BookAppt = () => {
                     Alert.alert("Success", `Appointment booked at ${slot.time} on ${selectedDate} with ${doctorName}`);
                     setBookedSlots([...bookedSlots, slot.time]);
                     setSelectedSlot(null);
+
+                    router.push('../survey')
                  
                 } catch (error) {
                   console.error("Error bookign the appointment:", error);
