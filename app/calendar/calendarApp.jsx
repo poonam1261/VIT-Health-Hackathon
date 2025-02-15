@@ -7,7 +7,9 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { useStoreRootState } from "expo-router/build/global-state/router-store";
 
 const ExpandableCalendarScreen = () => {
-  const [selectedDate, setSelectedDate] = useState("2025-02-06");
+  const today = new Date();
+ const defaultDate = today.toISOString().split('T')[0]; // Formats as "yyyy-mm-dd"
+   const [selectedDate, setSelectedDate] = useState(defaultDate);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
