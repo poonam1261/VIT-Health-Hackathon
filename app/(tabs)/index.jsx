@@ -16,9 +16,7 @@ export default function index() {
         </View>
        
       </View>
-      <TouchableOpacity onPress={() => router.push('/temp/temp3')}>
-          <Text>Click Me</Text>
-        </TouchableOpacity>
+      
     </SafeAreaView>
   )
 }
