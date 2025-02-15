@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   doneText: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
+    //fontWeight: "bold",
   },
 });
 

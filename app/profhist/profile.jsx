@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
       fontSize: 16,
       color: "#fff",
       alignContent: "center",
-      fontWeight: "bold",
+      //fontWeight: "bold",
     }
   });
 

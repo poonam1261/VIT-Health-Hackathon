@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   header: {
     display: 'flex',
     paddingVertical: 10,
-    backgroundColor: "#ae887b",
+    backgroundColor: "#829582",
     alignItems: "center",
     elevation: 5,
   },
