@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
+//import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 
 export default function Educational() {
@@ -21,7 +21,6 @@ export default function Educational() {
   ];
 
   return (
-    <LinearGradient colors={["#dac6be", "#ccb0a4", "#bd9989"]} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Lifestyle</Text>
@@ -41,7 +40,6 @@ export default function Educational() {
           ))}
         </ScrollView>
       </SafeAreaView>
-    </LinearGradient>
   );
 }
 
