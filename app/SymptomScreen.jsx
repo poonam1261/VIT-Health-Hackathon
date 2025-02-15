@@ -137,7 +137,7 @@ const SymptomScreen = () => {
       console.log("Success:", data);
 
       await AsyncStorage.setItem("savedSymptoms", JSON.stringify(payload));
-      navigation.navigate("meddash");
+      navigation.goBack() // navigation.navigate("meddash");
     } catch (error) {
       console.error("Submission failed:", error);
       alert(`Error: ${error.message}`);
