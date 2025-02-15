@@ -22,10 +22,12 @@ export default function Educational() {
 
   return (
     <LinearGradient colors={["#dac6be", "#ccb0a4", "#bd9989"]} style={styles.container}>
-      <SafeAreaView>
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Lifestyle</Text>
         </View>
+        
+        {/* Added ScrollView to enable scrolling */}
         <ScrollView contentContainerStyle={styles.contentContainer}>
           {buttons.map((button) => (
             <TouchableOpacity
@@ -44,6 +46,9 @@ export default function Educational() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
   },
@@ -64,6 +69,8 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-evenly",
     paddingVertical: 20,
+    // Added padding to prevent content from getting cut off
+    paddingBottom: 30,
   },
   button: {
     width: 160,

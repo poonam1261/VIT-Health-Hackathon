@@ -1,3 +1,5 @@
+//READ 
+
 import {
   View,
   Text,
@@ -8,7 +10,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
@@ -16,20 +18,18 @@ import { useRouter } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import { db } from "../../firebase/firebaseConfig";
-import {
-  getDocs,
-  collection,
-  where,
-  orderBy,
-  query,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
-import { useFocusEffect } from "@react-navigation/native";
+import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
+import LottieView from 'lottie-react-native';           //import Lottie from "lottie-react";       //is a no no if we want to work on phones
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+
+const router = useRouter();
+
 export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [isAnimationVisible, setIsAnimationVisible] = useState(true);
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
   const doctors2 = [
@@ -101,6 +101,32 @@ export default function TeleMed() {
     );
   };
 
+
+
+
+
+
+// RESET MOOD: uncomment below code -> run once(npx expo start -c) -> comment below -> refresh, this way peelu mood is reset to 0 and can be uplifted again.
+
+// if (typeof window !== "undefined") {
+//   AsyncStorage.setItem("healthScore", "0");
+// }  
+
+////////////////////////////////
+
+
+
+
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsAnimationVisible(true); // Show animation when screen is focused
+      return () => setIsAnimationVisible(false); // Hide animation when screen is unfocused
+    }, [])
+  );
+
   const fetchDoctors = async () => {
     try {
       const snapshot = await getDocs(collection(db, "Doctors"));
@@ -108,12 +134,11 @@ export default function TeleMed() {
         snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        })),
+        }))
       );
       console.log("Doctors:", doctors);
-      return appointments;
     } catch (error) {
-      console.error("Error fetching appointments:", error);
+      console.error("Error fetching doctors:", error);
     }
   };
 
@@ -122,7 +147,7 @@ export default function TeleMed() {
       const q = query(
         collection(db, "Appointments"),
         where("date", ">=", defaultDate),
-        orderBy("date", "asc"),
+        orderBy("date", "asc")
       );
       const snapshot = await getDocs(q);
       const fetchedAppointments = snapshot.docs.map((doc) => ({
@@ -203,8 +228,6 @@ export default function TeleMed() {
     </TouchableOpacity>
   );
 
-  const router = useRouter();
-
   const handleBookApt = (doctor) => {
     router.push({
       pathname: "../Appointment/bookAppt",
@@ -216,6 +239,71 @@ export default function TeleMed() {
     });
   };
 
+  const BlobAnimation = ({ isVisible }) => {
+    const [score, setScore] = useState(0);
+    const [animationData, setAnimationData] = useState(null);
+    const animationRef = useRef(null);
+
+    const loadScore = async () => {
+      try {
+        const storedScore = await AsyncStorage.getItem("healthScore");
+        if (storedScore) {
+          setScore(parseInt(storedScore, 10));
+        }
+      } catch (error) {
+        console.error("Error loading score:", error);
+      }
+    };
+
+
+
+
+    const updateAnimationData = () => {
+      let anim;
+      if (score < 25) {
+        anim = require("../../assets/animations/angry.json");
+      } else if (score < 50) {
+        anim = require("../../assets/animations/concerned.json");
+      } else if (score < 75) {
+        anim = require("../../assets/animations/idle.json");
+      } else {
+        anim = require("../../assets/animations/happy.json");
+      }
+      setAnimationData(anim);
+    };
+
+    useEffect(() => {
+      loadScore();
+    }, []);
+
+    useEffect(() => {
+      updateAnimationData();
+    }, [score]);
+
+    return (
+      <View
+        style={{
+          position: "absolute",
+          bottom: -60,
+          right: -40,
+          width: 250,
+          height: 250,
+          opacity: isVisible ? 1 : 0,
+        }}
+      >
+        {animationData && (
+          <LottieView
+            ref={animationRef}
+            source={animationData}
+            autoPlay={isVisible}
+            loop
+            style={{ width: "100%", height: "100%" }}
+          />
+        )}
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
@@ -224,7 +312,6 @@ export default function TeleMed() {
             <View style={styles.header}>
               <Text style={styles.headerText}>Tele Medicine</Text>
             </View>
-
             <View style={styles.message}>
               <Image
                 source={require("../../assets/images/doctorImg.png")}
@@ -243,28 +330,6 @@ export default function TeleMed() {
               <Text style={styles.surveyText}>Take Up Medical Survey</Text>
               <Feather name="arrow-right-circle" size={30} color="white" />
             </TouchableOpacity>
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={styles.aptHead}>Scheduled Appointments</Text>
-              <Foundation
-                name="calendar"
-                size={45}
-                color="#5b4d54"
-                style={styles.calendarIcon}
-                onPress={() =>
-                  router.push({
-                    pathname: "../calendar/calendarApp",
-                    params: { appointments: JSON.stringify(appointments) },
-                  })
-                }
-              />
-            </View>
           </>
         }
         data={appointments}
@@ -280,8 +345,9 @@ export default function TeleMed() {
             />
           </>
         }
-        contentContainerStyle={{ paddingBottom: 20 }} // Prevent bottom cutoff
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
+      <BlobAnimation isVisible={isAnimationVisible} />
     </SafeAreaView>
   );
 }
