@@ -1,5 +1,5 @@
 import { Redirect } from 'expo-router';
 
 export default function Index() {
-  return <Redirect href="/Doctor/DocAppts" />;
+  return <Redirect href="/telemed" />;  //return <Redirect href="/Doctor/DocAppts" />;      
 }
