@@ -16,7 +16,7 @@ import app from "../../firebase/firebaseConfig"; // Adjust the path according to
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 
-function LoginScreen({}) {
+function DoctorLogin({}) {
   const navigation = useNavigation();
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -37,7 +37,7 @@ function LoginScreen({}) {
 
       if (user) {
         setLoading(false);
-        navigation.navigate("(tabs)");
+        router.push("../Doctor/DocAppts");
       } else {
         console.error("User not found after login");
         setLoading(false);
@@ -68,7 +68,7 @@ function LoginScreen({}) {
           style={styles.buttonDesigner}
           onPress={() => console.log("Designer pressed")}
         >
-          <Button color="#8c7a92" title="Patient Login" />
+          <Button color="#8c7a92" title="Doctor Login" />
         </TouchableOpacity>
       </View>
       <TextInput
@@ -96,7 +96,7 @@ function LoginScreen({}) {
         <Button
           color="#8c7a92"
           title="Register"
-          onPress={() => router.push("Login_Register/RegisterPage")}
+          onPress={() => router.push("Login_Register/DoctorRegistration")}
         />
       </View>
     </View>
@@ -170,4 +170,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default DoctorLogin;
