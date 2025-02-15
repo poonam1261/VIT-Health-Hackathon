@@ -222,7 +222,7 @@ export default function TeleMed() {
         ListHeaderComponent={
           <>
             <View style={styles.header}>
-              <Text style={styles.headerText}>Tele Medicine</Text>
+              <Text style={styles.headerText}>Telemedicine</Text>
             </View>
 
             <View style={styles.message}>
