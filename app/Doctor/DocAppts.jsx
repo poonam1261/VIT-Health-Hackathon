@@ -5,6 +5,7 @@ import { db } from '../../firebase/firebaseConfig'; // Ensure correct path
 import { Octicons } from '@expo/vector-icons';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function DocAppts() {
   const router = useRouter();
@@ -81,8 +82,8 @@ export default function DocAppts() {
   );
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 10 }}>Dr. Sameera Malhotra's Appointments</Text>
+    <SafeAreaView style={{ flex: 1, padding: 20 }}>
+      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 10,alignSelf:'center' }}>Your Appointments</Text>
 
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
@@ -95,7 +96,7 @@ export default function DocAppts() {
           renderItem={({ item }) => <AptItem item={item} />}
           />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 

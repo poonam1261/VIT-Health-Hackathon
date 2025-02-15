@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Feather from "@expo/vector-icons/Feather";
@@ -16,21 +16,11 @@ import { useRouter } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import { db } from "../../firebase/firebaseConfig";
-import {
-  getDocs,
-  collection,
-  where,
-  orderBy,
-  query,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
 import LottieView from 'lottie-react-native';
 // import Lottie from "lottie-react";       //is a no no if we want to work on phones
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
 
 const router = useRouter();
 
@@ -38,8 +28,10 @@ export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [isAnimationVisible, setIsAnimationVisible] = useState(true);
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
+  const [showAllAppointments, setShowAllAppointments] = useState(false);
   
 
   useEffect(() => {
@@ -370,6 +362,7 @@ export default function TeleMed() {
         }
         contentContainerStyle={{ paddingBottom: 20 }}
       />
+      <BlobAnimation isVisible={isAnimationVisible} />
     </SafeAreaView>
   );
 }

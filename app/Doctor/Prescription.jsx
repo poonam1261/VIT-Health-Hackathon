@@ -130,10 +130,12 @@ const PrescriptionScreen = () => {
         <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
           <Text style={styles.buttonText}>Clear Signature</Text>
         </TouchableOpacity>
-      </View>
+     
       <TouchableOpacity style={styles.saveButton} onPress={() => {savePrescription("8Yzs4YgkTKcSOsf5XsP4")}}>
         <Text style={styles.buttonText}>Save Prescription</Text>
+        
       </TouchableOpacity>
+       </View>
     </ScrollView>
   );
 };
@@ -162,14 +164,15 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   addButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#829582",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
   },
   buttonText: {
-    color: "black",
+    color: "white",
     fontWeight: "bold",
+    
   },
   medicineItem: {
     backgroundColor: "#f8f8f8",
@@ -195,12 +198,23 @@ const styles = StyleSheet.create({
     borderColor: "#000",
   },
   saveButton: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#8c7a92",
     padding: 15,
     borderRadius: 8,
-    alignItems: "center",
     marginTop: 20,
   },
+  clearButton:{
+    backgroundColor: "#8c7a92",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 20,
+    marginRight:10
+  }, 
+  buttonContainer:{
+    flexDirection:'row', 
+    justifyContent:'space-evenly', 
+    wdith:'100%'
+  }
 });
 
 export default PrescriptionScreen;
