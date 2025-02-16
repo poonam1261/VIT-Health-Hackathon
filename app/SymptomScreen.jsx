@@ -72,6 +72,7 @@ const SymptomScreen = () => {
     "Slow healing wounds",
     "Sore throat",
     "Sweating",
+    "Swollen Legs",
     "Vision changes",
     "Vomiting",
     "Weakness",

@@ -15,10 +15,18 @@ const Survey = () => {
   const [medicineInteractions, setMedicineInteractions] = useState("");
   const [painScale, setPainScale] = useState(5);
   const [otherObservations, setOtherObservations] = useState("");
-
-  const [bloodWorkTestsDone, setBloodWorkTestsDone] = useState("");
-  const [bloodSugarFluctuations, setBloodSugarFluctuations] = useState("");
-  const [diabetesMedication, setDiabetesMedication] = useState("");
+  const [symptomsStart, setSymptomsStart] = useState("");
+  const[infection, setInfection] = useState("");
+  const [bloodwork, setBloodwork] = useState('');
+const [hbA1c, setHbA1c] = useState('');
+const [fastingGlucose, setFastingGlucose] = useState('');
+const [kidneyFunction, setKidneyFunction] = useState('');
+const [lipidPanel, setLipidPanel] = useState('');
+const [liverFunction, setLiverFunction] = useState('');
+const [electrolytePanel, setElectrolytePanel] = useState('');
+const [eyeExam, setEyeExam] = useState('');
+const [footExam, setFootExam] = useState('');
+const [heartHealth, setHeartHealth] = useState('');
 
   const handleSubmit = () => {
     const formData = {
@@ -29,9 +37,20 @@ const Survey = () => {
       foodInteractions,
       medicineInteractions,
       painScale,
-      bloodSugarFluctuations,
-      diabetesMedication,
       otherObservations,
+      symptomsStart,
+      infection,
+      bloodwork,
+      hbA1c,
+      fastingGlucose,
+      kidneyFunction,
+      lipidPanel,
+      liverFunction,
+      electrolytePanel,
+      eyeExam,
+      footExam,
+      heartHealth
+
     };
 
     console.log("Pre-Appointment Form Data:", formData);
@@ -145,37 +164,118 @@ const Survey = () => {
 
         {symptomsAdded && <Text style={styles.symptomsText}>Symptoms have been added successfully!</Text>}
 
-        <Text style={styles.infoText}>Based on your medical history, you have Type 2 Diabetes.</Text>
 
-        {/* Question 1 */}
-        <Text style={styles.label}>Have you done any blood-work tests? If so, what were your blood sugar levels before and after fasting?</Text>
+        <Text style={styles.label}>When did these symptoms start? Are they getting worse?</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter your response"
+          placeholder="eg 1 day, 1 week, etc."
           placeholderTextColor="gray"
-          value={bloodWorkTestsDone}
-          onChangeText={setBloodWorkTestsDone}
+          value={symptomsStart}
+          onChangeText={setSymptomsStart}
         />
 
-        {/* Question 2 */}
-        <Text style={styles.label}>Have you experienced any unusual blood sugar fluctuations recently?</Text>
+        <Text style={styles.label}>Have you had any recent infection?</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter your response"
+          placeholder="Enter infection"
           placeholderTextColor="gray"
-          value={bloodSugarFluctuations}
-          onChangeText={setBloodSugarFluctuations}
+          value={infection}
+          onChangeText={setInfection}
         />
 
-        {/* Question 3 */}
-        <Text style={styles.label}>Are you currently taking any diabetes medication?</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your response"
-          placeholderTextColor="gray"
-          value={diabetesMedication}
-          onChangeText={setDiabetesMedication}
-        />
+<Text style={styles.label}>When was your last bloodwork done?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Enter date and results"
+  placeholderTextColor="gray"
+  value={bloodwork}
+  onChangeText={setBloodwork}
+ />
+
+<Text style={styles.label}>Have you had an HbA1c test recently?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Enter details"
+  placeholderTextColor="gray"
+  value={hbA1c}
+  onChangeText={setHbA1c}
+/>
+
+<Text style={styles.label}>Have you had a fasting blood glucose test?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Enter details"
+  placeholderTextColor="gray"
+  value={fastingGlucose}
+  onChangeText={setFastingGlucose}
+/>
+
+<Text style={styles.label}>Have you had your kidney function checked?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="BUN, creatinine, eGFR, urine albumin test"
+  placeholderTextColor="gray"
+  value={kidneyFunction}
+  onChangeText={setKidneyFunction}
+/>
+
+<Text style={styles.label}>Have you had a lipid panel done?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Cholesterol levels: LDL, HDL, triglycerides"
+  placeholderTextColor="gray"
+  value={lipidPanel}
+  onChangeText={setLipidPanel}
+/>
+
+<Text style={styles.label}>Have you had liver function tests?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Enter details"
+  placeholderTextColor="gray"
+  value={liverFunction}
+  onChangeText={setLiverFunction}
+/>
+
+<Text style={styles.label}>Have you had an electrolyte panel?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Enter details"
+  placeholderTextColor="gray"
+  value={electrolytePanel}
+  onChangeText={setElectrolytePanel}
+/>
+
+<Text style={styles.label}>When was your last eye exam?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Enter date or details"
+  placeholderTextColor="gray"
+  value={eyeExam}
+  onChangeText={setEyeExam}
+/>
+
+<Text style={styles.label}>Have you had a foot exam recently?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Any numbness, tingling, or wounds that won’t heal?"
+  placeholderTextColor="gray"
+  value={footExam}
+  onChangeText={setFootExam}
+/>
+
+<Text style={styles.label}>Have you had a heart health screening?</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Enter details"
+  placeholderTextColor="gray"
+  value={heartHealth}
+  onChangeText={setHeartHealth}
+/>
+
+
+
+
 
         {/* Other Observations */}
         <Text style={styles.label}>Other Observations</Text>
@@ -208,6 +308,11 @@ const styles = StyleSheet.create({
   input: { backgroundColor: "#f0f0f0", borderRadius: 8, padding: 10, fontSize: 16, marginBottom: 15, borderWidth: 1, borderColor: "#ccc" },
   doneButton: { backgroundColor: "#B89EB8", padding: 15, borderRadius: 10, alignItems: "center", marginTop: 10 },
   doneText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  symptomsText:{
+    fontSize: 14,
+    color: "#333",
+    marginVertical: 5,
+  },
   toggleContainer: {
     flexDirection: "row",
     marginBottom: 15,
