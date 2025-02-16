@@ -49,6 +49,7 @@ export default function RootLayout() {
         <Stack.Screen name="Login_Register/DoctorRegistration" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="VoiceAssistance" />
         <Stack.Screen name="survey" />
         <Stack.Screen name="calendar/calendarApp" options={
           {
