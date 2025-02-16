@@ -36,7 +36,6 @@ yarn-error.*
 *.tsbuildinfo
 
 server/node_modules
-server/GSTT_API_KEYS/tactical-racer-440011-q3-140f1964c08f.json
 
 # Django
 # backend/backend/settings.py
