@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
+import BlobAnimation from "../../components/BlobAnimation"
+
 
 export default function SimplerTerms() {
   const router = useRouter();
   const [word, setWord] = useState("");
   const [definition, setDefinition] = useState(null);
+  const [isAnimationVisible, setIsAnimationVisible] = useState(true);
+  
+  useFocusEffect(
+      useCallback(() => {
+        setIsAnimationVisible(true); // Show animation when screen is focused
+        return () => setIsAnimationVisible(false); // Hide animation when screen is unfocused
+      }, [])
+    );
 
   const fetchDefinition = async () => {
     if (!word.trim()) return;
@@ -35,9 +46,21 @@ export default function SimplerTerms() {
       {/* Main Content */}
       <View style={styles.container}>
         <Text style={styles.title}>Simpler Terms</Text>
+        <BlobAnimation 
+        isVisible={true}
+        positionStyle={{
+          position: "absolute",
+          top: "30%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 250,
+          height: 250,
+        }}
+      />
         <TextInput
           style={styles.input}
-          placeholder="Enter a word..."
+          placeholder="Enter a word, I'll explain it for you ^_^"
+          placeholderTextColor={"grey"}
           value={word}
           onChangeText={setWord}
           autoCapitalize="none"
