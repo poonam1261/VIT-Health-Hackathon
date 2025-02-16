@@ -2,17 +2,16 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 
 const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
-  // Initialize score as null so we know when the value is loaded from AsyncStorage.
-  const [happinessScore, setHappinessScore] = useState(0);
+  // Initialize score as null so we know when it's loaded from AsyncStorage.
   const [score, setScore] = useState(null);  // CHANGED: initial state from 0 to null
   const [animationData, setAnimationData] = useState(null);
   const animationRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Load score from AsyncStorage; default to 0 if not found.
+  // Load score from AsyncStorage; if not found, default to 0 (new user starts at 0)
   const loadScore = async () => {
     try {
       const storedScore = await AsyncStorage.getItem("healthScore");
@@ -29,6 +28,7 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
       setScore(0);
     }
   };
+
 
   // Decrease score every 120 seconds
   useEffect(() => {
@@ -47,18 +47,20 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
     loadScore();
   }, []);
 
-  // Also refresh the score whenever the screen is focused
+  // Every time the screen is focused, wait 100ms then reload the score
   useFocusEffect(
     useCallback(() => {
       setIsVisible(true);
-      loadScore(); // re-load score on focus
+      setTimeout(() => {
+        loadScore(); // ADDED: short delay to allow AsyncStorage update to complete
+      }, 100);
       return () => setIsVisible(false);
     }, [])
   );
 
-  // Update animation data based on score; only run if score is loaded
+  // Update animation data based on score (only runs once score is loaded)
   const updateAnimationData = () => {
-    if (score === null) return; // Don't update if score is not loaded yet
+    if (score === null) return; // Do nothing if score isn't loaded yet
     let anim;
     if (score < 25) {
       anim = require("../assets/animations/angry.json");
@@ -81,7 +83,7 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
     if (typeof onScoreChange === "function" && score !== null) {
       onScoreChange(score);
     }
-    console.log("Score changed:", score);
+    console.log("Score changed:", score); // DEBUG
   }, [score, onScoreChange]);
 
   // Only render once the score is loaded
