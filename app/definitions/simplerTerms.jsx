@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 10,
-    marginBottom: 20,
+    marginVertical: 10,
   },
   searchButtonText: { fontSize: 18, color: "#fff", fontWeight: "bold" },
   resultContainer: { 
