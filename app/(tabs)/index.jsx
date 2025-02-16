@@ -289,6 +289,7 @@ export default function index() {
     !showNotifications && !showMedications && !showAppointments;
 
   const [meterWidth, setMeterWidth] = useState(0);
+  const [happinessScore, setHappinessScore] = useState(25);
   const happinessAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(happinessAnim, {

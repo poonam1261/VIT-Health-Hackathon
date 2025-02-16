@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View } from "react-native";
+import { View, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from '@react-navigation/native';
 
 const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
   const [happinessScore, setHappinessScore] = useState(0);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(0);  // Start at 25 by default
   const [animationData, setAnimationData] = useState(null);
   const animationRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -15,15 +15,31 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
   const loadScore = async () => {
     try {
       const storedScore = await AsyncStorage.getItem("healthScore");
-      if (storedScore) {
+      if (storedScore !== null) {
         setScore(parseInt(storedScore, 10));
+      } else {
+        // User has never used the app; initialize score to 25
+        setScore(25);
+        await AsyncStorage.setItem("healthScore", "25");
       }
     } catch (error) {
       console.error("Error loading score:", error);
     }
   };
 
-  // Decrease score every 30 seconds
+  // Run loadScore once when the component mounts
+  useEffect(() => {
+    loadScore();
+  }, []);
+
+  // ADDED: Re-load the score from AsyncStorage whenever the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      loadScore();
+    }, [])
+  );
+
+  // Decrease score every 120 seconds
   useEffect(() => {
     const decrementInterval = setInterval(async () => {
       setScore((prevScore) => {
@@ -31,8 +47,7 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
         AsyncStorage.setItem("healthScore", newScore.toString());
         return newScore;
       });
-    }, 30000); // 30 seconds
-
+    }, 120000); // 120 seconds
     return () => clearInterval(decrementInterval);
   }, []);
 
@@ -41,7 +56,7 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
     let anim;
     if (score < 25) {
       anim = require("../assets/animations/angry.json");
-    } else if (score < 50) {
+    }else if (score < 50) {
       anim = require("../assets/animations/concerned.json");
     } else if (score < 75) {
       anim = require("../assets/animations/idle.json");
@@ -52,16 +67,13 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
   };
 
   useEffect(() => {
-    loadScore();
-  }, []);
-
-  useEffect(() => {
     updateAnimationData();
   }, [score]);
 
   // Use useFocusEffect to control visibility
   useFocusEffect(
     useCallback(() => {
+      loadScore();
       setIsVisible(true);
       return () => setIsVisible(false); // Hide when losing focus
     }, [])

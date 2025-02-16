@@ -19,8 +19,8 @@ const updateScore = async (increment = 25) => {
     const scoreStr = await AsyncStorage.getItem("healthScore"); // <-- Using AsyncStorage.getItem instead of localStorage.getItem
     let score = scoreStr ? parseInt(scoreStr, 10) : 0;
     
-    // Increment the score and ensure it doesn't exceed 100
-    score = Math.min(score + increment, 100);
+    // Increment the score and ensure it doesn't exceed 75
+    score = Math.min(score + increment, 75);
     
     // Save the updated score back to AsyncStorage
     await AsyncStorage.setItem("healthScore", score.toString()); // <-- Using AsyncStorage.setItem instead of localStorage.setItem
@@ -91,7 +91,7 @@ const SymptomScreen = () => {
       }, {});
 
       const payload = {
-        patient: auth.currentUser.uid, // Fetch user ID from firebase
+        // patient: auth.currentUser.uid, // Fetch user ID from firebase              //comment this else peelu's mood doesnt get uplifted due to error
         patient: "1", // hardcoded value
         symptom_data: symptomsObject,
       };

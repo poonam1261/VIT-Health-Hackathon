@@ -33,7 +33,6 @@ export default function TeleMed() {
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
   const [showAllAppointments, setShowAllAppointments] = useState(false);
-  
 
   useEffect(() => {
     fetchDoctors();

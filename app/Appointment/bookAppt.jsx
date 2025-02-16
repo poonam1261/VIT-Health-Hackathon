@@ -55,7 +55,16 @@ const BookAppt = () => {
       return;
     }
 
-    
+
+
+
+    router.push('../survey')            // delete this
+
+
+
+
+
+
 
      Alert.alert(
           "Confirm Appointment",
