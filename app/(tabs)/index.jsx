@@ -315,7 +315,7 @@ export default function index() {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Home</Text>
-          <View style={styles.profileIcon}>
+          <View style={styles.profileIcon} onPress ={()=>router.push("profhist/profile")}>
             <MaterialCommunityIcons
               name="face-man-profile"
               size={34}
@@ -380,17 +380,30 @@ export default function index() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f8f8f8" },
+  // header: {
+  //   backgroundColor: "#829582",
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   padding: 15,
+  // },
+
   header: {
-    backgroundColor: "#829582",
+    display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 15,
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-  },
-  headerText: { fontSize: 22, fontWeight: "bold", color: "white" },
-  mainContainer: { flex: 1, flexDirection: "row", padding: 10 },
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: "#829582",
+    justifyContent: "center",
+    paddingLeft: 10,
+    paddingRight: 10,
+},
+  headerText: { fontSize: 24,
+    fontWeight: "bold",
+    alignSelf: "center",
+    color: "#fff", },
+
+  mainContainer: { flex: 1, flexDirection: "row", padding: 10, },
   leftColumn: {
     flex: 1,
     paddingRight: 10,
@@ -464,14 +477,16 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(242, 235, 237)",
     borderRadius: 20,
     borderWidth: 0.1,
+    marginVertical: 2,
     borderColor: "#000",
+    margin: 5,
   },
   notificationCardText: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 20,
-    marginTop: 10,
+    //marginTop: 10,
     padding: 12,
   },
   notificationIcon: {
@@ -548,4 +563,5 @@ const styles = StyleSheet.create({
     right: 0,
     alignSelf: "flex-end",
   },
+  
 });

@@ -137,7 +137,8 @@ const SymptomScreen = () => {
       console.log("Success:", data);
 
       await AsyncStorage.setItem("savedSymptoms", JSON.stringify(payload));
-      navigation.goBack() // navigation.navigate("meddash");
+      //navigation.navigate("meddash");
+      navigation.goBack();
     } catch (error) {
       console.error("Submission failed:", error);
       alert(`Error: ${error.message}`);
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
   doneText: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
+    //fontWeight: "bold",
   },
 });
 

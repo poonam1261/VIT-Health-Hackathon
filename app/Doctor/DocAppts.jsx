@@ -73,7 +73,12 @@ export default function DocAppts() {
       </View>
       <TouchableOpacity
           style={styles.addPres}
-          onPress={() => {router.push('./Prescription')}}
+          onPress={() => {router.push({
+            pathname : './Prescription',
+            params : {
+              appointmentId : item.id
+            }
+          })}}
         >
           <AntDesign name="pluscircleo" size={24} color="black" />
           <Text>Add Prescription</Text>
@@ -86,7 +91,7 @@ export default function DocAppts() {
       <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 10,alignSelf:'center' }}>Your Appointments</Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#5b4d54" />
       ) : appointments.length === 0 ? (
         <Text>No Appointments Found</Text>
       ) : (   

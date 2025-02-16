@@ -17,13 +17,12 @@ import Octicons from "@expo/vector-icons/Octicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import { db } from "../../firebase/firebaseConfig";
 import { useFocusEffect } from "@react-navigation/native";
-import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
+//import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
 import LottieView from 'lottie-react-native';
 // import Lottie from "lottie-react";       //is a no no if we want to work on phones
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import BlobAnimation from "../../components/BlobAnimation.jsx";
-
-const router = useRouter();
+import BlobAnimation from "../../components/BlobAnimation"
+const router = useRouter(); 
 
 export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -213,7 +212,7 @@ export default function TeleMed() {
         ListHeaderComponent={
           <>
             <View style={styles.header}>
-              <Text style={styles.headerText}>Tele Medicine</Text>
+              <Text style={styles.headerText}>Telemedicine</Text>
             </View>
   
             <View style={styles.message}>
@@ -302,9 +301,9 @@ const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "#FFBFCC",
+    paddingTop: 15,
+    paddingBottom: 15,
+    backgroundColor: "#829582",
     justifyContent: "center",
     paddingLeft: 10,
     paddingRight: 10,

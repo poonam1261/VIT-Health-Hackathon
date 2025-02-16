@@ -12,11 +12,12 @@ import {
   ScrollView
 } from "react-native";
 import SignatureScreen from "react-native-signature-canvas";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig"; // Ensure correct path
+import { useLocalSearchParams } from "expo-router";
 
 const PrescriptionScreen = () => {
+  const { appointmentId } = useLocalSearchParams(); // Extract appointment ID
   const [medicineName, setMedicineName] = useState("");
   const [dosage, setDosage] = useState("");
   const [frequency, setFrequency] = useState("");
@@ -131,7 +132,7 @@ const PrescriptionScreen = () => {
           <Text style={styles.buttonText}>Clear Signature</Text>
         </TouchableOpacity>
      
-      <TouchableOpacity style={styles.saveButton} onPress={() => {savePrescription("8Yzs4YgkTKcSOsf5XsP4")}}>
+      <TouchableOpacity style={styles.saveButton} onPress={() => {savePrescription(appointmentId)}}>
         <Text style={styles.buttonText}>Save Prescription</Text>
         
       </TouchableOpacity>

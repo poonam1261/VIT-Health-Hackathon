@@ -37,7 +37,7 @@ export default function ShowPrescription() {
   }, [appointmentId]);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 50 }} />;
+    return <ActivityIndicator size="large" color="#5b4d54" style={{ marginTop: 50 }} />;
   }
 
   return (
@@ -76,7 +76,7 @@ export default function ShowPrescription() {
           )}
         </View>
       ) : (
-        <Text style={{ color: "red", fontSize: 18 }}>No Prescription Available</Text>
+        <Text style={{ color: "red", fontSize: 18, marginLeft: 15, marginTop: 10 }}>No Prescription Available</Text>
       )}
     </ScrollView>
   );

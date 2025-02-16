@@ -32,11 +32,11 @@ export default function Educational() {
             <TouchableOpacity
               key={button.id}
               style={styles.button}
-              onPress={() => router.push(`/article/${button.id}`)}
+              onPress={() => router.push(button.id === "simplerTerms" ? '/definitions/simplerTerms' : `/article/${button.id}`)}
             >
               {button.icon}
               <Text style={styles.buttonText}>{button.title}</Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
           ))}
         </ScrollView>
       </SafeAreaView>
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   header: {
     display: 'flex',
     paddingVertical: 10,
-    backgroundColor: "#ae887b",
+    backgroundColor: "#829582",
     alignItems: "center",
     elevation: 5,
   },

@@ -100,7 +100,7 @@ const ExpandableCalendarScreen = () => {
         <Text style={styles.header}>Appointments</Text>
         
         {loading ? (
-          <ActivityIndicator size="large" color="blue" />
+          <ActivityIndicator size="large" color="#5b4d54" />
         ) : appointments.length > 0 ? (
           <AgendaList
             sections={[

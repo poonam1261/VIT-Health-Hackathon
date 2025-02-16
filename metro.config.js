@@ -5,7 +5,9 @@ const defaultConfig = getDefaultConfig(__dirname);
 defaultConfig.resolver.assetExts.push('lottie');
 defaultConfig.resolver.sourceExts.push('cjs');
 
+
 module.exports = defaultConfig;
+
 
 
 
