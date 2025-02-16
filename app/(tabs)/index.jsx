@@ -454,6 +454,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 0.1,
     borderColor: "#000",
+    margin: 5,
   },
   notificationCardText: {
     flex: 1,
@@ -537,4 +538,5 @@ const styles = StyleSheet.create({
     right: 0,
     alignSelf: "flex-end",
   },
+  
 });
