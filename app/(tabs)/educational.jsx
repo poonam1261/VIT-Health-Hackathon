@@ -20,6 +20,12 @@ export default function Educational() {
     { id: 'stressRelief', title: 'Stress Relief', icon: <MaterialIcons name="emoji-nature" size={40} color="#fff" /> }
   ];
 
+  const routes = {
+    simplerTerms: "/definitions/simplerTerms",
+    sleep: "educate/sleep",
+    heartHealth: 'educate/heartHealth'
+  }
+
   return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
@@ -32,7 +38,7 @@ export default function Educational() {
             <TouchableOpacity
               key={button.id}
               style={styles.button}
-              onPress={() => router.push(button.id === "simplerTerms" ? '/definitions/simplerTerms' : `/article/${button.id}`)}
+              onPress={() => router.push(routes[button.id] || `/article/${button.id}`)}
             >
               {button.icon}
               <Text style={styles.buttonText}>{button.title}</Text>
