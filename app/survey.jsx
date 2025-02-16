@@ -145,8 +145,6 @@ const Survey = () => {
 
         {symptomsAdded && <Text style={styles.symptomsText}>Symptoms have been added successfully!</Text>}
 
-        {/* Follow-up Questions */}
-        <Text style={styles.subheading}>Follow-up Questions</Text>
         <Text style={styles.infoText}>Based on your medical history, you have Type 2 Diabetes.</Text>
 
         {/* Question 1 */}
