@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Platform } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getFirestore, collection, getDocs, addDoc, query, where } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
@@ -55,7 +55,14 @@ const BookAppt = () => {
       return;
     }
 
-    
+
+
+      router.push('../survey')            // special privilige ios
+
+
+
+
+
 
      Alert.alert(
           "Confirm Appointment",
