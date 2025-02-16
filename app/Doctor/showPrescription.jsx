@@ -1,4 +1,4 @@
-import { View, Text, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { db } from '../../firebase/firebaseConfig'; // Ensure correct path
@@ -41,32 +41,33 @@ export default function ShowPrescription() {
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10 }}>Prescription Details</Text>
+    <ScrollView contentContainerStyle={{ flex:1}}>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 15 , alignSelf:'center'}}>Prescription Details</Text>
 
       {appointment && appointment.prescription ? (
-        <View>
-          <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>Medicines:</Text>
+        <View style={styles.container}>
+          <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10, marginLeft:5 }}>Medicines:</Text>
           {appointment.prescription.medicines.map((med, index) => (
-            <Text key={index} style={{ fontSize: 16 }}>
+           <View style={styles.medicine}>
+             <Text key={index} style={{ fontSize: 18, color:'#ffffee', fontWeight:'bold' }}>
               • {med.name} - {med.dosage} - {med.frequency}
             </Text>
+            </View>
           ))}
 
           {/* Display Doctor's Signature */}
           {appointment.prescription.signature ? (
-            <View style={{ alignItems: "center", marginTop: 20 , flexDirection:'row'}}>
+            <View style={{ alignItems: "flex-start", marginTop: 20, marginLeft:5}}>
               <Text style={{ fontWeight: "bold", fontSize: 18 }}>Doctor's Signature:</Text>
               <Image
                 source={{ uri: appointment.prescription.signature }}
                 style={{
-                  width: '100',
-                  height: 80,
+                  width: 150,
+                  height: 120,
                   resizeMode: "contain",
-                  borderColor: "#000",
                   marginTop: 10, 
-                  alignSelf:'center',
-                  borderRadius:15
+                  alignSelf:'flex-start',
+                  
                 }}
               />
             </View>
@@ -80,3 +81,19 @@ export default function ShowPrescription() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  medicine:{
+    padding:5, 
+    margin:5,
+    borderRadius:10,
+    backgroundColor:'#b6dc76'
+  }, 
+  container:{
+    backgroundColor:'rgb(243, 244, 226)',
+    padding:10, 
+    margin:20, 
+    borderRadius:15, 
+    elevation:5
+  }
+})

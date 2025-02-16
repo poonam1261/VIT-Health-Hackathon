@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity} from "react-native";
+import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity } from "react-native";
 import Slider from '@react-native-community/slider';
 import { useNavigation } from "@react-navigation/native";
 
@@ -16,6 +16,10 @@ const Survey = () => {
   const [painScale, setPainScale] = useState(5);
   const [otherObservations, setOtherObservations] = useState("");
 
+  const [bloodWorkTestsDone, setBloodWorkTestsDone] = useState("");
+  const [bloodSugarFluctuations, setBloodSugarFluctuations] = useState("");
+  const [diabetesMedication, setDiabetesMedication] = useState("");
+
   const handleSubmit = () => {
     const formData = {
       reason,
@@ -25,17 +29,16 @@ const Survey = () => {
       foodInteractions,
       medicineInteractions,
       painScale,
+      bloodSugarFluctuations,
+      diabetesMedication,
       otherObservations,
     };
 
-
     console.log("Pre-Appointment Form Data:", formData);
-    //ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
-  
     navigation.goBack();
   };
 
-  const Navigate = () =>{
+  const Navigate = () => {
     navigation.navigate("SymptomScreen");
     setSymptomsAdded(true);
   };
@@ -48,34 +51,29 @@ const Survey = () => {
           Please fill out the details before booking your appointment.
         </Text>
 
-        {/*Type of appt*/}
+        {/* Type of Appointment */}
         <Text style={styles.label}>Type of Appointment</Text>
         <View style={styles.toggleContainer}>
           <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              apptType === "new" && styles.activeToggle,
-            ]}
+            style={[styles.toggleButton, apptType === "new" && styles.activeToggle]}
             onPress={() => setApptType("new")}
           >
             <Text style={styles.toggleText}>New</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              apptType === "followUp" && styles.activeToggle,
-            ]}
+            style={[styles.toggleButton, apptType === "followUp" && styles.activeToggle]}
             onPress={() => setApptType("followUp")}
           >
             <Text style={styles.toggleText}>Follow Up</Text>
           </TouchableOpacity>
         </View>
+
         {/* Reason for Visit */}
         <Text style={styles.label}>Reason for Visit</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter the reason for your visit"
-          placeholderTextColor={"gray"}
+          placeholderTextColor="gray"
           value={reason}
           onChangeText={setReason}
         />
@@ -84,19 +82,13 @@ const Survey = () => {
         <Text style={styles.label}>Is this a new or existing problem?</Text>
         <View style={styles.toggleContainer}>
           <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              problemType === "new" && styles.activeToggle,
-            ]}
+            style={[styles.toggleButton, problemType === "new" && styles.activeToggle]}
             onPress={() => setProblemType("new")}
           >
             <Text style={styles.toggleText}>New</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              problemType === "existing" && styles.activeToggle,
-            ]}
+            style={[styles.toggleButton, problemType === "existing" && styles.activeToggle]}
             onPress={() => setProblemType("existing")}
           >
             <Text style={styles.toggleText}>Existing</Text>
@@ -110,7 +102,7 @@ const Survey = () => {
           placeholder="e.g., 1 week, 3 days"
           value={duration}
           onChangeText={setDuration}
-          placeholderTextColor={"gray"}
+          placeholderTextColor="gray"
         />
 
         {/* Food Interactions */}
@@ -118,7 +110,7 @@ const Survey = () => {
         <TextInput
           style={styles.input}
           placeholder="Any new food reactions? (Optional)"
-          placeholderTextColor={"gray"}
+          placeholderTextColor="gray"
           value={foodInteractions}
           onChangeText={setFoodInteractions}
         />
@@ -128,7 +120,7 @@ const Survey = () => {
         <TextInput
           style={styles.input}
           placeholder="Any medicine reactions? (Optional)"
-          placeholderTextColor={"gray"}
+          placeholderTextColor="gray"
           value={medicineInteractions}
           onChangeText={setMedicineInteractions}
         />
@@ -145,24 +137,54 @@ const Survey = () => {
         />
         <Text style={styles.sliderValue}>Pain Level: {painScale}</Text>
 
-        {/*add symptoms*/}
+        {/* Add Symptoms */}
         <Text style={styles.label}>Add Symptoms</Text>
-        <TouchableOpacity style = {styles.doneButton} onPress={Navigate}>
+        <TouchableOpacity style={styles.doneButton} onPress={Navigate}>
           <Text style={styles.doneText}>Select Symptoms</Text>
         </TouchableOpacity>
 
-        {symptomsAdded && (
-        <Text style={styles.symptomsText}>
-          Symptoms have been added successfully!
-        </Text>
-      )}
+        {symptomsAdded && <Text style={styles.symptomsText}>Symptoms have been added successfully!</Text>}
+
+        {/* Follow-up Questions */}
+        <Text style={styles.subheading}>Follow-up Questions</Text>
+        <Text style={styles.infoText}>Based on your medical history, you have Type 2 Diabetes.</Text>
+
+        {/* Question 1 */}
+        <Text style={styles.label}>Have you done any blood-work tests? If so, what were your blood sugar levels before and after fasting?</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your response"
+          placeholderTextColor="gray"
+          value={bloodWorkTestsDone}
+          onChangeText={setBloodWorkTestsDone}
+        />
+
+        {/* Question 2 */}
+        <Text style={styles.label}>Have you experienced any unusual blood sugar fluctuations recently?</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your response"
+          placeholderTextColor="gray"
+          value={bloodSugarFluctuations}
+          onChangeText={setBloodSugarFluctuations}
+        />
+
+        {/* Question 3 */}
+        <Text style={styles.label}>Are you currently taking any diabetes medication?</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your response"
+          placeholderTextColor="gray"
+          value={diabetesMedication}
+          onChangeText={setDiabetesMedication}
+        />
 
         {/* Other Observations */}
         <Text style={styles.label}>Other Observations</Text>
         <TextInput
           style={[styles.input, { height: 80 }]}
           placeholder="Enter any unusual symptoms. (Optional)"
-          placeholderTextColor={"gray"}
+          placeholderTextColor="gray"
           value={otherObservations}
           onChangeText={setOtherObservations}
           multiline={true}
@@ -178,56 +200,16 @@ const Survey = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff5ee",
-  },
-
-  header: {
-    paddingVertical: 15,
-    backgroundColor: '#ae887b',
-    alignItems: 'center',
-    marginBottom: 5,
-},
-
-headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-},
-  scrollContent: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#rgba(58, 22, 20, 0.74)",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "gray",
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 5,
-    color: "#333",
-  },
-  symptomsText: {
-    fontSize: 18,
-    marginVertical: 5,
-    color: "#ae897b",
-  },
-  input: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 16,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#ccc",
-  },
+  container: { flex: 1, backgroundColor: "#fff5ee" },
+  scrollContent: { padding: 20 },
+  title: { fontSize: 24, fontWeight: "bold", color: "#3A1614", marginBottom: 10 },
+  subtitle: { fontSize: 16, color: "gray", marginBottom: 20 },
+  subheading: { fontSize: 20, fontWeight: "bold", color: "#3A1614", marginTop: 20, marginBottom: 5 },
+  infoText: { fontSize: 16, color: "#AE897B", marginBottom: 10 },
+  label: { fontSize: 18, marginBottom: 5, color: "#333" },
+  input: { backgroundColor: "#f0f0f0", borderRadius: 8, padding: 10, fontSize: 16, marginBottom: 15, borderWidth: 1, borderColor: "#ccc" },
+  doneButton: { backgroundColor: "#B89EB8", padding: 15, borderRadius: 10, alignItems: "center", marginTop: 10 },
+  doneText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   toggleContainer: {
     flexDirection: "row",
     marginBottom: 15,
@@ -247,28 +229,6 @@ headerText: {
   toggleText: {
     color: "#333",
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  slider: {
-    width: "100%",
-    height: 40,
-    marginBottom: 10,
-  },
-  sliderValue: {
-    fontSize: 16,
-    marginBottom: 15,
-    color: "#ae897b",
-  },
-  doneButton: {
-    backgroundColor: "#rgb(184, 158, 184)",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  doneText: {
-    color: "#fff",
-    fontSize: 18,
     fontWeight: "bold",
   },
 });
