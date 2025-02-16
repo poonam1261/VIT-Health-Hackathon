@@ -20,7 +20,7 @@ const updateScore = async (increment = 25) => {
     let score = scoreStr ? parseInt(scoreStr, 10) : 0;
     
     // Increment the score and ensure it doesn't exceed 75
-    score = Math.min(score + increment, 75);
+    score = Math.min(score + increment, 100);
     
     // Save the updated score back to AsyncStorage
     await AsyncStorage.setItem("healthScore", score.toString()); // <-- Using AsyncStorage.setItem instead of localStorage.setItem

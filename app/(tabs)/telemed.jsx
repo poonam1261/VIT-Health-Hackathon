@@ -17,7 +17,7 @@ import Octicons from "@expo/vector-icons/Octicons";
 import Foundation from "@expo/vector-icons/Foundation";
 import { db } from "../../firebase/firebaseConfig";
 import { useFocusEffect } from "@react-navigation/native";
-//import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
+import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
 import LottieView from 'lottie-react-native';
 // import Lottie from "lottie-react";       //is a no no if we want to work on phones
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,6 +32,7 @@ export default function TeleMed() {
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
   const [showAllAppointments, setShowAllAppointments] = useState(false);
+  
 
   useEffect(() => {
     fetchDoctors();
@@ -495,5 +496,5 @@ const styles = StyleSheet.create({
     flexDirection:'row', 
     justifyContent:'space-between',
     alignItems:'center',
-  }
+  }
 });

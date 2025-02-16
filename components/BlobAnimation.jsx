@@ -1,43 +1,34 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, Button } from "react-native";
+import { View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from '@react-navigation/native';
 
 const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
+  // Initialize score as null so we know when the value is loaded from AsyncStorage.
   const [happinessScore, setHappinessScore] = useState(0);
-  const [score, setScore] = useState(0);  // Start at 25 by default
+  const [score, setScore] = useState(null);  // CHANGED: initial state from 0 to null
   const [animationData, setAnimationData] = useState(null);
   const animationRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Load score from AsyncStorage
+  // Load score from AsyncStorage; default to 0 if not found.
   const loadScore = async () => {
     try {
       const storedScore = await AsyncStorage.getItem("healthScore");
+      console.log("Stored score:", storedScore); // DEBUG
       if (storedScore !== null) {
         setScore(parseInt(storedScore, 10));
       } else {
-        // User has never used the app; initialize score to 25
-        setScore(25);
-        await AsyncStorage.setItem("healthScore", "25");
+        setScore(0);  // New user starts at 0
+        await AsyncStorage.setItem("healthScore", "0");
+        console.log("No stored score found. Setting score to 0"); // DEBUG
       }
     } catch (error) {
       console.error("Error loading score:", error);
+      setScore(0);
     }
   };
-
-  // Run loadScore once when the component mounts
-  useEffect(() => {
-    loadScore();
-  }, []);
-
-  // ADDED: Re-load the score from AsyncStorage whenever the screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      loadScore();
-    }, [])
-  );
 
   // Decrease score every 120 seconds
   useEffect(() => {
@@ -47,16 +38,31 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
         AsyncStorage.setItem("healthScore", newScore.toString());
         return newScore;
       });
-    }, 120000); // 120 seconds
+    }, 180000); // 120 seconds
     return () => clearInterval(decrementInterval);
   }, []);
 
-  // Update animation data based on score
+  // Load the score on mount
+  useEffect(() => {
+    loadScore();
+  }, []);
+
+  // Also refresh the score whenever the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      setIsVisible(true);
+      loadScore(); // re-load score on focus
+      return () => setIsVisible(false);
+    }, [])
+  );
+
+  // Update animation data based on score; only run if score is loaded
   const updateAnimationData = () => {
+    if (score === null) return; // Don't update if score is not loaded yet
     let anim;
     if (score < 25) {
       anim = require("../assets/animations/angry.json");
-    }else if (score < 50) {
+    } else if (score < 50) {
       anim = require("../assets/animations/concerned.json");
     } else if (score < 75) {
       anim = require("../assets/animations/idle.json");
@@ -70,21 +76,16 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
     updateAnimationData();
   }, [score]);
 
-  // Use useFocusEffect to control visibility
-  useFocusEffect(
-    useCallback(() => {
-      loadScore();
-      setIsVisible(true);
-      return () => setIsVisible(false); // Hide when losing focus
-    }, [])
-  );
-
+  // Notify parent of score changes
   useEffect(() => {
-    if (typeof onScoreChange === "function") {
+    if (typeof onScoreChange === "function" && score !== null) {
       onScoreChange(score);
     }
     console.log("Score changed:", score);
   }, [score, onScoreChange]);
+
+  // Only render once the score is loaded
+  if (score === null) return null; // CHANGED: Wait for score to load
 
   return (
     <View
