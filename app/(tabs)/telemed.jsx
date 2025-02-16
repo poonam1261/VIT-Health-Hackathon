@@ -18,11 +18,13 @@ import Foundation from "@expo/vector-icons/Foundation";
 import { db } from "../../firebase/firebaseConfig";
 import { useFocusEffect } from "@react-navigation/native";
 //import { getDocs, collection, where, orderBy, query, deleteDoc, doc } from "firebase/firestore";
-import LottieView from 'lottie-react-native';
+import LottieView from "lottie-react-native";
 // import Lottie from "lottie-react";       //is a no no if we want to work on phones
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import BlobAnimation from "../../components/BlobAnimation"
-const router = useRouter(); 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import BlobAnimation from "../../components/BlobAnimation";
+import { query } from "firebase/firestore";
+const router = useRouter();
+//query(query, compositeFilter)
 
 export default function TeleMed() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,7 +34,6 @@ export default function TeleMed() {
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
   const [showAllAppointments, setShowAllAppointments] = useState(false);
-  
 
   useEffect(() => {
     fetchDoctors();
@@ -45,13 +46,13 @@ export default function TeleMed() {
   );
 
   const handleViewPres = (apptId) => {
-    router.push(
-      {pathname : '../Doctor/showPrescription', 
+    router.push({
+      pathname: "../Doctor/showPrescription",
       params: {
-        appointmentId : apptId
-       }}
-    )
-  }
+        appointmentId: apptId,
+      },
+    });
+  };
   const handleDeleteAppt = async (id) => {
     Alert.alert(
       "Confirm Deletion",
@@ -79,13 +80,11 @@ export default function TeleMed() {
     );
   };
 
-
-
   useFocusEffect(
     useCallback(() => {
       setIsAnimationVisible(true); // Show animation when screen is focused
       return () => setIsAnimationVisible(false); // Hide animation when screen is unfocused
-    }, [])
+    }, []),
   );
 
   const fetchDoctors = async () => {
@@ -188,11 +187,11 @@ export default function TeleMed() {
         </TouchableOpacity>
       </View>
       <TouchableOpacity
-          style={styles.viewPres}
-          onPress={() => handleViewPres(item.id)}
-        >
-          <Text>View Prescription</Text>
-        </TouchableOpacity>
+        style={styles.viewPres}
+        onPress={() => handleViewPres(item.id)}
+      >
+        <Text>View Prescription</Text>
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 
@@ -215,7 +214,7 @@ export default function TeleMed() {
             <View style={styles.header}>
               <Text style={styles.headerText}>Telemedicine</Text>
             </View>
-  
+
             <View style={styles.message}>
               <Image
                 source={require("../../assets/images/doctorImg.png")}
@@ -225,7 +224,7 @@ export default function TeleMed() {
                 Hi John, how are you feeling?
               </Text>
             </View>
-  
+
             <TouchableOpacity
               style={styles.survey}
               onPress={() => router.push("../Doctor/allPrescriptions")}
@@ -233,8 +232,14 @@ export default function TeleMed() {
               <Text style={styles.surveyText}>All Prescriptions</Text>
               <Feather name="arrow-right-circle" size={30} color="white" />
             </TouchableOpacity>
-  
-            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <Text style={styles.aptHead}>Scheduled Appointments</Text>
               <Foundation
                 name="calendar"
@@ -261,19 +266,37 @@ export default function TeleMed() {
                 onPress={() => setShowAllAppointments(true)}
                 style={styles.showMoreBtn}
               >
-                <Text style={{ color: "#5b4d54", textAlign:"right", fontWeight: "bold", marginRight:15 }}>Show More...</Text>
+                <Text
+                  style={{
+                    color: "#5b4d54",
+                    textAlign: "right",
+                    fontWeight: "bold",
+                    marginRight: 15,
+                  }}
+                >
+                  Show More...
+                </Text>
               </TouchableOpacity>
             )}
-  
+
             {showAllAppointments && (
               <TouchableOpacity
                 onPress={() => setShowAllAppointments(false)}
                 style={styles.showMoreBtn}
               >
-                <Text style={{ color: "#5b4d54", textAlign:"right", fontWeight: "bold", marginRight:15 }}>Show Less</Text>
+                <Text
+                  style={{
+                    color: "#5b4d54",
+                    textAlign: "right",
+                    fontWeight: "bold",
+                    marginRight: 15,
+                  }}
+                >
+                  Show Less
+                </Text>
               </TouchableOpacity>
             )}
-  
+
             <Text style={styles.aptHead}>Book Appointment</Text>
             <FlatList
               data={doctors}
@@ -284,7 +307,7 @@ export default function TeleMed() {
         }
         contentContainerStyle={{ paddingBottom: 20 }}
       />
-      <BlobAnimation 
+      <BlobAnimation
         isVisible={true}
         positionStyle={{
           position: "absolute",
@@ -485,16 +508,16 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 8,
   },
-  viewPres:{
+  viewPres: {
     backgroundColor: "rgba(4, 8, 240, 0.14)",
     marginRight: 10,
     padding: 5,
     borderRadius: 8,
-    width:120,
-    alignSelf:'flex-end',
-    marginTop:10, 
-    flexDirection:'row', 
-    justifyContent:'space-between',
-    alignItems:'center',
-  }
+    width: 120,
+    alignSelf: "flex-end",
+    marginTop: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 });
