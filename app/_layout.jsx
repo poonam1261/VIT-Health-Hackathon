@@ -42,6 +42,7 @@ export default function RootLayout() {
         <Stack.Screen name="Doctor/DocAppts" options={{ headerShown: false }} />
         <Stack.Screen name="Doctor/Prescription" options={{ title:'Add Prescription' }} />
         <Stack.Screen name="Doctor/showPrescription" options={{ title :'Prescription Details' }} />
+        <Stack.Screen name="Doctor/allPrescriptions" options={{ title :'All Prescription' }} />
         <Stack.Screen name="Login_Register/DoctorLogin" options={{ headerShown: false }} />
         <Stack.Screen name="InitialPage" options={{ headerShown: false }} />
         <Stack.Screen name="Login_Register/RegisterPage" options={{ headerShown: false }} />

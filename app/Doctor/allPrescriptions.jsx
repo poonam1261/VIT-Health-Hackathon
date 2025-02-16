@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { db } from '../../firebase/firebaseConfig'; 
 import { collection, getDocs } from 'firebase/firestore';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function PrescriptionsList() {
   const [appointments, setAppointments] = useState([]);
@@ -31,13 +32,13 @@ export default function PrescriptionsList() {
   }, []);
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <SafeAreaView style={{ flex: 1, padding: 20 }}>
       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10 }}>
         All Prescriptions
       </Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#5b4d54" />
       ) : appointments.length === 0 ? (
         <Text>No Appointments Found</Text>
       ) : (
@@ -75,7 +76,7 @@ export default function PrescriptionsList() {
           )}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -120,7 +121,7 @@ const styles = {
     borderColor: "#000"
   },
   button: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#8c7a92",
     padding: 10,
     borderRadius: 5,
     alignItems: "center",

@@ -86,7 +86,7 @@ function LoginScreen({}) {
       />
       <View style={styles.buttonContainer}>
         {loading ? (
-          <ActivityIndicator size="large" color="#8c7a92" />
+          <ActivityIndicator size="large" color="#5b4d54" />
         ) : (
           <Button color="#8c7a92" title="Login" onPress={handleLogin} />
         )}
