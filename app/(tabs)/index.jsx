@@ -21,6 +21,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BlobAnimation from "../../components/BlobAnimation.jsx";
+import Entypo from '@expo/vector-icons/Entypo';
+import { useNavigation } from "@react-navigation/native";
+
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
@@ -259,6 +262,8 @@ const RightColumnContent = ({
 
 export default function index() {
   const router = useRouter();
+  const navigation = useNavigation();
+
 
   const [notifications, setNotifications] = useState([
     "💧 Stay hydrated! Drink a glass of water.",
@@ -311,6 +316,11 @@ export default function index() {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Home</Text>
+
+          <View style={{flexDirection:'row'}}>
+           
+
+
           <View style={styles.profileIcon} onPress ={()=>router.push("profhist/profile")}>
             <MaterialCommunityIcons
               name="face-man-profile"
@@ -318,6 +328,12 @@ export default function index() {
               color="white"
             />
           </View>
+          <TouchableOpacity onPress={() =>{navigation.navigate('VoiceAssistance')}}>
+          <Entypo name="mic" size={28} color="white" style={{alignSelf:'flex-end'}}/>
+          </TouchableOpacity>
+
+        </View>
+
         </View>
         <View style={styles.mainContainer}>
           <View style={styles.leftColumn}>
@@ -551,6 +567,8 @@ const styles = StyleSheet.create({
   profileIcon: {
     right: 0,
     alignSelf: "flex-end",
+    marginLeft:15
+
   },
   
 });
