@@ -35,6 +35,7 @@ const updateScore = async (increment = 25) => {
 const SymptomScreen = () => {
   const navigation = useNavigation();
   const symptoms = [
+    
     "Abdominal pain",
     "Anxiety",
     "Back pain",
@@ -48,11 +49,14 @@ const SymptomScreen = () => {
     "Diarrhea",
     "Dizziness",
     "Dry mouth",
+    "Excessive thirst",
     "Fatigue",
     "Fever",
+    "Frequent urination",
     "Hair loss",
     "Headache",
     "Heartburn",
+    "High/low blood sugar episodes",
     "Irritability",
     "Itchy skin",
     "Joint pain",
@@ -62,15 +66,19 @@ const SymptomScreen = () => {
     "Muscle cramps",
     "Nausea",
     "Night sweats",
-    "Numbness",
+    "Numbness (including feet/hands)",
     "Shortness of breath",
     "Skin rash",
+    "Slow healing wounds",
     "Sore throat",
     "Sweating",
+    "Swollen Legs",
+    "Vision changes",
     "Vomiting",
     "Weakness",
     "Weight gain",
     "Weight loss"
+
 ];
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
 
