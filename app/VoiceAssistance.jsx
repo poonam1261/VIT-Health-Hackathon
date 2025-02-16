@@ -1,9 +1,10 @@
 import React, { useState, useRef } from "react";
-import { View, Button, Text, Platform } from "react-native";
+import { View, Button, Text, Platform, StyleSheet, TouchableOpacity } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function VoiceAssistance() {
     const [recording, setRecording] = useState(null);
@@ -12,9 +13,11 @@ export default function VoiceAssistance() {
     const audioChunks = useRef([]);
     const navigation = useNavigation();
     const router = useRouter();
+    const [isRecording, setIsRecording] = useState(false); 
 
     // 🎤 Start Recording (Handles Web & Native)
     const startRecording = async () => {
+        setIsRecording(true);
         if (Platform.OS === "web") {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -47,6 +50,7 @@ export default function VoiceAssistance() {
 
     // 🛑 Stop Recording (Handles Web & Native)
     const stopRecording = async () => {
+        setIsRecording(false);
         if (Platform.OS === "web") {
             if (!mediaRecorderRef.current) return;
 
@@ -116,6 +120,16 @@ export default function VoiceAssistance() {
                     console.log("calendar");
                     router.push('calendar/calendarApp')
                 }
+
+                if(data.transcript.toLowerCase().includes("profile")) {
+                    console.log("calendar");
+                    router.push('profhist/profile')
+                }
+
+                if(data.transcript.toLowerCase().includes("symptom")) {
+                    console.log("calendar");
+                    router.push('SymptomScreen')
+                }
             }
         } catch (error) {
             console.error("❌ Upload error:", error);
@@ -124,10 +138,51 @@ export default function VoiceAssistance() {
     };
 
     return (
-        <View style={{ padding: 20 }}>
-            <Button title="🎤 Start Recording" onPress={startRecording} />
-            <Button title="🛑 Stop Recording" onPress={stopRecording} />
-            <Text style={{ marginTop: 20, fontSize: 18 }}>{transcription}</Text>
+        <SafeAreaView style={{padding:20}}>
+            <Text style={styles.transcript}>{transcription}</Text>
+        <View style={styles.container}>
+             
+           <TouchableOpacity  onPress={startRecording} style={styles.button}>
+           <Text style={{fontSize:24, color:'white'}}>🎤 Start  </Text>
+           </TouchableOpacity>
+           <TouchableOpacity  onPress={stopRecording} style={styles.button}>
+           <Text style={{fontSize:24, color:'white'}}>🛑 Stop  </Text>
+           </TouchableOpacity>          
         </View>
+        {isRecording && (<Text style={styles.rectext}>Recording ...</Text>)}
+        {/*<Text>Navigate to Calendar</Text>
+        <Text>Navigate to Profile</Text>
+        <Text>Navigate to Medical Dashboard</Text>
+        <Text>Navigate to Tele Medicine</Text>*/}
+        </SafeAreaView>
     );
 }
+
+const styles= StyleSheet.create({
+button : {
+    maxWidth:150, 
+    alignSelf:'center', 
+    backgroundColor:'black', 
+    borderRadius:15, 
+    padding:10, 
+    margin:10
+}, 
+container:{
+    flexDirection:'row', 
+    alignItems:'center',
+    alignSelf:'center'
+}, 
+transcript:{
+    fontSize:24,
+    marginBottom:15,
+    borderWidth:1, 
+    padding:10,
+    borderRadius:10
+    
+}, 
+rectext:{
+    fontSize:24, 
+    alignSelf:'center', 
+    marginTop:15
+}
+})
