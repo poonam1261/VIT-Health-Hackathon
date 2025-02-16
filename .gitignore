@@ -35,6 +35,8 @@ yarn-error.*
 # TypeScript
 *.tsbuildinfo
 
+server/node_modules
+
 # Django
 # backend/backend/settings.py
 
@@ -89,3 +91,4 @@ backend/*.cover
 backend/.vscode/
 backend/.idea/
 backend/*.sublime-workspace
+server/GSTT_API_KEY/*.json
