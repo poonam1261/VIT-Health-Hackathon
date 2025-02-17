@@ -487,7 +487,7 @@ const HomeScreen = () => {
 
                 <TouchableOpacity
                   style={styles.redeemButton}
-                  onPress={() => router.push("/pharmacy")}
+                  onPress={() => router.push("../pharmacyInt/pharmacy")}
                 >
                   <LinearGradient
                     colors={["#829582", "#667B66"]}

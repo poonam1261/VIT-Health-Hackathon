@@ -32,8 +32,18 @@ export const CoinsProvider = ({ children }) => {
     }
   };
 
+  const subCoins = async (amount) => {
+    try {
+      const newTotal = coins - amount;
+      setCoins(newTotal);
+      await AsyncStorage.setItem("coins", newTotal.toString());
+    } catch (error) {
+      console.error("Error saving coins:", error);
+    }
+  };
+
   return (
-    <CoinsContext.Provider value={{ coins, addCoins }}>
+    <CoinsContext.Provider value={{ coins, addCoins, subCoins }}>
       {children}
     </CoinsContext.Provider>
   );

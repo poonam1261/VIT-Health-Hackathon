@@ -5,15 +5,17 @@ import { useNavigation } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useCoins, CoinsProvider } from "../contexts/CoinContext";
 
-export default function PharmacyPage() {
+function PharmacyPageComponent() {
   const [location, setLocation] = useState(null);
   const [pharmacies, setPharmacies] = useState([]);
-  const [points, setPoints] = useState(0);
   const [selectedPharmacy, setSelectedPharmacy] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
   const navigation = useNavigation();
+  const { coins, subCoins } = useCoins();
+  const REDEEM_COST = 10; // Cost in points
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -33,28 +35,22 @@ export default function PharmacyPage() {
       setLocation(loc.coords);
       fetchNearbyPharmacies(loc.coords.latitude, loc.coords.longitude);
     })();
-
-    const fetchPoints = async () => {
-      try {
-        const storedPoints = await AsyncStorage.getItem("userPoints");
-        if (storedPoints) {
-          setPoints(parseInt(storedPoints));
-        }
-      } catch (error) {
-        console.error("Error fetching points:", error);
-      }
-    };
-
-    fetchPoints();
   }, []);
 
   const generateCode = () => {
+    if (coins < REDEEM_COST) {
+      alert("Not enough points to redeem a code!");
+      return;
+    }
+
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let code = '';
     for (let i = 0; i < 6; i++) {
       code += characters.charAt(Math.floor(Math.random() * characters.length));
     }
+
     setGeneratedCode(code);
+    subCoins(REDEEM_COST); // Deduct points
   };
 
   const fetchNearbyPharmacies = async (lat, lon) => {
@@ -67,7 +63,7 @@ export default function PharmacyPage() {
       { id: 6, name: "VitalHealth Pharmacy", ad: "Earn loyalty points with every purchase!", image: require("./pharmacy3.png") },
       { id: 7, name: "LifeAid Pharmacy", ad: "Free health consultations every Friday!", image: require("./pharmacy1.png") },
       { id: 8, name: "CareWell Pharmacy", ad: "Exclusive online discounts available!", image: require("./pharmacy2.png") },
-    ];    
+    ];
     setPharmacies(mockPharmacies);
   };
 
@@ -77,15 +73,15 @@ export default function PharmacyPage() {
         <Text style={styles.header}>Nearby Pharmacies</Text>
         <View style={styles.pointsSection}>
           <FontAwesome5 name="coins" size={24} color="gold" />
-          <Text style={styles.pointsText}>{points} Points</Text>
+          <Text style={styles.pointsText}>{coins} Points</Text>
         </View>
       </View>
-      
+
       <FlatList
         data={pharmacies}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.card}
             onPress={() => {
               setSelectedPharmacy(item);
@@ -110,23 +106,34 @@ export default function PharmacyPage() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.closeButton}
               onPress={() => setIsModalVisible(false)}
             >
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
-            
+
             <Text style={styles.modalTitle}>{selectedPharmacy?.name}</Text>
             <Text style={styles.modalAd}>{selectedPharmacy?.ad}</Text>
-            
+
             {!generatedCode ? (
-              <TouchableOpacity 
-                style={styles.redeemButton}
-                onPress={generateCode}
-              >
-                <Text style={styles.redeemButtonText}>Redeem Code</Text>
-              </TouchableOpacity>
+              <>
+                <Text style={styles.redeemCostText}>
+                  Redeem this offer for {REDEEM_COST} points
+                </Text>
+                <TouchableOpacity
+                  style={[
+                    styles.redeemButton,
+                    coins < REDEEM_COST && styles.disabledButton
+                  ]}
+                  onPress={generateCode}
+                  disabled={coins < REDEEM_COST}
+                >
+                  <Text style={styles.redeemButtonText}>
+                    {coins >= REDEEM_COST ? "Redeem Code" : "Not Enough Points"}
+                  </Text>
+                </TouchableOpacity>
+              </>
             ) : (
               <View style={styles.codeContainer}>
                 <Text style={styles.codeText}>{generatedCode}</Text>
@@ -145,6 +152,16 @@ export default function PharmacyPage() {
     </View>
   );
 }
+
+export default function PharmacyPage() {
+  return (
+    <CoinsProvider>
+      <PharmacyPageComponent />
+    </CoinsProvider>
+  );
+}
+
+
 
 const styles = StyleSheet.create({
   container: { 
@@ -282,5 +299,15 @@ const styles = StyleSheet.create({
   backText: { 
     color: "#fff", 
     fontSize: 16 
+  },
+  redeemCostText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "red",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  disabledButton: {
+    backgroundColor: "gray",
   },
 });
