@@ -537,7 +537,7 @@ export default function MedicationDashboard() {
       },
     
       calendarToggle: {
-        backgroundColor: "rgb(184, 158, 184)",
+        backgroundColor: "#b89eb8",
         padding: 10,
         borderRadius: 8,
         marginHorizontal: 20,
@@ -635,11 +635,23 @@ export default function MedicationDashboard() {
      left:20,
     },
     pharmacyButton: {
-      backgroundColor: "#4a90e2",
+      backgroundColor: "#b89eb8",
       padding: 12,
       borderRadius: 8,
       alignItems: "center",
       marginVertical: 10,
+      position: 'absolute',
+      bottom: 20,
+      left: 20,
+      width: '45%', // Slightly less than half to account for margins
+      elevation: 5, // For Android shadow
+      shadowColor: '#000', // For iOS shadow
+      shadowOffset: {
+      width: 0,
+      height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
     },
     pharmacyButtonText: {
       color: "#fff",
