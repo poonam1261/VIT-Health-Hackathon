@@ -58,13 +58,13 @@ export default function VoiceAssistance() {
             const formData = new FormData();
             formData.append("audio", {
                 uri: newUri,
-                type: "audio/wav",
+                type: "audio/x-wav",
                 name: "recording.wav",
             });
 
             console.log("📤 Uploading file...");
 
-            const response = await fetch("http://your-server-ip:3000/speech-to-text", {
+            const response = await fetch("http://localhost:3000/speech-to-text", {
                 method: "POST",
                 body: formData,
                 headers: { "Content-Type": "multipart/form-data" },
