@@ -47,8 +47,7 @@ const CalendarIcon = ({ gradientColors }) => (
   </LinearGradient>
 );
 
-const MedicationCard = ({ tooltipText, cardWidth }) => {
-  const router = useRouter();
+const MedicationCard = ({ tooltipText, cardWidth, router }) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const handlePress = () => {
@@ -63,7 +62,8 @@ const MedicationCard = ({ tooltipText, cardWidth }) => {
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
       <LinearGradient
-        colors={["#ffffff", "#f7f7f7"]}
+        // Updated gradient for contrast
+        colors={["#FFE0B2", "#FFB74D"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[
@@ -85,8 +85,7 @@ const MedicationCard = ({ tooltipText, cardWidth }) => {
   );
 };
 
-const AppointmentCard = ({ tooltipText, timeIndicator, cardWidth }) => {
-  const router = useRouter();
+const AppointmentCard = ({ tooltipText, timeIndicator, cardWidth, router }) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const gradientColors =
@@ -247,7 +246,10 @@ const HomeScreen = () => {
               <View style={styles.petWrapper}>
                 <BlobAnimation
                   isVisible={true}
-                  positionStyle={{ alignSelf: "center", position: "relative" }}
+                  positionStyle={{
+                    alignSelf: "center",
+                    position: "relative",
+                  }}
                 />
                 {notificationList.length > 0 && (
                   <PanGestureHandler
@@ -302,89 +304,122 @@ const HomeScreen = () => {
                 )}
               </View>
             </View>
+            {/* Progress bars displayed side by side */}
             <View style={styles.progressContainer}>
-              <View style={styles.progressBar}>
-                <Text style={styles.progressLabel}>Tasks</Text>
+              <View style={styles.progressRow}>
+                {/* Tasks Progress Card */}
                 <View
-                  style={styles.progressMeter}
-                  onLayout={(e) => setMeterWidth(e.nativeEvent.layout.width)}
+                  style={[
+                    styles.progressBar,
+                    styles.halfWidth,
+                    { marginRight: 5, marginLeft: 10 },
+                  ]}
                 >
-                  <Animated.View
-                    style={{
-                      width:
-                        meterWidth *
-                        (tasksCompleted / initialTaskCount.current),
-                      height: "100%",
-                    }}
+                  <View style={styles.progressLabelContainer}>
+                    <Text style={styles.progressLabel}>Tasks</Text>
+                  </View>
+                  <View
+                    style={styles.progressMeter}
+                    onLayout={(e) => setMeterWidth(e.nativeEvent.layout.width)}
                   >
-                    <LinearGradient
-                      colors={["#4FC3F7", "#0288D1"]}
-                      style={{ flex: 1, borderRadius: 8 }}
-                    />
-                  </Animated.View>
-                  <Text style={styles.progressValue}>
-                    {tasksCompleted} / {initialTaskCount.current}
-                  </Text>
+                    <Animated.View
+                      style={{
+                        width:
+                          meterWidth *
+                          (tasksCompleted / initialTaskCount.current),
+                        height: "100%",
+                      }}
+                    >
+                      <LinearGradient
+                        colors={["#4FC3F7", "#0288D1"]}
+                        style={{ flex: 1, borderRadius: 8 }}
+                      />
+                    </Animated.View>
+                    <Text style={styles.progressValue}>
+                      {tasksCompleted} / {initialTaskCount.current}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.progressBar}>
-                <Text style={styles.progressLabel}>Happiness</Text>
-                <View style={styles.progressMeter}>
-                  <Animated.View style={{ width: fillWidth, height: "100%" }}>
-                    <LinearGradient
-                      colors={["#81C784", "#388E3C"]}
-                      style={{ flex: 1, borderRadius: 8 }}
-                    />
-                  </Animated.View>
-                  <Text style={styles.progressValue}>
-                    {Math.round(happinessValue * 100)}%
-                  </Text>
+                {/* Happiness Progress Card */}
+                <View
+                  style={[
+                    styles.progressBar,
+                    styles.halfWidth,
+                    { marginLeft: 5, marginRight: 10 },
+                  ]}
+                >
+                  <View style={styles.progressLabelContainer}>
+                    <Text style={styles.progressLabel}>Happiness</Text>
+                  </View>
+                  <View style={styles.progressMeter}>
+                    <Animated.View style={{ width: fillWidth, height: "100%" }}>
+                      <LinearGradient
+                        colors={["#81C784", "#388E3C"]}
+                        style={{ flex: 1, borderRadius: 8 }}
+                      />
+                    </Animated.View>
+                    <Text style={styles.progressValue}>
+                      {Math.round(happinessValue * 100)}%
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
           </View>
           <View style={styles.bottomSection}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Medications</Text>
-              <View style={styles.counterContainer}>
-                <Text style={styles.counterText}>{medicationData.length}</Text>
+            {/* Medications Card */}
+            <View style={styles.sectionCard}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Medications</Text>
+                <View style={styles.counterContainer}>
+                  <Text style={styles.counterText}>
+                    {medicationData.length}
+                  </Text>
+                </View>
               </View>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                style={styles.horizontalScroll}
+              >
+                {medicationData.map((item) => (
+                  <MedicationCard
+                    key={item.id}
+                    tooltipText={item.tooltipText}
+                    cardWidth={250}
+                    router={router}
+                  />
+                ))}
+              </ScrollView>
             </View>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              style={styles.horizontalScroll}
-            >
-              {medicationData.map((item) => (
-                <MedicationCard
-                  key={item.id}
-                  tooltipText={item.tooltipText}
-                  cardWidth={250}
-                />
-              ))}
-            </ScrollView>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Appointments</Text>
-              <View style={styles.counterContainer}>
-                <Text style={styles.counterText}>{appointmentData.length}</Text>
+            {/* Appointments Card */}
+            <View style={styles.sectionCard}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Appointments</Text>
+                <View style={styles.counterContainer}>
+                  <Text style={styles.counterText}>
+                    {appointmentData.length}
+                  </Text>
+                </View>
               </View>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                style={styles.horizontalScroll}
+              >
+                {appointmentData.map((item) => (
+                  <AppointmentCard
+                    key={item.id}
+                    tooltipText={item.tooltipText}
+                    timeIndicator={item.timeIndicator}
+                    cardWidth={250}
+                    router={router}
+                  />
+                ))}
+              </ScrollView>
             </View>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              style={styles.horizontalScroll}
-            >
-              {appointmentData.map((item) => (
-                <AppointmentCard
-                  key={item.id}
-                  tooltipText={item.tooltipText}
-                  timeIndicator={item.timeIndicator}
-                  cardWidth={250}
-                />
-              ))}
-            </ScrollView>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -456,13 +491,23 @@ const styles = StyleSheet.create({
   },
   notificationBubbleText: { fontSize: 10, color: "#333" },
   progressContainer: { width: "100%", marginTop: -20 },
-  progressBar: { marginVertical: 6 },
-  progressLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#004D40",
-    marginBottom: 4,
+  progressRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
+  progressBar: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  halfWidth: { flex: 1 },
+  progressLabelContainer: { marginBottom: 6 },
+  progressLabel: { fontSize: 12, fontWeight: "600", color: "#004D40" },
   progressMeter: {
     width: "100%",
     height: 16,
@@ -470,7 +515,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: "hidden",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start",
     position: "relative",
   },
   progressValue: {
@@ -481,6 +526,18 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   bottomSection: { flex: 1 },
+  sectionCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
+  },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
