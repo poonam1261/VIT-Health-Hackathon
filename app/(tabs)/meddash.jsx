@@ -20,8 +20,12 @@ import{
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 import Swiper from "react-native-deck-swiper";
+import { useNavigation } from "expo-router";
 
 export default function MedicationDashboard() {
+
+  const navigation = useNavigation();
+
   const Harcoded=
   [
     { id: 6, name: "Lisinopril", dosage: "10mg", time: "8:00 AM" },
@@ -324,6 +328,9 @@ export default function MedicationDashboard() {
 />
 
       </ScrollView>
+      <TouchableOpacity style={styles.pharmacyButton} onPress={() => navigation.navigate("pharmacyInt/pharmacy")}>
+        <Text style={styles.pharmacyButtonText}>Find Nearby Pharmacies</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -624,7 +631,31 @@ export default function MedicationDashboard() {
     icon: {
      top:30,
      left:20,
-    }
+    },
+    pharmacyButton: {
+      backgroundColor: "#b89eb8",
+      padding: 12,
+      borderRadius: 8,
+      alignItems: "center",
+      marginVertical: 10,
+      position: 'absolute',
+      bottom: 20,
+      left: 20,
+      width: '45%', // Slightly less than half to account for margins
+      elevation: 5, // For Android shadow
+      shadowColor: '#000', // For iOS shadow
+      shadowOffset: {
+      width: 0,
+      height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
+    pharmacyButtonText: {
+      color: "#fff",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
 
 
     });
