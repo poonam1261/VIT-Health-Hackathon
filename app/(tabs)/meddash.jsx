@@ -14,8 +14,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 import Swiper from "react-native-deck-swiper";
+import { useNavigation } from "expo-router"; 
 
 export default function MedicationDashboard() {
+
+  const navigation = useNavigation();
+
   const initialSwipeMeds = [
     { id: 1, name: "Aspirin", dosage: "100mg", timing: "Morning" },
     { id: 2, name: "Metformin", dosage: "500mg", timing: "Evening" },
@@ -74,7 +78,7 @@ export default function MedicationDashboard() {
 
 
           <TouchableOpacity onPress={ToggleSwipe} style={styles.calendarToggle}>
-            <Text style={styles.calendarToggleText}>{isSwipeVisible ? "Hide Today's Medications ▲" : "Show Medication Calendar ▼"}</Text>
+            <Text style={styles.calendarToggleText}>{isSwipeVisible ? "Hide Today's Medications ▲" : "Show Today's Medications ▼"}</Text>
           </TouchableOpacity>
 
  {isSwipeVisible &&(
@@ -193,6 +197,9 @@ export default function MedicationDashboard() {
             )}
           />
       </ScrollView>
+      <TouchableOpacity style={styles.pharmacyButton} onPress={() => navigation.navigate("pharmacyInt/pharmacy")}>
+        <Text style={styles.pharmacyButtonText}>Find Nearby Pharmacies</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -228,7 +235,7 @@ export default function MedicationDashboard() {
           borderWidth: 1,
           borderColor: "#ccc",
           borderRadius: 5,
-          
+          height: 40,
         },
         input: {  
           marginLeft:10,
@@ -383,7 +390,18 @@ export default function MedicationDashboard() {
     icon: {
      top:30,
      left:20,
-    }
-
+    },
+    pharmacyButton: {
+      backgroundColor: "#4a90e2",
+      padding: 12,
+      borderRadius: 8,
+      alignItems: "center",
+      marginVertical: 10,
+    },
+    pharmacyButtonText: {
+      color: "#fff",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
 
     });

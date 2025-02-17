@@ -2,10 +2,20 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import { useNavigation } from "expo-router"; 
 
 const screenWidth = Dimensions.get("window").width;
 
 export default function Sleep() {
+
+  const navigation = useNavigation();
+
+  React.useLayoutEffect(() => {
+      navigation.setOptions({
+        headerTitle: 'Sleep Quality'
+      });
+    }, [navigation]);
+
   // Sample sleep data (hours slept over a week)
   const sleepData = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],

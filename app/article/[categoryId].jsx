@@ -12,6 +12,12 @@ export default function ArticleScreen() {
   const article = articleData[categoryId];
   console.log("categoryId:", categoryId);
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: ''
+    });
+  }, [navigation]);
+
   const goBack = () => {
     navigation.goBack();
   };
