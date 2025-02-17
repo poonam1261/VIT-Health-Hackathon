@@ -24,30 +24,55 @@ export default function VoiceAssistance() {
                 const mediaRecorder = new MediaRecorder(stream);
                 mediaRecorderRef.current = mediaRecorder;
                 audioChunks.current = [];
-
+    
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+    
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    
                 mediaRecorder.ondataavailable = (event) => {
                     audioChunks.current.push(event.data);
                 };
-
+    
                 mediaRecorder.start();
+    
                 console.log("🎙️ Web Recording started...");
+    
+                // Set a threshold for silence (in dB)
+                const silenceThreshold = 10; // 10 dB
+                const silenceDuration = 2000; // 2 seconds
+    
+                let silenceTimer = null;
+                const checkSilence = () => {
+                    analyser.getByteFrequencyData(dataArray);
+    
+                    // Check if the volume is below the silence threshold
+                    const averageVolume = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+    
+                    if (averageVolume < silenceThreshold) {
+                        if (!silenceTimer) {
+                            silenceTimer = setTimeout(() => {
+                                stopRecording(); // Stop recording after the silence threshold is met
+                            }, silenceDuration);
+                        }
+                    } else {
+                        clearTimeout(silenceTimer); // Reset timer if sound is detected
+                        silenceTimer = null;
+                    }
+    
+                    // Keep checking for silence
+                    requestAnimationFrame(checkSilence);
+                };
+    
+                checkSilence();
             } catch (error) {
                 console.error("❌ Web Recording failed:", error);
             }
-        } else {
-            try {
-                await Audio.requestPermissionsAsync();
-                const { recording } = await Audio.Recording.createAsync(
-                    Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-                );
-                setRecording(recording);
-                console.log("🎙️ Native Recording started...");
-            } catch (error) {
-                console.error("❌ Native Recording failed:", error);
-            }
         }
     };
-
+    
     // 🛑 Stop Recording (Handles Web & Native)
     const stopRecording = async () => {
         setIsRecording(false);
