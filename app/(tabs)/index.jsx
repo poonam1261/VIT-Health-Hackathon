@@ -23,6 +23,8 @@ import {
 import BlobAnimation from "../../components/BlobAnimation.jsx";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCoins } from "../contexts/CoinContext.jsx";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
@@ -161,8 +163,13 @@ const HomeScreen = () => {
   const [happinessScore, setHappinessScore] = useState(0);
   const [notificationIndex, setNotificationIndex] = useState(0);
   const [notificationExpanded, setNotificationExpanded] = useState(false);
+  const [showCoinsPopup, setShowCoinsPopup] = useState(false);
+  const [tasksCompleted, setTasksCompleted] = useState(0);
+  const { coins, addCoins } = useCoins();
 
+  const initialTaskCount = useRef(notificationList.length);
   const notificationScale = useRef(new Animated.Value(1)).current;
+
   useEffect(() => {
     Animated.spring(notificationScale, {
       toValue: notificationExpanded ? 1.05 : 1,
@@ -172,8 +179,15 @@ const HomeScreen = () => {
     }).start();
   }, [notificationExpanded]);
 
-  const [tasksCompleted, setTasksCompleted] = useState(0);
-  const initialTaskCount = useRef(notificationList.length);
+  useEffect(() => {
+    if (
+      tasksCompleted === initialTaskCount.current &&
+      initialTaskCount.current > 0
+    ) {
+      setShowCoinsPopup(true);
+      addCoins(10);
+    }
+  }, [tasksCompleted]);
 
   const handlePanGestureStateChange = (event) => {
     if (notificationList.length === 0) return;
@@ -441,6 +455,51 @@ const HomeScreen = () => {
             </View>
           </View>
         </ScrollView>
+
+        {showCoinsPopup && (
+          <View style={styles.popupContainer}>
+            <Animated.View style={styles.popup}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setShowCoinsPopup(false)}
+              >
+                <MaterialCommunityIcons
+                  name="close-circle"
+                  size={28}
+                  color="#829582"
+                />
+              </TouchableOpacity>
+
+              <LinearGradient
+                colors={["#FFE0B2", "#FFB74D"]}
+                style={styles.popupContent}
+              >
+                <MaterialCommunityIcons
+                  name="coin"
+                  size={48}
+                  color="#FFD700"
+                  style={styles.coinIcon}
+                />
+                <Text style={styles.popupTitle}>Congratulations! 🎉</Text>
+                <Text style={styles.popupText}>
+                  You've earned 10 coins to redeem at the pharmacy!
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.redeemButton}
+                  onPress={() => router.push("/pharmacy")}
+                >
+                  <LinearGradient
+                    colors={["#829582", "#667B66"]}
+                    style={styles.redeemButtonGradient}
+                  >
+                    <Text style={styles.redeemButtonText}>Redeem Now</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </LinearGradient>
+            </Animated.View>
+          </View>
+        )}
       </SafeAreaView>
     </GestureHandlerRootView>
   );
@@ -614,6 +673,70 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   tooltipText: { color: "#fff", fontSize: 10, fontWeight: "600" },
+
+  popupContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  popup: {
+    width: "80%",
+    borderRadius: 20,
+    overflow: "hidden",
+    transform: [{ scale: 1 }],
+  },
+  popupContent: {
+    padding: 24,
+    alignItems: "center",
+  },
+  coinIcon: {
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  popupTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#004D40",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  popupText: {
+    fontSize: 16,
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 24,
+    lineHeight: 24,
+  },
+  redeemButton: {
+    width: "100%",
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  redeemButtonGradient: {
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    alignItems: "center",
+  },
+  redeemButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    zIndex: 1001,
+  },
 });
 
 export default HomeScreen;
