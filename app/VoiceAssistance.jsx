@@ -5,6 +5,7 @@ import * as FileSystem from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function VoiceAssistance() {
     const [recording, setRecording] = useState(null);
@@ -147,13 +148,23 @@ export default function VoiceAssistance() {
                 }
 
                 if(data.transcript.toLowerCase().includes("profile")) {
-                    console.log("calendar");
+                    console.log("profile");
                     router.push('profhist/profile')
                 }
 
                 if(data.transcript.toLowerCase().includes("symptom")) {
-                    console.log("calendar");
+                    console.log("symptom");
                     router.push('SymptomScreen')
+                }
+
+                if(data.transcript.toLowerCase().includes("lifestyle") || data.transcript.toLowerCase().includes("education") ) {
+                    console.log("education");
+                    router.push('(tabs)/educational')
+                }
+                
+                if(data.transcript.toLowerCase().includes("home")) {
+                    console.log("home");
+                    router.push('(tabs)')
                 }
             }
         } catch (error) {
@@ -168,10 +179,12 @@ export default function VoiceAssistance() {
         <View style={styles.container}>
              
            <TouchableOpacity  onPress={startRecording} style={styles.button}>
-           <Text style={{fontSize:24, color:'white'}}>🎤 Start  </Text>
+           <MaterialCommunityIcons name="record-circle-outline" size={24} color="white" />
+           <Text style={{fontSize:24, color:'white'}}> Start  </Text>
            </TouchableOpacity>
            <TouchableOpacity  onPress={stopRecording} style={styles.button}>
-           <Text style={{fontSize:24, color:'white'}}>🛑 Stop  </Text>
+           <MaterialCommunityIcons name="stop-circle-outline" size={24} color="white" />
+           <Text style={{fontSize:24, color:'white'}}> Stop  </Text>
            </TouchableOpacity>          
         </View>
         {isRecording && (<Text style={styles.rectext}>Recording ...</Text>)}
@@ -187,10 +200,13 @@ const styles= StyleSheet.create({
 button : {
     maxWidth:150, 
     alignSelf:'center', 
-    backgroundColor:'#829582', 
+    backgroundColor:'#5b4d54', 
     borderRadius:15, 
     padding:10, 
-    margin:10
+    margin:10, 
+    flexDirection:'row', 
+    alignItems:'center',
+
 }, 
 container:{
     flexDirection:'row', 
