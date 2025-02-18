@@ -6,7 +6,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
   // Initialize score as null so we know when it's loaded from AsyncStorage.
-  const [score, setScore] = useState(null);  // CHANGED: initial state from 0 to null
+  const [score, setScore] = useState(null); // CHANGED: initial state from 0 to null
   const [animationData, setAnimationData] = useState(null);
   const animationRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -19,7 +19,7 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
       if (storedScore !== null) {
         setScore(parseInt(storedScore, 10));
       } else {
-        setScore(0);  // New user starts at 0
+        setScore(0); // New user starts at 0
         await AsyncStorage.setItem("healthScore", "0");
         console.log("No stored score found. Setting score to 0"); // DEBUG
       }
@@ -28,7 +28,6 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
       setScore(0);
     }
   };
-
 
   // Decrease score every 120 seconds
   useEffect(() => {
@@ -55,7 +54,7 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
         loadScore(); // ADDED: short delay to allow AsyncStorage update to complete
       }, 100);
       return () => setIsVisible(false);
-    }, [])
+    }, []),
   );
 
   // Update animation data based on score (only runs once score is loaded)
