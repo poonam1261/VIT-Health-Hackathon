@@ -4,24 +4,27 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
-const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
+const BlobAnimation = ({
+  score,
+  positionStyle,
+  onScoreChange = () => {},
+  isVisibleProp = true,
+}) => {
   // Initialize score as null so we know when it's loaded from AsyncStorage.
-  const [score, setScore] = useState(null); // CHANGED: initial state from 0 to null
+  const [localScore, setScore] = useState(null);
   const [animationData, setAnimationData] = useState(null);
   const animationRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(isVisibleProp);
 
   // Load score from AsyncStorage; if not found, default to 0 (new user starts at 0)
   const loadScore = async () => {
     try {
       const storedScore = await AsyncStorage.getItem("healthScore");
-      console.log("Stored score:", storedScore); // DEBUG
       if (storedScore !== null) {
         setScore(parseInt(storedScore, 10));
       } else {
         setScore(0); // New user starts at 0
         await AsyncStorage.setItem("healthScore", "0");
-        console.log("No stored score found. Setting score to 0"); // DEBUG
       }
     } catch (error) {
       console.error("Error loading score:", error);
@@ -41,6 +44,48 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
     return () => clearInterval(decrementInterval);
   }, []);
 
+  // Decrease score every 120 seconds
+  useEffect(() => {
+    const decrementInterval = setInterval(async () => {
+      setScore((prevScore) => {
+        const newScore = Math.max(prevScore - 25, 0); // Ensure score doesn't go below 0
+        AsyncStorage.setItem("healthScore", newScore.toString());
+        return newScore;
+      });
+    }, 180000); // 120 seconds
+    return () => clearInterval(decrementInterval);
+  }, []);
+
+  // Combine score logic
+  const combinedScore = score !== undefined ? score : localScore;
+
+  // Update animation data based on score
+  const updateAnimationData = () => {
+    if (combinedScore == null) return; // Wait until we have a valid score
+    let anim;
+    if (combinedScore < 25) {
+      anim = require("../assets/animations/angry.json");
+    } else if (combinedScore < 50) {
+      anim = require("../assets/animations/concerned.json");
+    } else if (combinedScore < 75) {
+      anim = require("../assets/animations/idle.json");
+    } else {
+      anim = require("../assets/animations/happy.json");
+    }
+    setAnimationData(anim);
+  };
+
+  useEffect(() => {
+    updateAnimationData();
+  }, [combinedScore]);
+
+  // Notify parent if needed
+  useEffect(() => {
+    if (typeof onScoreChange === "function" && combinedScore != null) {
+      onScoreChange(combinedScore);
+    }
+  }, [combinedScore, onScoreChange]);
+
   // Load the score on mount
   useEffect(() => {
     loadScore();
@@ -51,42 +96,14 @@ const BlobAnimation = ({ positionStyle, onScoreChange = () => {} }) => {
     useCallback(() => {
       setIsVisible(true);
       setTimeout(() => {
-        loadScore(); // ADDED: short delay to allow AsyncStorage update to complete
+        loadScore(); // Short delay to allow AsyncStorage update to complete
       }, 100);
       return () => setIsVisible(false);
     }, []),
   );
 
-  // Update animation data based on score (only runs once score is loaded)
-  const updateAnimationData = () => {
-    if (score === null) return; // Do nothing if score isn't loaded yet
-    let anim;
-    if (score < 25) {
-      anim = require("../assets/animations/angry.json");
-    } else if (score < 50) {
-      anim = require("../assets/animations/concerned.json");
-    } else if (score < 75) {
-      anim = require("../assets/animations/idle.json");
-    } else {
-      anim = require("../assets/animations/happy.json");
-    }
-    setAnimationData(anim);
-  };
-
-  useEffect(() => {
-    updateAnimationData();
-  }, [score]);
-
-  // Notify parent of score changes
-  useEffect(() => {
-    if (typeof onScoreChange === "function" && score !== null) {
-      onScoreChange(score);
-    }
-    console.log("Score changed:", score); // DEBUG
-  }, [score, onScoreChange]);
-
-  // Only render once the score is loaded
-  if (score === null) return null; // CHANGED: Wait for score to load
+  // Don't render until localScore is loaded
+  if (localScore === null) return null;
 
   return (
     <View
