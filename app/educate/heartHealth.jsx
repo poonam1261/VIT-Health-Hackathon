@@ -88,11 +88,21 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import { useNavigation } from "expo-router"; 
 
 const screenWidth = Dimensions.get("window").width;
 
 export default function HeartHealth() {
-  // Sample heart rate data (BPM trends over two weeks)
+
+  const navigation = useNavigation();
+
+  React.useLayoutEffect(() => {
+      navigation.setOptions({
+        headerTitle: 'Heart Health'
+      });
+    }, [navigation]);
+
+  // Sample heart rate data (average BPM over a week)
   const heartRateData = {
     labels: ["M", "T", "W", "T", "F", "S", "S", "M", "T", "W", "T", "F", "S", "S"],
     datasets: [

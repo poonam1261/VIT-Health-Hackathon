@@ -1,29 +1,30 @@
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Pressable,
+  ScrollView,
+  Animated,
+  UIManager,
+  Platform,
+  Image,
 } from "react-native";
-import React, { useState, useRef, useEffect } from "react";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import {
-  Animated,
-  ScrollView,
-  LayoutAnimation,
-  UIManager,
-  Platform,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import Swipeable from "react-native-gesture-handler/Swipeable";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  PanGestureHandler,
+  State,
+} from "react-native-gesture-handler";
 import BlobAnimation from "../../components/BlobAnimation.jsx";
-import Entypo from '@expo/vector-icons/Entypo';
+import Entypo from "@expo/vector-icons/Entypo";
 import { useNavigation } from "@react-navigation/native";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCoins } from "../contexts/CoinContext.jsx";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
@@ -31,7 +32,6 @@ if (Platform.OS === "android") {
 }
 
 // ICONS & CARDS
-const [happinessScore, setHappinessScore] = useState(0);
 const PillIcon = () => (
   <LinearGradient
     colors={["#FFCDD2", "#E57373"]}
@@ -48,55 +48,26 @@ const CalendarIcon = ({ gradientColors }) => (
     end={{ x: 1, y: 1 }}
     style={styles.calendarIcon}
   >
-    <Ionicons name="calendar" size={24} color="white" />
+    <Ionicons name="calendar" size={20} color="white" />
   </LinearGradient>
 );
 
-const NotificationIcon = () => (
-  <LinearGradient
-    colors={["rgb(172, 170, 176)", "rgb(211, 183, 214)"]}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 0.5, y: 1 }}
-    style={styles.notificationIcon}
-  >
-    <Ionicons name="notifications" size={16} color="white" />
-  </LinearGradient>
-);
-
-// UPDATED: NotificationItem now includes swipeable functionality
-const NotificationItem = ({ text, onDelete }) => {
-  return (
-    <Swipeable
-      renderRightActions={() => (
-        <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
-          <Text style={styles.deleteText}>Delete</Text>
-        </TouchableOpacity>
-      )}
-    >
-      <View style={styles.notificationCard}>
-        <Text style={styles.notificationCardText} numberOfLines={2}>
-          {text}
-        </Text>
-      </View>
-    </Swipeable>
-  );
-};
-
-const MedicationCard = ({ tooltipText, cardWidth }) => {
-  const router = useRouter();
+const MedicationCard = ({ tooltipText, cardWidth, router }) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const handlePress = () => {
     if (!tooltipVisible) {
       setTooltipVisible(true);
       setTimeout(() => setTooltipVisible(false), 2000);
     } else {
-      router.push("./telemed");
+      router.push("./meddash");
     }
   };
+
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
       <LinearGradient
-        colors={["#ffffff", "#f7f7f7"]}
+        colors={["#FFE0B2", "#FFB74D"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[
@@ -118,15 +89,16 @@ const MedicationCard = ({ tooltipText, cardWidth }) => {
   );
 };
 
-const AppointmentCard = ({ tooltipText, timeIndicator, cardWidth }) => {
-  const router = useRouter();
+const AppointmentCard = ({ tooltipText, timeIndicator, cardWidth, router }) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const gradientColors =
     timeIndicator === "Today"
       ? ["hsl(60, 100.00%, 94.50%)", "rgb(251, 209, 104)"]
       : timeIndicator === "Tomorrow"
         ? ["#fff59d", "#fff176"]
         : ["#a5d6a7", "#81c784"];
+
   const handlePress = () => {
     if (!tooltipVisible) {
       setTooltipVisible(true);
@@ -135,6 +107,7 @@ const AppointmentCard = ({ tooltipText, timeIndicator, cardWidth }) => {
       router.push("./telemed");
     }
   };
+
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={handlePress}>
       <LinearGradient
@@ -160,118 +133,10 @@ const AppointmentCard = ({ tooltipText, timeIndicator, cardWidth }) => {
   );
 };
 
-const RightColumnContent = ({
-  notifications,
-  onDeleteNotification,
-  medicationData,
-  appointmentData,
-  showNotifications,
-  setShowNotifications,
-  showMedications,
-  setShowMedications,
-  showAppointments,
-  setShowAppointments,
-  allCollapsed,
-}) => {
-  const [medCardWidth, setMedCardWidth] = useState(0);
-  const [appCardWidth, setAppCardWidth] = useState(0);
-  const toggleSection = (setter, value) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setter(!value);
-  };
-  return (
-    <View style={styles.rightColumnContent}>
-      <TouchableOpacity
-        style={styles.dropdownHeader}
-        onPress={() => toggleSection(setShowNotifications, showNotifications)}
-      >
-        <Text style={styles.dropdownHeaderText}>Notifications</Text>
-        <Text style={styles.dropdownHeaderText}>
-          {showNotifications ? "▲" : "▼"}
-        </Text>
-      </TouchableOpacity>
-      {showNotifications &&
-        notifications.map((item, index) => (
-          <NotificationItem
-            key={index}
-            text={item}
-            onDelete={() => onDeleteNotification(item)}
-          />
-        ))}
-      <TouchableOpacity
-        style={styles.dropdownHeader}
-        onPress={() => toggleSection(setShowMedications, showMedications)}
-      >
-        <Text style={styles.dropdownHeaderText}>Medications</Text>
-        <Text style={styles.dropdownHeaderText}>
-          {showMedications ? "▲" : "▼"}
-        </Text>
-      </TouchableOpacity>
-      {showMedications && (
-        <View onLayout={(e) => setMedCardWidth(e.nativeEvent.layout.width)}>
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-          >
-            {medicationData.map((item) => (
-              <MedicationCard
-                key={item.id}
-                tooltipText={item.tooltipText}
-                cardWidth={medCardWidth}
-              />
-            ))}
-          </ScrollView>
-        </View>
-      )}
-      <TouchableOpacity
-        style={styles.dropdownHeader}
-        onPress={() => toggleSection(setShowAppointments, showAppointments)}
-      >
-        <Text style={styles.dropdownHeaderText}>Appointments</Text>
-        <Text style={styles.dropdownHeaderText}>
-          {showAppointments ? "▲" : "▼"}
-        </Text>
-      </TouchableOpacity>
-      {showAppointments && (
-        <View onLayout={(e) => setAppCardWidth(e.nativeEvent.layout.width)}>
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-          >
-            {appointmentData.map((item) => (
-              <AppointmentCard
-                key={item.id}
-                tooltipText={item.tooltipText}
-                timeIndicator={item.timeIndicator}
-                cardWidth={appCardWidth}
-              />
-            ))}
-          </ScrollView>
-        </View>
-      )}
-      {allCollapsed && (
-        <View style={styles.stayHealthyContainer}>
-          <Text style={styles.stayHealthyText}>Stay healthy!</Text>
-        </View>
-      )}
-    </View>
-  );
-};
-
-export default function index() {
+const HomeScreen = () => {
   const router = useRouter();
   const navigation = useNavigation();
 
-
-  const [notifications, setNotifications] = useState([
-    "💧 Stay hydrated! Drink a glass of water.",
-    "🏃‍♂️ Time for a quick stretch!",
-    "🍎 Eat a healthy snack.",
-    "📅 Appointment at 3 PM",
-    "🚴‍♂️ Go for a bike ride!",
-  ]);
   const medicationData = [
     { id: "1", tooltipText: "Ibuprofen, 9AM" },
     { id: "2", tooltipText: "Insulin, 7AM" },
@@ -287,32 +152,97 @@ export default function index() {
     { id: "5", tooltipText: "Cardiology", timeIndicator: "Upcoming" },
   ];
 
-  const [showNotifications, setShowNotifications] = useState(true);
-  const [showMedications, setShowMedications] = useState(true);
-  const [showAppointments, setShowAppointments] = useState(true);
-  const allCollapsed =
-    !showNotifications && !showMedications && !showAppointments;
+  const [notificationList, setNotificationList] = useState([
+    "Meds or your family.",
+    "🏃‍♂️ Time for a quick stretch!",
+    "🍎 Eat a healthy snack.",
+    "📅 Appointment at 3 PM",
+    "🚴‍♂️ Go for a bike ride!",
+  ]);
+
+  const [happinessScore, setHappinessScore] = useState(0);
+  const [notificationIndex, setNotificationIndex] = useState(0);
+  const [notificationExpanded, setNotificationExpanded] = useState(false);
+  const [showCoinsPopup, setShowCoinsPopup] = useState(false);
+  const [tasksCompleted, setTasksCompleted] = useState(0);
+  const { coins, addCoins } = useCoins();
+
+  const initialTaskCount = useRef(notificationList.length);
+  const notificationScale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.spring(notificationScale, {
+      toValue: notificationExpanded ? 1.05 : 1,
+      friction: 3,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  }, [notificationExpanded]);
+
+  useEffect(() => {
+    if (
+      tasksCompleted === initialTaskCount.current &&
+      initialTaskCount.current > 0
+    ) {
+      setShowCoinsPopup(true);
+      addCoins(10);
+    }
+  }, [tasksCompleted]);
+
+  const handlePanGestureStateChange = (event) => {
+    if (notificationList.length === 0) return;
+    if (event.nativeEvent.state === State.END) {
+      const { translationX } = event.nativeEvent;
+      const threshold = 30;
+      if (translationX < -threshold) {
+        setNotificationExpanded(false);
+        setNotificationIndex((prev) => (prev + 1) % notificationList.length);
+      } else if (translationX > threshold) {
+        setNotificationExpanded(false);
+        setNotificationIndex((prev) =>
+          prev === 0 ? notificationList.length - 1 : prev - 1,
+        );
+      }
+    }
+  };
 
   const [meterWidth, setMeterWidth] = useState(0);
-  const [happinessScore, setHappinessScore] = useState(25);
+
   const happinessAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(happinessAnim, {
-      toValue: happinessScore,  // Animate to the latest score
+      toValue: happinessScore,
       duration: 1000,
       useNativeDriver: false,
     }).start();
   }, [happinessScore]);
 
   const fillWidth = happinessAnim.interpolate({
-    inputRange: [0, 100], // Update this to match score range (0 to 100)
+    inputRange: [0, 100],
     outputRange: [0, meterWidth],
   });
-  
-  
 
-  const handleDeleteNotification = (notificationText) => {
-    setNotifications(notifications.filter((item) => item !== notificationText));
+  const handleTaskDone = () => {
+    setTasksCompleted((prev) => prev + 1);
+    setHappinessScore((prev) => Math.min(prev + 10, 100));
+    removeCurrentNotification();
+  };
+
+  const handleTaskIgnored = () => {
+    setHappinessScore((prev) => Math.max(prev - 10, 0));
+    removeCurrentNotification();
+  };
+
+  const removeCurrentNotification = () => {
+    setNotificationExpanded(false);
+    setNotificationList((prevList) => {
+      const newList = [...prevList];
+      newList.splice(notificationIndex, 1);
+      return newList;
+    });
+    setNotificationIndex((prev) =>
+      notificationList.length <= 1 ? 0 : prev % (notificationList.length - 1),
+    );
   };
 
   return (
@@ -321,265 +251,492 @@ export default function index() {
         <View style={styles.header}>
           <Text style={styles.headerText}>Home</Text>
 
-          <View style={{flexDirection:'row'}}>
-           
-
-
-          <View style={styles.profileIcon} onPress ={()=>router.push("profhist/profile")}>
-            <MaterialCommunityIcons
-              name="face-man-profile"
-              size={34}
-              color="white"
-            />
-          </View>
-          <TouchableOpacity onPress={() =>{navigation.navigate('VoiceAssistance')}}>
-          <Entypo name="mic" size={28} color="white" style={{alignSelf:'flex-end'}}/>
-          </TouchableOpacity>
-
-        </View>
-
-        </View>
-        <View style={styles.mainContainer}>
-          <View style={styles.leftColumn}>
-            <View style={styles.virtualPetContainer}>
-              {/* <Text style={styles.virtualPetText}>Peelu here?</Text> */}
-
-
-              <BlobAnimation 
-                isVisible={true}
-                positionStyle={{
-                  position: "relative",
-                  alignSelf: "center",
-                }}
-                onScoreChange={setHappinessScore}
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("VoiceAssistance")}
+            >
+              <Entypo
+                name="mic"
+                size={28}
+                color="white"
+                style={{ alignSelf: "flex-end" }}
               />
+            </TouchableOpacity>
 
+            <TouchableOpacity onPress={() => router.push("profhist/profile")}>
+              <Image
+                style={styles.profileImage}
+                source={{
+                  uri: "https://th.bing.com/th/id/OIP.RnJxrWFyL3eU5OUVnecnTQHaHa?w=206&h=207&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
 
-
-            </View>
-            <View style={styles.happinessContainer}>
-              <Text style={styles.happinessTitle}>Happiness Meter</Text>
-              <View
-                style={styles.happinessMeter}
-                onLayout={(e) => setMeterWidth(e.nativeEvent.layout.width)}
-              >
-                <Animated.View
-                  style={[styles.happinessFill, { width: fillWidth }]}
+        <ScrollView contentContainerStyle={styles.mainContainer}>
+          <View style={styles.topSection}>
+            <View style={styles.petAndNotificationContainer}>
+              <View style={styles.petWrapper}>
+                <BlobAnimation
+                  isVisible={true}
+                  positionStyle={{
+                    alignSelf: "center",
+                    position: "relative",
+                  }}
+                  onScoreChange={setHappinessScore}
                 />
-                <Text style={styles.happinessValue}>{happinessScore}%</Text>
 
+                {notificationList.length > 0 && (
+                  <PanGestureHandler
+                    onHandlerStateChange={handlePanGestureStateChange}
+                  >
+                    <Animated.View
+                      style={[
+                        styles.notificationBubble,
+                        {
+                          position: "absolute",
+                          top: 10,
+                          left: 140,
+                          transform: [{ scale: notificationScale }],
+                        },
+                      ]}
+                      onStartShouldSetResponder={() => true}
+                      onResponderRelease={() =>
+                        setNotificationExpanded((prev) => !prev)
+                      }
+                    >
+                      <View style={styles.bubbleTailBorder} />
+                      <View style={styles.bubbleTailInner} />
+                      <Text style={styles.notificationBubbleText}>
+                        {notificationList[notificationIndex]}
+                      </Text>
+                      {notificationExpanded && (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-around",
+                            marginTop: 8,
+                          }}
+                        >
+                          <TouchableOpacity onPress={handleTaskDone}>
+                            <Ionicons
+                              name="checkmark-circle"
+                              size={22}
+                              color="green"
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={handleTaskIgnored}>
+                            <Ionicons
+                              name="close-circle"
+                              size={22}
+                              color="red"
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      )}
+                    </Animated.View>
+                  </PanGestureHandler>
+                )}
+              </View>
+            </View>
+
+            <View style={styles.progressContainer}>
+              <View style={styles.progressRow}>
+                <View
+                  style={[
+                    styles.progressBar,
+                    styles.halfWidth,
+                    { marginRight: 5, marginLeft: 10 },
+                  ]}
+                >
+                  <View style={styles.progressLabelContainer}>
+                    <Text style={styles.progressLabel}>Tasks</Text>
+                  </View>
+                  <View
+                    style={styles.progressMeter}
+                    onLayout={(e) => setMeterWidth(e.nativeEvent.layout.width)}
+                  >
+                    <Animated.View
+                      style={{
+                        width:
+                          meterWidth *
+                          (tasksCompleted / initialTaskCount.current),
+                        height: "100%",
+                      }}
+                    >
+                      <LinearGradient
+                        colors={["#4FC3F7", "#0288D1"]}
+                        style={{ flex: 1, borderRadius: 8 }}
+                      />
+                    </Animated.View>
+                    <Text style={styles.progressValue}>
+                      {tasksCompleted} / {initialTaskCount.current}
+                    </Text>
+                  </View>
+                </View>
+
+                <View
+                  style={[
+                    styles.progressBar,
+                    styles.halfWidth,
+                    { marginLeft: 5, marginRight: 10 },
+                  ]}
+                >
+                  <View style={styles.progressLabelContainer}>
+                    <Text style={styles.progressLabel}>Happiness</Text>
+                  </View>
+                  <View style={styles.progressMeter}>
+                    <Animated.View style={{ width: fillWidth, height: "100%" }}>
+                      <LinearGradient
+                        colors={["#81C784", "#388E3C"]}
+                        style={{ flex: 1, borderRadius: 8 }}
+                      />
+                    </Animated.View>
+                    <Text style={styles.progressValue}>{happinessScore}%</Text>
+                  </View>
+                </View>
               </View>
             </View>
           </View>
-          <View style={styles.rightColumn}>
-            <ScrollView contentContainerStyle={styles.rightColumnContent}>
-              <RightColumnContent
-                notifications={notifications}
-                onDeleteNotification={handleDeleteNotification}
-                medicationData={medicationData}
-                appointmentData={appointmentData}
-                showNotifications={showNotifications}
-                setShowNotifications={setShowNotifications}
-                showMedications={showMedications}
-                setShowMedications={setShowMedications}
-                showAppointments={showAppointments}
-                setShowAppointments={setShowAppointments}
-                allCollapsed={allCollapsed}
-              />
-            </ScrollView>
+
+          <View style={styles.bottomSection}>
+            <View style={styles.sectionCard}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Medications</Text>
+                <View style={styles.counterContainer}>
+                  <Text style={styles.counterText}>
+                    {medicationData.length}
+                  </Text>
+                </View>
+              </View>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                style={styles.horizontalScroll}
+              >
+                {medicationData.map((item) => (
+                  <MedicationCard
+                    key={item.id}
+                    tooltipText={item.tooltipText}
+                    cardWidth={250}
+                    router={router}
+                  />
+                ))}
+              </ScrollView>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Appointments</Text>
+                <View style={styles.counterContainer}>
+                  <Text style={styles.counterText}>
+                    {appointmentData.length}
+                  </Text>
+                </View>
+              </View>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                style={styles.horizontalScroll}
+              >
+                {appointmentData.map((item) => (
+                  <AppointmentCard
+                    key={item.id}
+                    tooltipText={item.tooltipText}
+                    timeIndicator={item.timeIndicator}
+                    cardWidth={250}
+                    router={router}
+                  />
+                ))}
+              </ScrollView>
+            </View>
           </View>
-        </View>
+        </ScrollView>
+
+        {showCoinsPopup && (
+          <View style={styles.popupContainer}>
+            <Animated.View style={styles.popup}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setShowCoinsPopup(false)}
+              >
+                <MaterialCommunityIcons
+                  name="close-circle"
+                  size={28}
+                  color="#829582"
+                />
+              </TouchableOpacity>
+
+              <LinearGradient
+                colors={["#FFE0B2", "#FFB74D"]}
+                style={styles.popupContent}
+              >
+                <MaterialCommunityIcons
+                  name="coin"
+                  size={48}
+                  color="#FFD700"
+                  style={styles.coinIcon}
+                />
+                <Text style={styles.popupTitle}>Congratulations! 🎉</Text>
+                <Text style={styles.popupText}>
+                  You've earned 10 coins to redeem at the pharmacy!
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.redeemButton}
+                  onPress={() => router.push("../pharmacyInt/pharmacy")}
+                >
+                  <LinearGradient
+                    colors={["#829582", "#667B66"]}
+                    style={styles.redeemButtonGradient}
+                  >
+                    <Text style={styles.redeemButtonText}>Redeem Now</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </LinearGradient>
+            </Animated.View>
+          </View>
+        )}
       </SafeAreaView>
     </GestureHandlerRootView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f8f8f8" },
-  // header: {
-  //   backgroundColor: "#829582",
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   padding: 15,
-  // },
-
   header: {
-    display: "flex",
     flexDirection: "row",
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
     backgroundColor: "#829582",
-    justifyContent: "center",
-    paddingLeft: 10,
-    paddingRight: 10,
-},
-  headerText: { fontSize: 24,
-    fontWeight: "bold",
-    alignSelf: "center",
-    color: "#fff", },
-
-  mainContainer: { flex: 1, flexDirection: "row", padding: 10, },
-  leftColumn: {
-    flex: 1,
-    paddingRight: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  virtualPetContainer: {
-    width: "90%",
-    height: 350,
-    backgroundColor: "rgb(238, 238, 250)",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 20,
-  },
-  virtualPetText: { fontSize: 22, fontWeight: "bold", color: "#004D40" },
-  happinessContainer: {
-    width: "90%",
-    backgroundColor: "rgb(226, 246, 226)",
-    borderRadius: 12,
-    padding: 8,
-    alignItems: "center",
-  },
-  happinessTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4,
-    color: "#004D40",
-  },
-  happinessMeter: {
-    width: "100%",
-    height: 30,
-    backgroundColor: "rgb(247, 253, 253)",
-    borderRadius: 10,
-    overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-  },
-  happinessFill: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    height: "100%",
-    backgroundColor: "rgb(137, 185, 180)",
-  },
-  happinessValue: { fontSize: 14, color: "#004D40", fontWeight: "600" },
-  rightColumn: { flex: 1, paddingLeft: 10 },
-  rightColumnContent: { paddingBottom: 20 },
-  dropdownHeader: {
-    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  headerText: { fontSize: 20, fontWeight: "bold", color: "#fff" },
+  profileImage: { width: 40, height: 40, borderRadius: 20 },
+  mainContainer: { padding: 8 },
+  topSection: { flex: 2, marginBottom: 12 },
+  petAndNotificationContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  petWrapper: { position: "relative", marginLeft: 20 },
+  notificationBubble: {
+    backgroundColor: "#fff",
+    borderRadius: 6,
+    paddingVertical: 10,
     paddingHorizontal: 12,
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 2,
+    elevation: 1,
+    borderWidth: 0.4,
+    borderColor: "#ccc",
+    maxWidth: "55%",
+  },
+  bubbleTailBorder: {
+    position: "absolute",
+    left: 10,
+    bottom: -10,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderTopWidth: 10,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderTopColor: "#ccc",
+  },
+  bubbleTailInner: {
+    position: "absolute",
+    left: 12,
+    bottom: -8,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderTopWidth: 8,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderTopColor: "#fff",
+  },
+  notificationBubbleText: { fontSize: 10, color: "#333" },
+  progressContainer: { width: "100%", marginTop: -20 },
+  progressRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  progressBar: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  halfWidth: { flex: 1 },
+  progressLabelContainer: { marginBottom: 6 },
+  progressLabel: { fontSize: 12, fontWeight: "600", color: "#004D40" },
+  progressMeter: {
+    width: "100%",
+    height: 16,
+    backgroundColor: "rgb(247,253,253)",
+    borderRadius: 8,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    position: "relative",
+  },
+  progressValue: {
+    fontSize: 10,
+    color: "#004D40",
+    fontWeight: "600",
+    position: "absolute",
+    alignSelf: "center",
+  },
+  bottomSection: { flex: 1 },
+  sectionCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
   },
-  dropdownHeaderText: { fontSize: 16, fontWeight: "600", color: "#004D40" },
-  notificationsListContainer: { marginVertical: 8 },
-  notificationStackContainer: { height: 330, marginVertical: 8 },
-  notificationStackContent: { paddingVertical: 10 },
-  notificationItemContainer: { height: 220, marginBottom: 10 },
-  verticalArrowContainer: { alignItems: "center", marginTop: 5 },
-  notificationCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 2,
-    backgroundColor: "rgb(242, 235, 237)",
-    borderRadius: 20,
-    borderWidth: 0.1,
-    marginVertical: 2,
-    borderColor: "#000",
-    margin: 5,
+  sectionTitle: { fontSize: 16, fontWeight: "bold", color: "#004D40" },
+  counterContainer: {
+    backgroundColor: "#FF5733",
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    marginLeft: 8,
   },
-  notificationCardText: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 20,
-    //marginTop: 10,
-    padding: 12,
-  },
-  notificationIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 15,
+  counterText: { color: "#fff", fontSize: 10, fontWeight: "bold" },
+  horizontalScroll: { marginBottom: 10 },
+  pillIcon: { width: 30, height: 14, borderRadius: 7, marginBottom: 6 },
+  calendarIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 6,
+    marginBottom: 8,
     alignItems: "center",
     justifyContent: "center",
   },
-  deckContainer: { paddingHorizontal: 8 },
   medicationCard: {
-    borderRadius: 20,
-    padding: 20,
-    marginHorizontal: 10,
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   medicationText: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 14,
+    fontWeight: "600",
     color: "#333",
     textAlign: "center",
   },
   appointmentCard: {
-    borderRadius: 20,
-    padding: 20,
-    marginHorizontal: 10,
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   appointmentText: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 14,
+    fontWeight: "600",
     color: "#333",
     textAlign: "center",
   },
-  pillIcon: { width: 40, height: 20, borderRadius: 10, marginBottom: 10 },
-  calendarIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   tooltip: {
-    marginTop: 10,
+    marginTop: 6,
     backgroundColor: "rgba(0,0,0,0.6)",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
   },
-  tooltipText: { color: "#fff", fontSize: 12, fontWeight: "600" },
-  stayHealthyContainer: {
+  tooltipText: { color: "#fff", fontSize: 10, fontWeight: "600" },
+
+  popupContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 140,
+    zIndex: 1000,
   },
-  stayHealthyText: {
-    fontSize: 40,
-    fontStyle: "italic",
-    fontWeight: "300",
+  popup: {
+    width: "80%",
+    borderRadius: 20,
+    overflow: "hidden",
+    transform: [{ scale: 1 }],
+  },
+  popupContent: {
+    padding: 24,
+    alignItems: "center",
+  },
+  coinIcon: {
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  popupTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
     color: "#004D40",
+    marginBottom: 8,
+    textAlign: "center",
   },
-  deleteButton: {
-    backgroundColor: "#ff0000",
-    justifyContent: "center",
-    alignItems: "flex-end",
-    paddingHorizontal: 30,
-    height: "100%",
+  popupText: {
+    fontSize: 16,
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 24,
+    lineHeight: 24,
   },
-  deleteText: { color: "white", fontWeight: "600", padding: 20 },
-  profileIcon: {
-    right: 0,
-    alignSelf: "flex-end",
-    marginLeft:15
-
+  redeemButton: {
+    width: "100%",
+    borderRadius: 12,
+    overflow: "hidden",
   },
-  
+  redeemButtonGradient: {
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    alignItems: "center",
+  },
+  redeemButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    zIndex: 1001,
+  },
 });
+
+export default HomeScreen;

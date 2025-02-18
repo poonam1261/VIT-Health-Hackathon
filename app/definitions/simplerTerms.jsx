@@ -4,10 +4,12 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import BlobAnimation from "../../components/BlobAnimation"
+import { useNavigation } from "expo-router"; 
 
 
 export default function SimplerTerms() {
   const router = useRouter();
+  const navigation = useNavigation();
   const [word, setWord] = useState("");
   const [definition, setDefinition] = useState(null);
   const [isAnimationVisible, setIsAnimationVisible] = useState(true);
@@ -18,6 +20,12 @@ export default function SimplerTerms() {
         return () => setIsAnimationVisible(false); // Hide animation when screen is unfocused
       }, [])
     );
+
+  React.useLayoutEffect(() => {
+        navigation.setOptions({
+          headerTitle: 'Simpler Terms'
+        });
+      }, [navigation]);
 
   const fetchDefinition = async () => {
     if (!word.trim()) return;

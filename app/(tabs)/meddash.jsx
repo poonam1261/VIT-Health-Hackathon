@@ -24,6 +24,9 @@ import { hasJSDocParameterTags } from "typescript";
 import YourComponent from "../graph";
 
 export default function MedicationDashboard() {
+
+  const navigation = useNavigation();
+
   const Harcoded=
   [
     
@@ -357,6 +360,9 @@ export default function MedicationDashboard() {
         </View>
        
       </ScrollView>
+      <TouchableOpacity style={styles.pharmacyButton} onPress={() => navigation.navigate("pharmacyInt/pharmacy")}>
+        <Text style={styles.pharmacyButtonText}>Find Nearby Pharmacies</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -658,7 +664,31 @@ export default function MedicationDashboard() {
     icon: {
      top:30,
      left:20,
-    }
+    },
+    pharmacyButton: {
+      backgroundColor: "#b89eb8",
+      padding: 12,
+      borderRadius: 8,
+      alignItems: "center",
+      marginVertical: 10,
+      position: 'absolute',
+      bottom: 20,
+      left: 20,
+      width: '45%', // Slightly less than half to account for margins
+      elevation: 5, // For Android shadow
+      shadowColor: '#000', // For iOS shadow
+      shadowOffset: {
+      width: 0,
+      height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
+    pharmacyButtonText: {
+      color: "#fff",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
 
 
     });
