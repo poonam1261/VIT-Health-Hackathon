@@ -11,6 +11,7 @@ import {
   Image,
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { FontAwesome5 } from "@expo/vector-icons"; // Using FontAwesome5 for the coins icon
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -246,7 +247,7 @@ const HomeScreen = () => {
         if (storedScore !== null) {
           setHappinessScore(parseInt(storedScore, 10));
         }
-      }, 100); // short delay
+      }, 100);
     }, []),
   );
 
@@ -271,28 +272,20 @@ const HomeScreen = () => {
     }
   }, [happinessScore]);
 
-  // ---------------------------
   // 6. Accept Task -> Increase Score
-  // ---------------------------
   const handleTaskDone = () => {
     setTasksCompleted((prev) => prev + 1);
-    // Increase score by 10, capped at 100
     setHappinessScore((prev) => Math.min(prev + 10, 100));
     removeCurrentNotification();
   };
 
-  // ---------------------------
   // 7. Ignore Task -> Decrease Score
-  // ---------------------------
   const handleTaskIgnored = () => {
-    // Decrease score by 10, floored at 0
     setHappinessScore((prev) => Math.max(prev - 10, 0));
     removeCurrentNotification();
   };
 
-  // ---------------------------
   // 8. Remove Notification
-  // ---------------------------
   const removeCurrentNotification = () => {
     setNotificationExpanded(false);
     setNotificationList((prevList) => {
@@ -310,7 +303,6 @@ const HomeScreen = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Home</Text>
-
           <View style={{ flexDirection: "row" }}>
             <TouchableOpacity
               onPress={() => navigation.navigate("VoiceAssistance")}
@@ -322,7 +314,6 @@ const HomeScreen = () => {
                 style={{ alignSelf: "flex-end" }}
               />
             </TouchableOpacity>
-
             <TouchableOpacity onPress={() => router.push("profhist/profile")}>
               <Image
                 style={styles.profileImage}
@@ -347,7 +338,6 @@ const HomeScreen = () => {
                   onScoreChange={setHappinessScore}
                   score={happinessScore}
                 />
-
                 {notificationList.length > 0 && (
                   <PanGestureHandler
                     onHandlerStateChange={handlePanGestureStateChange}
@@ -532,13 +522,15 @@ const HomeScreen = () => {
               </TouchableOpacity>
 
               <LinearGradient
-                colors={["#FFE0B2", "#FFB74D"]}
+                // Changed popup gradient colors for a dark contrast
+                colors={["#424242", "#212121"]}
                 style={styles.popupContent}
               >
-                <MaterialCommunityIcons
-                  name="coin"
+                {/* Replaced the MaterialCommunityIcons coin icon with FontAwesome5 coins icon */}
+                <FontAwesome5
+                  name="coins"
                   size={48}
-                  color="#FFD700"
+                  color="gold"
                   style={styles.coinIcon}
                 />
                 <Text style={styles.popupTitle}>Congratulations! 🎉</Text>
@@ -548,7 +540,10 @@ const HomeScreen = () => {
 
                 <TouchableOpacity
                   style={styles.redeemButton}
-                  onPress={() => router.push("../pharmacyInt/pharmacy")}
+                  onPress={() => {
+                    setShowCoinsPopup(false); // Close the popup
+                    router.push("../pharmacyInt/pharmacy");
+                  }}
                 >
                   <LinearGradient
                     colors={["#829582", "#667B66"]}
@@ -734,7 +729,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   tooltipText: { color: "#fff", fontSize: 10, fontWeight: "600" },
-
   popupContainer: {
     position: "absolute",
     top: 0,
@@ -766,13 +760,13 @@ const styles = StyleSheet.create({
   popupTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#004D40",
+    color: "#fff", // White text for contrast with dark popup
     marginBottom: 8,
     textAlign: "center",
   },
   popupText: {
     fontSize: 16,
-    color: "#333",
+    color: "#fff", // White text for contrast
     textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,

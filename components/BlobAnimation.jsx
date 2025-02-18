@@ -32,17 +32,17 @@ const BlobAnimation = ({
     }
   };
 
-  // Decrease score every 120 seconds
-  useEffect(() => {
-    const decrementInterval = setInterval(async () => {
-      setScore((prevScore) => {
-        const newScore = Math.max(prevScore - 25, 0); // Ensure score doesn't go below 0
-        AsyncStorage.setItem("healthScore", newScore.toString());
-        return newScore;
-      });
-    }, 180000); // 120 seconds
-    return () => clearInterval(decrementInterval);
-  }, []);
+  // // Decrease score every 120 seconds
+  // useEffect(() => {
+  //   const decrementInterval = setInterval(async () => {
+  //     setScore((prevScore) => {
+  //       const newScore = Math.max(prevScore - 25, 0); // Ensure score doesn't go below 0
+  //       AsyncStorage.setItem("healthScore", newScore.toString());
+  //       return newScore;
+  //     });
+  //   }, 180000); // 180 seconds
+  //   return () => clearInterval(decrementInterval);
+  // }, []);
 
   // Decrease score every 120 seconds
   useEffect(() => {
