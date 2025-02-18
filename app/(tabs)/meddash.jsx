@@ -23,8 +23,10 @@ import Swiper from "react-native-deck-swiper";
 import { hasJSDocParameterTags } from "typescript";
 import YourComponent from "../graph";
 import { useNavigation } from "@react-navigation/native";
+import { LogBox } from "react-native";
 
 export default function MedicationDashboard() {
+  LogBox.ignoreAllLogs(); // Hides all warnings
 
   const navigation = useNavigation();
 

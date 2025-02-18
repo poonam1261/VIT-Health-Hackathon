@@ -27,6 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCoins } from "../contexts/CoinContext.jsx";
+import { LogBox } from "react-native";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
@@ -136,6 +137,7 @@ const AppointmentCard = ({ tooltipText, timeIndicator, cardWidth, router }) => {
 };
 
 const HomeScreen = () => {
+  LogBox.ignoreAllLogs(); // Hides all warnings
   const [animationData, setAnimationData] = useState(null);
   const router = useRouter();
   const navigation = useNavigation();
@@ -156,7 +158,6 @@ const HomeScreen = () => {
   ];
 
   const [notificationList, setNotificationList] = useState([
-    "Meds or your family.",
     "🏃‍♂️ Loosen up your joints and muscles to reduce stiffness!",
     "🍎 Choose a fiber-rich snack to keep your energy steady",
     "📅 Take a minute to breathe deeply.",

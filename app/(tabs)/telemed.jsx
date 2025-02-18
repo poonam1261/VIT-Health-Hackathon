@@ -30,9 +30,11 @@ import LottieView from "lottie-react-native";
 // import Lottie from "lottie-react";       //is a no no if we want to work on phones
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BlobAnimation from "../../components/BlobAnimation";
+import { LogBox } from "react-native";
 //query(query, compositeFilter)
 
 export default function TeleMed() {
+  LogBox.ignoreAllLogs(); // Hides all warnings
   const [modalVisible, setModalVisible] = useState(false);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
