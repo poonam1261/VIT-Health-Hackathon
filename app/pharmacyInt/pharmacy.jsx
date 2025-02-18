@@ -60,9 +60,9 @@ function PharmacyPageComponent() {
       { id: 3, name: "PharmEasy", ad: "Flat 25% off on your first order!", image: require("./pharmacy_3.jpg") },
       { id: 4, name: "Tata 1mg", ad: "Enjoy exclusive discounts on wellness products!", image: require("./pharmacy_4.jpg") },
       { id: 5, name: "MedPlusMart", ad: "Get your prescriptions in under 10 minutes!", image: require("./pharmacy_5.jpg") },
-      { id: 6, name: "VitalHealth Pharmacy", ad: "Earn loyalty points with every purchase!", image: require("./pharmacy3.png") },
-      { id: 7, name: "LifeAid Pharmacy", ad: "Free health consultations every Friday!", image: require("./pharmacy1.png") },
-      { id: 8, name: "CareWell Pharmacy", ad: "Exclusive online discounts available!", image: require("./pharmacy2.png") },
+      //{ id: 6, name: "VitalHealth Pharmacy", ad: "Earn loyalty points with every purchase!", image: require("./pharmacy3.png") },
+      //{ id: 7, name: "LifeAid Pharmacy", ad: "Free health consultations every Friday!", image: require("./pharmacy1.png") },
+      //{ id: 8, name: "CareWell Pharmacy", ad: "Exclusive online discounts available!", image: require("./pharmacy2.png") },
     ];
     setPharmacies(mockPharmacies);
   };

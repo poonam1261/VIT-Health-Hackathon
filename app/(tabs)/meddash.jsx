@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MedDash from "../calendar"
 import { MaterialCommunityIcons, AntDesign, Entypo } from "@expo/vector-icons";
@@ -21,6 +21,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 import Swiper from "react-native-deck-swiper";
 import { useNavigation } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
+import { API_BASE_URL } from "../../config";
+import SymptomsDisplay from '../../components/SymptomsDisplay';
 
 export default function MedicationDashboard() {
 
@@ -104,6 +107,8 @@ export default function MedicationDashboard() {
   <Text style={styles.placeholderText}>ChART</Text>
 </View>
 <MedDash/>
+
+<SymptomsDisplay/>
 
           <TouchableOpacity onPress={ToggleSwipe} style={styles.calendarToggle}>
             <Text style={styles.calendarToggleText}>{isSwipeVisible ? "Hide Today's Medications ▲" : "Show Medications ▼"}</Text>
@@ -659,3 +664,4 @@ export default function MedicationDashboard() {
 
 
     });
+    
