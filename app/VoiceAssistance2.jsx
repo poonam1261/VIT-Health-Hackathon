@@ -9,14 +9,12 @@ export default function VoiceAssistance() {
 
     const startRecording = async () => {
         try {
-            // Request permission for microphone
             const { status } = await Audio.requestPermissionsAsync();
             if (status !== "granted") {
-                console.error("Permission to access microphone was denied.");
+                alert("Permission to access microphone was denied.");
                 return;
             }
-
-            // Prepare recording
+    
             const recordingObject = new Audio.Recording();
             await recordingObject.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
             await recordingObject.startAsync();
@@ -26,6 +24,7 @@ export default function VoiceAssistance() {
             console.error("Failed to start recording", err);
         }
     };
+    
 
     const stopRecording = async () => {
         if (!recording) return;
@@ -43,33 +42,44 @@ export default function VoiceAssistance() {
 
     const sendAudioToServer = async (uri) => {
         try {
-            // Ensure file exists
+            console.log("📤 Preparing file for upload...");
+    
             const fileInfo = await FileSystem.getInfoAsync(uri);
+            console.log("📁 File Info:", fileInfo);
+    
             if (!fileInfo.exists) {
                 console.error("❌ File does not exist:", uri);
                 return;
             }
-
-            // Move file for access
+    
+            // ✅ Ensure file is accessible
             const newUri = FileSystem.documentDirectory + "recording.wav";
-            await FileSystem.moveAsync({ from: uri, to: newUri });
-
-            // Create formData
+            await FileSystem.copyAsync({ from: uri, to: newUri });
+            console.log("✅ File moved to:", newUri);
+    
+            // ✅ Construct FormData Correctly
             const formData = new FormData();
             formData.append("audio", {
                 uri: newUri,
-                type: "audio/x-wav",
+                type: "audio/wav",
                 name: "recording.wav",
             });
-
+    
             console.log("📤 Uploading file...");
-
-            const response = await fetch("http://localhost:3000/speech-to-text", {
+    
+            const response = await fetch("http://192.168.104.36:3000/speech-to-text", {
                 method: "POST",
                 body: formData,
                 headers: { "Content-Type": "multipart/form-data" },
             });
-
+    
+            console.log("🔄 Server Response Status:", response.status);
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server error: ${errorText}`);
+            }
+    
             const data = await response.json();
             console.log("📝 Transcription:", data);
             setTranscription(data.transcript);
@@ -77,7 +87,7 @@ export default function VoiceAssistance() {
             console.error("❌ Error uploading file:", error);
         }
     };
-
+    
     return (
         <View>
             <Button title="Start Recording" onPress={startRecording} disabled={recording !== null} />

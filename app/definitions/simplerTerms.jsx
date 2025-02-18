@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
@@ -46,7 +46,7 @@ export default function SimplerTerms() {
       {/* Main Content */}
       <View style={styles.container}>
         <Text style={styles.title}>Simpler Terms</Text>
-        <BlobAnimation 
+        <BlobAnimation style = {styles.blobContainer}
         isVisible={true}
         positionStyle={{
           position: "absolute",
@@ -93,6 +93,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
   },
+  blobContainer: {
+    alignItems: "center", 
+    justifyContent: "center", 
+    marginBottom: 20 
+  },
+
   searchButton: {
     backgroundColor: "rgb(184, 158, 184)",
     paddingVertical: 12,

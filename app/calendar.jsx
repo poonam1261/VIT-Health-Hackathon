@@ -29,8 +29,24 @@ const MedDash = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>OwO doing goood</Text>
+      <View 
+      style={{
+        backgroundColor: '#FFF9C4', // Soft pastel yellow background
+        padding:5,
+        borderRadius: 25,
+        marginVertical: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000', // Shadow effect
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
+      }}
+      >
+      <Text style={styles.headerText}>You are doing great!</Text>
 
+      </View>
+    
       {/* 🔥 Hardcoded Streak Progress */}
       <Card style={styles.streakCard}>
         <Text style={styles.streakText}>🔥 Streak: {streak} Days</Text>

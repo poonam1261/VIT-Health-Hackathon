@@ -20,14 +20,18 @@ import{
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 import Swiper from "react-native-deck-swiper";
+import { hasJSDocParameterTags } from "typescript";
+import YourComponent from "../graph";
 
 export default function MedicationDashboard() {
   const Harcoded=
   [
-    { id: 6, name: "Lisinopril", dosage: "10mg", time: "8:00 AM" },
-    { id: 7, name: "Atorvastatin", dosage: "20mg", time: "10:00 PM" },
-    { id: 8, name: "Metformin", dosage: "500mg", time: "8:00 AM and 8:00 PM" }
-  ]
+    
+      { id: 6, name: "Lisinopril", dosage: "10mg", timing: "8:00 AM", frequency: "Once daily" },
+      { id: 7, name: "Atorvastatin", dosage: "20mg", timing: "10:00 PM", frequency: "Once daily" },
+      { id: 8, name: "Metformin", dosage: "500mg", timing: "8:00 AM and 8:00 PM", frequency: "Twice daily" }
+    ];
+    
   const initialSwipeMeds = 
     [
       { id: 1, name: "Paracetamol", dosage: "500mg", timing: "As needed for pain" },
@@ -54,14 +58,16 @@ export default function MedicationDashboard() {
   const [isSwipeVisible, setisSwipeVisible] = useState(false);
   const totalMedications = initialSwipeMeds.length;
   const [medicationsTaken, setMedicationsTaken] = useState(0);
+  
 
 
 
   const handleSave = () => {
+        setModalVisible(false); // Close modal after saving
+
     setMedications([...medications, newMed]);
     setNewMed({ name: "", dosage: "", timing: "", frequency: "" , StartDate:"", EndDate:""});
   
-    setModalVisible(false); // Close modal after saving
   };
   
   const ToggleSwipe=() =>{
@@ -96,9 +102,11 @@ export default function MedicationDashboard() {
             <Text style={styles.headerText}>MedDash</Text>
           </View>
 
-          <View style={styles.placeholderContainer}>
-  <Text style={styles.placeholderText}>ChART</Text>
-</View>
+          
+            <View >
+  <YourComponent/>
+  </View>
+
 <MedDash/>
 
           <TouchableOpacity onPress={ToggleSwipe} style={styles.calendarToggle}>
@@ -110,7 +118,7 @@ export default function MedicationDashboard() {
   <View style={{ height: 250,  flexDirection: "row",  justifyContent: "space-between", marginBottom: 20, marginTop: 10  }}>
     
     {/* Swiper Container */}
-    <View style={{ left: 2 }}>
+    <View style={{ left: 2 ,alignItems:"left" }}>
   <Swiper
     cards={swipeMeds}
     renderCard={(med) => (
@@ -148,10 +156,10 @@ export default function MedicationDashboard() {
 </View>
 
    
-    <View style={{  marginRight: 10 }}>
+    <View style={{  marginRight: 10,marginLeft:5 }}>
     <View style={{
     backgroundColor: "#FCE4EC", // Soft pink pastel
-    padding: 10,
+    padding: 8,
     borderRadius: 20,
     alignItems: "center",
     shadowColor: "#000",
@@ -163,7 +171,7 @@ export default function MedicationDashboard() {
     {/* Circular Progress */}
     <CircularProgress
       value={(medicationsTaken / totalMedications) * 100}
-      radius={76}
+      radius={73}
       strokeWidth={12}
       progressColor="#FF80AB" // Soft pastel pink
       activeStrokeColor="rgb(164, 90, 115)"
@@ -195,18 +203,22 @@ export default function MedicationDashboard() {
   </View>
 )}
 
-          <Modal visible={showModal} animationType="slide" transparent>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalText}>
-                  {selectedMed ? `${selectedMed.name} - ${selectedMed.dosage} (${selectedMed.timing})` : "No medication selected"}
-                </Text>
-                <TouchableOpacity style={styles.closeButton} onPress={() => setShowModal(false)}>
-                  <Text style={styles.closeButtonText}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
+<Modal visible={showModal} animationType="slide" transparent={true}>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+    <View style={{ width: '80%', backgroundColor: 'white', borderRadius: 10, padding: 20, alignItems: 'center', elevation: 5 }}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, color: '#333' }}>
+        {selectedMed ? `${selectedMed.name} - ${selectedMed.dosage}` : "No medication selected"}
+      </Text>
+      <Text style={{ fontSize: 16, color: '#666', marginBottom: 20 }}>
+        {selectedMed ? `${selectedMed.timing} | Frequency: ${selectedMed.frequency}` : ""}
+      </Text>
+      
+      <TouchableOpacity style={{ marginTop: 10, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'rgb(166, 193, 221)', borderRadius: 5 }} onPress={() => setShowModal(false)}>
+        <Text style={{ color: 'white', fontSize: 16 }}>Close</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
 
             {/* Input form */}
             <View>
@@ -217,69 +229,87 @@ export default function MedicationDashboard() {
 
       {/* Medication Input Modal */}
       <Modal visible={modalVisible} animationType="fade" transparent>
-      <View style={styles.modalOverlay}>
-        <View style={styles.inputContainer}>
-          
-          {/* Medicine Name */}
-          <View>
-            <MaterialCommunityIcons name="pill" size={24} color="black" style={styles.icon} />
-            <TextInput
-              placeholder="Medicine Name"
-              value={newMed.name}
-              onChangeText={(text) => setNewMed({ ...newMed, name: text })}
-              style={[styles.input, { paddingLeft: 40 }]}
-            />
-          </View>
-
-          {/* Dosage */}
-          <View>
-            <Entypo name="line-graph" size={24} color="black" style={styles.icon} />
-            <TextInput
-              placeholder="Dosage"
-              value={newMed.dosage}
-              onChangeText={(text) => setNewMed({ ...newMed, dosage: text })}
-              style={[styles.input, { paddingLeft: 40 }]}
-            />
-          </View>
-
-          {/* Timing */}
-          <View>
-            <AntDesign name="clockcircleo" size={24} color="black" style={styles.icon} />
-            <TextInput
-              placeholder="Timing"
-              value={newMed.timing}
-              onChangeText={(text) => setNewMed({ ...newMed, timing: text })}
-              style={[styles.input, { paddingLeft: 40 }]}
-            />
-          </View>
-
-          {/* Frequency */}
-          <View>
-            <Entypo name="line-graph" size={24} color="black" style={styles.icon} />
-            <TextInput
-              placeholder="Frequency"
-              value={newMed.frequency}
-              onChangeText={(text) => setNewMed({ ...newMed, frequency: text })}
-              style={[styles.input, { paddingLeft: 40 }]}
-            />
-          </View>
-
-    
-
-          {/* Save & Cancel Buttons */}
-          <View style={styles.buttonContainer}>
-            <Button title="Cancel" onPress={() => setModalVisible(false)} />
-            <Button title="Save" onPress={[addMedication, handleSave]} />
-          </View>
-
-        </View>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+    <View style={{ width: '85%', backgroundColor: 'white', borderRadius: 10, padding: 20, elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.8, shadowRadius: 3 }}>
+      
+      {/* Medicine Name */}
+      <View style={{ marginBottom: 15 }}>
+        <MaterialCommunityIcons name="pill" size={24} color="rgb(188, 204, 156)" style={{ position: 'absolute', left: 10, top: '50%', transform: [{ translateY: -12 }] }} />
+        <TextInput
+          placeholder="Medicine Name"
+          value={newMed.name}
+          onChangeText={(text) => setNewMed({ ...newMed, name: text })}
+          style={{ height: 50, borderWidth: 1, borderColor: '#ddd', borderRadius: 5, paddingHorizontal: 15, fontSize: 16, color: '#333', paddingLeft: 40 }}
+        />
       </View>
-    </Modal>
+
+      {/* Dosage */}
+      <View style={{ marginBottom: 15 }}>
+        <AntDesign name="medicinebox"  size={24} color="rgb(188, 204, 156)" style={{ position: 'absolute', left: 10, top: '50%', transform: [{ translateY: -12 }] }} />
+        <TextInput
+          placeholder="Dosage"
+          value={newMed.dosage}
+          onChangeText={(text) => setNewMed({ ...newMed, dosage: text })}
+          style={{ height: 50, borderWidth: 1, borderColor: '#ddd', borderRadius: 5, paddingHorizontal: 15, fontSize: 16, color: '#333', paddingLeft: 40 }}
+        />
+      </View>
+
+      {/* Timing */}
+      <View style={{ marginBottom: 15 }}>
+        <AntDesign name="clockcircleo" size={24} color="rgb(188, 204, 156)" style={{ position: 'absolute', left: 10, top: '50%', transform: [{ translateY: -12 }] }} />
+        <TextInput
+          placeholder="Timing"
+          value={newMed.timing}
+          onChangeText={(text) => setNewMed({ ...newMed, timing: text })}
+          style={{ height: 50, borderWidth: 1, borderColor: '#ddd', borderRadius: 5, paddingHorizontal: 15, fontSize: 16, color: '#333', paddingLeft: 40 }}
+        />
+      </View>
+
+      {/* Frequency */}
+      <View style={{ marginBottom: 15 }}>
+        <Entypo name="line-graph" size={24} color="rgb(188, 204, 156)" style={{ position: 'absolute', left: 10, top: '50%', transform: [{ translateY: -12 }] }} />
+        <TextInput
+          placeholder="Frequency"
+          value={newMed.frequency}
+          onChangeText={(text) => setNewMed({ ...newMed, frequency: text })}
+          style={{ height: 50, borderWidth: 1, borderColor: '#ddd', borderRadius: 5, paddingHorizontal: 15, fontSize: 16, color: '#333', paddingLeft: 40 }}
+        />
+      </View>
+
+      {/* Save & Cancel Buttons */}
+      <View style={{ marginTop: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Button title="Cancel" onPress={() => setModalVisible(false)} color="#D8BFD8" />
+        <Button title="Save" onPress={handleSave} color="rgb(237, 234, 147)" />
+      </View>
+
+    </View>
+  </View>
+</Modal>
+
   
     </View>
   
         </View>
-        <Text style={styles.subHeader}>All Medications</Text>
+      
+             <View 
+             style={{
+               backgroundColor: '#FFF9C4', // Soft pastel yellow background
+               padding:5,
+               marginRight:10,
+               borderRadius: 25,
+               marginVertical: 10,
+               alignItems: 'center',
+               justifyContent: 'center',
+               shadowColor: '#000', // Shadow effect
+               shadowOpacity: 0.1,
+               shadowRadius: 10,
+               elevation: 5,
+             }}
+             >
+             <Text style={{fontSize: 20, fontWeight: "bold", color: "#6B6B6B", textAlign: "center", marginBottom: 20}}>All medications</Text>
+       
+             </View>
+        <View style={styles.listContainer}>
         <FlatList
       style={styles.listContainer}
       data={Harcoded} // Keeping the original list static
@@ -302,7 +332,7 @@ export default function MedicationDashboard() {
       )}
     />
 <FlatList
-  style={styles.listContainer}
+  
   data={medications}
   keyExtractor={(item, index) => index.toString()}
   renderItem={({ item }) => (
@@ -323,6 +353,9 @@ export default function MedicationDashboard() {
   )}
 />
 
+
+        </View>
+       
       </ScrollView>
     </SafeAreaView>
   );
@@ -331,7 +364,8 @@ export default function MedicationDashboard() {
 
   const styles = StyleSheet.create({
     placeholderContainer: {
-      backgroundColor: "#FFEDF3",  // Soft pastel pink
+      backgroundColor: "#FFEDF3",
+      marginTop:15,  // Soft pastel pink
       padding: 15,
       height:250,
       borderRadius: 10,
@@ -453,7 +487,7 @@ export default function MedicationDashboard() {
           fontWeight: "bold",
         },
         removeButton: {
-          backgroundColor: "#ff4d4d",
+          backgroundColor: "rgb(206, 98, 98)",
           paddingVertical: 6,
           paddingHorizontal: 12,
           borderRadius: 8,
