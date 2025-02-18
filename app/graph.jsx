@@ -7,6 +7,7 @@ const YourComponent = () => {
   // Define the time series for severity of symptoms (severity scale: 0 to 10)
   const data = {
     labels: ['Day 1', 'Day 2', 'Day 3'], // X-axis labels for days
+    med: ["med1", "med2", "med3", "med4", "med5"],
     datasets: [
       {
         data: [7, 3, 8], // Severity of symptoms for Paracetamol (more fluctuation)
@@ -39,6 +40,7 @@ const YourComponent = () => {
         name: 'Antacid',
       },
     ],
+    legend: ["Med1", "Med2", "Med3", "Med4", "Med5"],
   };
 
   return (
@@ -58,7 +60,7 @@ const YourComponent = () => {
           shadowRadius: 10,
           elevation: 3,
         }}>
-          Medication Severity Over Time
+          Symptom Severity over time
         </Text>
 
         {/* Line Chart */}

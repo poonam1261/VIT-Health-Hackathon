@@ -53,18 +53,20 @@ export default function SimplerTerms() {
 
       {/* Main Content */}
       <View style={styles.container}>
-        <Text style={styles.title}>Simpler Terms</Text>
+        
         <BlobAnimation style = {styles.blobContainer}
         isVisible={true}
         positionStyle={{
-          position: "absolute",
-          top: "30%",
-          left: "50%",
+          position: "relative",
+          top:120,
+      
+        left: 125,
           transform: "translate(-50%, -50%)",
           width: 250,
           height: 250,
         }}
       />
+      <Text style={styles.title}>Simpler Terms</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter a word, I'll explain it for you ^_^"
@@ -89,10 +91,11 @@ export default function SimplerTerms() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#fff", paddingHorizontal: 20 },
-  container: { flex: 1, alignItems: "center", justifyContent: "center", paddingTop: 50 },
+  container: { alignItems: "center", justifyContent: "center", paddingTop: 50 },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
   input: {
     width: "100%",
+     
     height: 50,
     borderWidth: 1,
     borderColor: "#ccc",
@@ -109,6 +112,7 @@ const styles = StyleSheet.create({
 
   searchButton: {
     backgroundColor: "rgb(184, 158, 184)",
+   
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 10,

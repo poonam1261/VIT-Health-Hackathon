@@ -137,7 +137,7 @@ export default function VoiceAssistance() {
                     router.push('(tabs)/telemed')
                 }
 
-                if(data.transcript.toLowerCase().includes("dashboard")) {
+                if(data.transcript.toLowerCase().includes("dashboard") || data.transcript.toLowerCase().includes("dash")) {
                     console.log("Meddash");
                     router.push('(tabs)/meddash')
                 }

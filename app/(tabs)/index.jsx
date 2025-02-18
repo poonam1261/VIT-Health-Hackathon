@@ -138,11 +138,11 @@ const HomeScreen = () => {
   const navigation = useNavigation();
 
   const medicationData = [
-    { id: "1", tooltipText: "Ibuprofen, 9AM" },
-    { id: "2", tooltipText: "Insulin, 7AM" },
-    { id: "3", tooltipText: "Vaccine, 10AM" },
-    { id: "4", tooltipText: "Aspirin, 1PM" },
-    { id: "5", tooltipText: "Vitamin D, 8AM" },
+    { id: 1, tooltipText: "Paracetamol-500mg", timing: "As needed for pain" },
+      { id: 2, tooltipText: "Amoxicillin-250mg", timing: "Every 8 hours" },
+      { id: 3, tooltipText: "Vitamin C-1000mg", timing: "Once a day" },
+      { id: 4, tooltipText: "Ibuprofen-200mg", timing: "Every 6 hours as needed for pain" },
+      { id: 5, tooltipText: "Antacid-10ml", timing: "As needed for heartburn or indigestion" }
   ];
   const appointmentData = [
     { id: "1", tooltipText: "Dentist Appointment", timeIndicator: "Today" },
@@ -154,10 +154,10 @@ const HomeScreen = () => {
 
   const [notificationList, setNotificationList] = useState([
     "Meds or your family.",
-    "🏃‍♂️ Time for a quick stretch!",
-    "🍎 Eat a healthy snack.",
-    "📅 Appointment at 3 PM",
-    "🚴‍♂️ Go for a bike ride!",
+    "🏃‍♂️ Loosen up your joints and muscles to reduce stiffness!",
+    "🍎 Choose a fiber-rich snack to keep your energy steady",
+    "📅 Take a minute to breathe deeply.",
+    "🚴‍♂️ Monitor your BP to prevent complications!",
   ]);
 
   const [happinessScore, setHappinessScore] = useState(0);

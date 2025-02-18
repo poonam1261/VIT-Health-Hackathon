@@ -22,6 +22,7 @@ import { Calendar } from "react-native-calendars";
 import Swiper from "react-native-deck-swiper";
 import { hasJSDocParameterTags } from "typescript";
 import YourComponent from "../graph";
+import { useNavigation } from "@react-navigation/native";
 
 export default function MedicationDashboard() {
 
@@ -118,10 +119,13 @@ export default function MedicationDashboard() {
 
 
           {isSwipeVisible && (
+           
   <View style={{ height: 250,  flexDirection: "row",  justifyContent: "space-between", marginBottom: 20, marginTop: 10  }}>
     
     {/* Swiper Container */}
+    
     <View style={{ left: 2 ,alignItems:"left" }}>
+    
   <Swiper
     cards={swipeMeds}
     renderCard={(med) => (
@@ -188,7 +192,7 @@ export default function MedicationDashboard() {
       backgroundColor: "#FFEBEE", // Lighter pastel pink
       paddingVertical: 10,
       borderRadius: 15,
-      marginTop: 28,
+      marginTop: 20,
       marginBottom:5,
     }}>
       <Text style={{
@@ -196,6 +200,10 @@ export default function MedicationDashboard() {
         fontWeight: "bold",
         color: "#D81B60", // Deep pink
       }}>
+         
+              Swipe Right if taken {'\n'}
+              Swipe left to dismiss{'\n'}
+              
         💊 {medicationsTaken} / {totalMedications} Medications Taken
       </Text>
     </View>
@@ -203,7 +211,9 @@ export default function MedicationDashboard() {
   </View>
 </View>
 
+
   </View>
+  
 )}
 
 <Modal visible={showModal} animationType="slide" transparent={true}>

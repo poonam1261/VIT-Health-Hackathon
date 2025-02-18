@@ -57,7 +57,7 @@ const BookAppt = () => {
 
 
 
-      router.push('../survey')            // special privilige ios
+     // router.push('../survey')            // special privilige ios
 
 
 
