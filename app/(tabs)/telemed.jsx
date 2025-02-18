@@ -30,7 +30,6 @@ import LottieView from "lottie-react-native";
 // import Lottie from "lottie-react";       //is a no no if we want to work on phones
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BlobAnimation from "../../components/BlobAnimation";
-const router = useRouter();
 //query(query, compositeFilter)
 
 export default function TeleMed() {
@@ -41,6 +40,7 @@ export default function TeleMed() {
   const today = new Date();
   const defaultDate = today.toISOString().split("T")[0];
   const [showAllAppointments, setShowAllAppointments] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetchDoctors();

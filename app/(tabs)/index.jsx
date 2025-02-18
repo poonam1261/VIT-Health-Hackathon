@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Image,
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { FontAwesome5 } from "@expo/vector-icons"; // Using FontAwesome5 for the coins icon
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,6 +25,7 @@ import BlobAnimation from "../../components/BlobAnimation.jsx";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { useCoins } from "../contexts/CoinContext.jsx";
 
 if (Platform.OS === "android") {
@@ -134,6 +136,7 @@ const AppointmentCard = ({ tooltipText, timeIndicator, cardWidth, router }) => {
 };
 
 const HomeScreen = () => {
+  const [animationData, setAnimationData] = useState(null);
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -222,17 +225,67 @@ const HomeScreen = () => {
     outputRange: [0, meterWidth],
   });
 
+  // 2. On mount, load score from AsyncStorage
+  useEffect(() => {
+    const loadScore = async () => {
+      const storedScore = await AsyncStorage.getItem("healthScore");
+      if (storedScore !== null) {
+        setHappinessScore(parseInt(storedScore, 10));
+      } else {
+        setHappinessScore(0);
+        await AsyncStorage.setItem("healthScore", "0");
+      }
+    };
+    loadScore();
+  }, []);
+
+  // 3. On focus, re-load the score (in case it changed on another screen)
+  useFocusEffect(
+    useCallback(() => {
+      setTimeout(async () => {
+        const storedScore = await AsyncStorage.getItem("healthScore");
+        if (storedScore !== null) {
+          setHappinessScore(parseInt(storedScore, 10));
+        }
+      }, 100);
+    }, []),
+  );
+
+  // 4. Whenever happinessScore changes, save to AsyncStorage
+  useEffect(() => {
+    AsyncStorage.setItem("healthScore", happinessScore.toString()).catch(
+      (err) => console.error("Error storing score:", err),
+    );
+  }, [happinessScore]);
+
+  // 5. “Signal” for animation changes => if happinessScore changes, pick correct animation
+  useEffect(() => {
+    console.log("Score changed to:", happinessScore);
+    if (happinessScore < 25) {
+      setAnimationData(require("../../assets/animations/angry.json"));
+    } else if (happinessScore < 50) {
+      setAnimationData(require("../../assets/animations/concerned.json"));
+    } else if (happinessScore < 75) {
+      setAnimationData(require("../../assets/animations/idle.json"));
+    } else {
+      setAnimationData(require("../../assets/animations/happy.json"));
+    }
+  }, [happinessScore]);
+
+  // 6. Accept Task -> Increase Score
   const handleTaskDone = () => {
     setTasksCompleted((prev) => prev + 1);
     setHappinessScore((prev) => Math.min(prev + 10, 100));
     removeCurrentNotification();
   };
 
+  // 7. Ignore Task -> Decrease Score
   const handleTaskIgnored = () => {
     setHappinessScore((prev) => Math.max(prev - 10, 0));
     removeCurrentNotification();
   };
 
+  // 8. Remove Notification
   const removeCurrentNotification = () => {
     setNotificationExpanded(false);
     setNotificationList((prevList) => {
@@ -250,7 +303,6 @@ const HomeScreen = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Home</Text>
-
           <View style={{ flexDirection: "row" }}>
             <TouchableOpacity
               onPress={() => navigation.navigate("VoiceAssistance")}
@@ -262,7 +314,6 @@ const HomeScreen = () => {
                 style={{ alignSelf: "flex-end" }}
               />
             </TouchableOpacity>
-
             <TouchableOpacity onPress={() => router.push("profhist/profile")}>
               <Image
                 style={styles.profileImage}
@@ -285,8 +336,8 @@ const HomeScreen = () => {
                     position: "relative",
                   }}
                   onScoreChange={setHappinessScore}
+                  score={happinessScore}
                 />
-
                 {notificationList.length > 0 && (
                   <PanGestureHandler
                     onHandlerStateChange={handlePanGestureStateChange}
@@ -471,13 +522,15 @@ const HomeScreen = () => {
               </TouchableOpacity>
 
               <LinearGradient
-                colors={["#FFE0B2", "#FFB74D"]}
+                // Changed popup gradient colors for a dark contrast
+                colors={["#424242", "#212121"]}
                 style={styles.popupContent}
               >
-                <MaterialCommunityIcons
-                  name="coin"
+                {/* Replaced the MaterialCommunityIcons coin icon with FontAwesome5 coins icon */}
+                <FontAwesome5
+                  name="coins"
                   size={48}
-                  color="#FFD700"
+                  color="gold"
                   style={styles.coinIcon}
                 />
                 <Text style={styles.popupTitle}>Congratulations! 🎉</Text>
@@ -487,7 +540,10 @@ const HomeScreen = () => {
 
                 <TouchableOpacity
                   style={styles.redeemButton}
-                  onPress={() => router.push("../pharmacyInt/pharmacy")}
+                  onPress={() => {
+                    setShowCoinsPopup(false); // Close the popup
+                    router.push("../pharmacyInt/pharmacy");
+                  }}
                 >
                   <LinearGradient
                     colors={["#829582", "#667B66"]}
@@ -673,7 +729,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   tooltipText: { color: "#fff", fontSize: 10, fontWeight: "600" },
-
   popupContainer: {
     position: "absolute",
     top: 0,
@@ -705,13 +760,13 @@ const styles = StyleSheet.create({
   popupTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#004D40",
+    color: "#fff", // White text for contrast with dark popup
     marginBottom: 8,
     textAlign: "center",
   },
   popupText: {
     fontSize: 16,
-    color: "#333",
+    color: "#fff", // White text for contrast
     textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,
