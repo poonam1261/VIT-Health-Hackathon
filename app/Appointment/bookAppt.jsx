@@ -85,10 +85,10 @@ const BookAppt = () => {
                   
                   const querySnapshot = await getDocs(q);
                   
-                  if (!querySnapshot.empty) {
+                  /*if (!querySnapshot.empty) {
                     alert("You already have an Appointment booked for this Slot");
                     return;
-                  }
+                  }*/
                   
                 
                     // Add appointment with selected date and time to Firestore

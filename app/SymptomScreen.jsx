@@ -154,8 +154,12 @@ const SymptomScreen = () => {
 
       //window.location.reload();   forced refresh
       // Update the score (increment by 10 points for each submission)
-      const updatedScore = updateScore(); // Update the score
-      console.log("Updated Health Score:", updatedScore);
+
+
+      // const updatedScore = updateScore(); // Update the score
+
+
+      // console.log("Updated Health Score:", updatedScore);
       //navigation.navigate("TeleMed");   //setup in navigator
   };
 

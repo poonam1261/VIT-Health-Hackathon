@@ -2,6 +2,29 @@ import React, { useState } from "react";
 import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity } from "react-native";
 import Slider from '@react-native-community/slider';
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
+// UPDATED: Use AsyncStorage (async) instead of localStorage
+const updateScore = async (increment = 25) => {
+  try {
+    // Retrieve the existing score from AsyncStorage
+    const scoreStr = await AsyncStorage.getItem("healthScore"); // <-- Using AsyncStorage.getItem instead of localStorage.getItem
+    let score = scoreStr ? parseInt(scoreStr, 10) : 0;
+    
+    // Increment the score and ensure it doesn't exceed 75
+    score = Math.min(score + increment, 100);
+    
+    // Save the updated score back to AsyncStorage
+    await AsyncStorage.setItem("healthScore", score.toString()); // <-- Using AsyncStorage.setItem instead of localStorage.setItem
+    
+    return score;
+  } catch (error) {
+    console.error("Error updating score:", error);
+    return 0;
+  }
+};
+
 
 const Survey = () => {
   const navigation = useNavigation();
@@ -27,6 +50,7 @@ const [electrolytePanel, setElectrolytePanel] = useState('');
 const [eyeExam, setEyeExam] = useState('');
 const [footExam, setFootExam] = useState('');
 const [heartHealth, setHeartHealth] = useState('');
+
 
   const handleSubmit = () => {
     const formData = {
@@ -59,6 +83,7 @@ const [heartHealth, setHeartHealth] = useState('');
 
   const Navigate = () => {
     navigation.navigate("SymptomScreen");
+    const updatedScore = updateScore(); // Update the score
     setSymptomsAdded(true);
   };
 

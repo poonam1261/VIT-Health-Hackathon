@@ -158,6 +158,7 @@ const HomeScreen = () => {
   ];
 
   const [notificationList, setNotificationList] = useState([
+    "🥛Drink Water",
     "🏃‍♂️ Loosen up your joints and muscles to reduce stiffness!",
     "🍎 Choose a fiber-rich snack to keep your energy steady",
     "📅 Take a minute to breathe deeply.",

@@ -52,7 +52,7 @@ const BlobAnimation = ({
         AsyncStorage.setItem("healthScore", newScore.toString());
         return newScore;
       });
-    }, 180000); // 120 seconds
+    }, 200000); // 120 seconds
     return () => clearInterval(decrementInterval);
   }, []);
 

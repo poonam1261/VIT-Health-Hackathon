@@ -6,8 +6,11 @@ import { Octicons } from '@expo/vector-icons';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LogBox } from 'react-native';
 
 export default function DocAppts() {
+    LogBox.ignoreAllLogs(); // Hides all warnings
+  
   const router = useRouter();
   const [appointments, setAppointments] = useState([]);   
   const [loading, setLoading] = useState(true);
